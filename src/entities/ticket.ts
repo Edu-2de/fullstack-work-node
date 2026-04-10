@@ -17,7 +17,7 @@ export class Ticket {
     events!: Event;
 
     @ManyToOne(() => User)
-    customer_id!: User;
+    customer!: User;
 
     @Column({ type: "timestamp", precision: 2 })
     purchase_date!: Date;

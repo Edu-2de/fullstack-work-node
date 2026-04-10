@@ -1,9 +1,6 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import "reflect-metadata";
-import { ProdutoController } from "./controller/produto-controller";
-import { ProdutoRepositoryMem } from "./repository/produto-repository-mem";
-import { produtoRotas } from "./router/produto-router";
-import { ProdutoService } from "./service/produto-service";
+import { AppError } from "./errors/AppError";
 
 const app = express();
 const port = 3000;
@@ -15,13 +12,24 @@ app.get("/hello", (req: Request, res: Response) => {
 
 app.use("/uploads", express.static("my-uploads"));
 
-//Inicializacao das dependencias
-const produtoRepository = new ProdutoRepositoryMem();
-const produtoService = new ProdutoService(produtoRepository);
-const produtoController = new ProdutoController(produtoService);
-
-app.use("/api/produtos", produtoRotas(produtoController));
-
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
 });
+
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    if (err instanceof AppError) {
+        return res.status(err.statusCode).json({
+            status: "error",
+            message: err.message,
+        });
+    }
+
+    console.error("Erro interno capturado:", err);
+
+    return res.status(500).json({
+        status: "error",
+        message: "Internal server error",
+    });
+});
+
+export { app };
