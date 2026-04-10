@@ -1,0 +1,22 @@
+import { Repository } from "typeorm";
+import { AppDataSource } from "../../data-source";
+import { Category } from "../../entities/category";
+import { ICategoryRepository } from "./ICategoryRepository";
+
+export class CategoryRepository implements ICategoryRepository {
+    private ormRepository: Repository<Category>;
+
+    constructor() {
+        this.ormRepository = AppDataSource.getRepository(Category);
+    }
+
+    async create(data: Partial<Category>): Promise<Category> {
+        const category = this.ormRepository.create(data);
+        await this.ormRepository.save(category);
+        return category;
+    }
+
+    async findByName(name: string): Promise<Category | null> {
+        return this.ormRepository.findOne({ where: { name } });
+    }
+}
