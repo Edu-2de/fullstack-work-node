@@ -17,5 +17,5 @@ export const createUserSchema = z.object({
 });
 
 export const deleteUserSchema = z.object({
-    id: z.string(),
+    id: z.string().min(1, { error: "Id inválido" }),
 });
