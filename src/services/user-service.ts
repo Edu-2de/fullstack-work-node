@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { User } from "../entities/user";
 import { AppError, HttpStatus } from "../errors/AppError";
 import { UserRepository } from "../repositories/user/user.repository";
@@ -14,5 +15,14 @@ export class UserService {
                 HttpStatus.BAD_REQUEST,
             );
         }
+
+        data.password_encrypted = await bcrypt.hash(
+            data.password_encrypted!,
+            10,
+        );
+
+        const user = await this.userRepository.create(data);
+
+        return user;
     }
 }
