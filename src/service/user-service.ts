@@ -1,6 +1,6 @@
 import { User } from "../entities/user";
 import { AppError, HttpStatus } from "../errors/AppError";
-import { UserRepository } from "../repository/user/user.repository";
+import { UserRepository } from "../repositories/user/user.repository";
 
 export class UserService {
     constructor(private userRepository: UserRepository) {}
