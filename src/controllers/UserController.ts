@@ -1,14 +1,10 @@
 import { Request, Response } from "express";
-import { UserRepository } from "../repositories/user/user.repository";
-import { UserService } from "../services/user-service";
+import { userService } from "../factories/services-factory";
 
 export class UserController {
     async create(req: Request, res: Response) {
         //Os dados ja estão validados pelo zod
         const { name, email, password_encrypted, role } = req.body;
-
-        const userRepository = new UserRepository();
-        const userService = new UserService(userRepository);
 
         const user = await userService.create({
             name,
@@ -24,10 +20,7 @@ export class UserController {
     }
 
     async delete(req: Request, res: Response) {
-        const userId = req.params.id;
-
-        const userRepository = new UserRepository();
-        const userService = new UserService(userRepository);
+        const userId = req.params.id as string;
 
         await userService.delete(userId);
 
