@@ -24,4 +24,8 @@ export class UserRepository implements IUserRepository {
     async findById(id: string): Promise<User | null> {
         return this.ormRepository.findOne({ where: { id } });
     }
+
+    async delete(id: string): Promise<void> {
+        await this.ormRepository.delete(id);
+    }
 }

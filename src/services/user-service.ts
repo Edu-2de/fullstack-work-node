@@ -6,7 +6,7 @@ import { UserRepository } from "../repositories/user/user.repository";
 export class UserService {
     constructor(private userRepository: UserRepository) {}
 
-    async executeCreation(data: Partial<User>) {
+    async create(data: Partial<User>) {
         const userExists = await this.userRepository.findByEmail(data.email!);
 
         if (userExists) {
@@ -24,5 +24,18 @@ export class UserService {
         const user = await this.userRepository.create(data);
 
         return user;
+    }
+
+    async delete(id: string) {
+        const userExists = await this.userRepository.findById(id);
+
+        if (!userExists) {
+            throw new AppError(
+                "Esse id nao pertence a nenhum usuário",
+                HttpStatus.NOT_FOUND,
+            );
+        }
+
+        await this.userRepository.delete(id);
     }
 }

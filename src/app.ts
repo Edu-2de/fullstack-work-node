@@ -1,16 +1,13 @@
 import express, { NextFunction, Request, Response } from "express";
 import "reflect-metadata";
 import { AppError } from "./errors/AppError";
+import { router } from "./routes";
 
 const app = express();
 const port = 3000;
 app.use(express.json());
 
-app.get("/hello", (req: Request, res: Response) => {
-    res.json({ message: "Hello World!!" });
-});
-
-app.use("/uploads", express.static("my-uploads"));
+app.use(router);
 
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
