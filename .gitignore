@@ -4,3 +4,5 @@
 /my-uploads
 package-lock.json
 .env
+.log
+/logs

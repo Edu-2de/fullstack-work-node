@@ -1,0 +1,86 @@
+{
+    "_type": "export",
+    "__export_format": 4,
+    "__export_date": "2026-04-11T12:00:00.000Z",
+    "__export_source": "insomnia.desktop.app:v2023.5.8",
+    "resources": [
+        {
+            "_id": "wrk_events_api",
+            "_type": "workspace",
+            "name": "Events API"
+        },
+        {
+            "_id": "env_base_url",
+            "parentId": "wrk_events_api",
+            "_type": "environment",
+            "name": "Base Environment",
+            "data": {
+                "base_url": "http://localhost:3000"
+            }
+        },
+        {
+            "_id": "fld_users",
+            "parentId": "wrk_events_api",
+            "_type": "request_group",
+            "name": "Users"
+        },
+        {
+            "_id": "req_create_user",
+            "parentId": "fld_users",
+            "_type": "request",
+            "name": "1. Create User",
+            "method": "POST",
+            "url": "{{ _.base_url }}/users",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"name\": \"Eduardo Paim\",\n\t\"email\": \"eduardo@example.com\",\n\t\"password_encrypted\": \"senha123\",\n\t\"role\": \"customer\"\n}"
+            },
+            "headers": [{ "name": "Content-Type", "value": "application/json" }]
+        },
+        {
+            "_id": "req_get_all_users",
+            "parentId": "fld_users",
+            "_type": "request",
+            "name": "2. Get All Users",
+            "method": "GET",
+            "url": "{{ _.base_url }}/users"
+        },
+        {
+            "_id": "req_get_user_by_id",
+            "parentId": "fld_users",
+            "_type": "request",
+            "name": "3. Get User By ID",
+            "method": "GET",
+            "url": "{{ _.base_url }}/users/COLE_O_UUID_AQUI"
+        },
+        {
+            "_id": "req_get_user_by_email",
+            "parentId": "fld_users",
+            "_type": "request",
+            "name": "4. Get User By Email",
+            "method": "GET",
+            "url": "{{ _.base_url }}/users/email/eduardo@example.com"
+        },
+        {
+            "_id": "req_update_user",
+            "parentId": "fld_users",
+            "_type": "request",
+            "name": "5. Update User",
+            "method": "PUT",
+            "url": "{{ _.base_url }}/users/COLE_O_UUID_AQUI",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"name\": \"Eduardo Paim (Atualizado)\",\n\t\"role\": \"organizer\"\n}"
+            },
+            "headers": [{ "name": "Content-Type", "value": "application/json" }]
+        },
+        {
+            "_id": "req_delete_user",
+            "parentId": "fld_users",
+            "_type": "request",
+            "name": "6. Delete User",
+            "method": "DELETE",
+            "url": "{{ _.base_url }}/users/COLE_O_UUID_AQUI"
+        }
+    ]
+}
