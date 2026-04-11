@@ -11,7 +11,6 @@ import { Event } from "./event";
 export enum UserRole {
     ORGANIZER = "organizer",
     CUSTOMER = "customer",
-    GHOST = "ghost",
 }
 
 @Entity("users")
@@ -25,13 +24,13 @@ export class User {
     @Column({ unique: true })
     email!: string;
 
-    @Column()
+    @Column({ select: false })
     password_encrypted!: string;
 
     @Column({
         type: "enum",
         enum: UserRole,
-        default: UserRole.GHOST,
+        default: UserRole.CUSTOMER,
     })
     role!: UserRole;
 
