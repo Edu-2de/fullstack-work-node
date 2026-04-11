@@ -1,15 +1,28 @@
 import { NextFunction, Request, Response } from "express";
 import { z, ZodError } from "zod";
-import { AppError } from "../errors/AppError";
+import { AppError, HttpStatus } from "../errors/AppError";
 
-export const validateData = (schema: z.ZodType) => {
+export const validateData = (
+    schema: z.ZodType,
+    target: "body" | "params" | "query" = "body",
+) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         try {
-            schema.parse(req.body);
+            const validatedData = schema.parse(req[target]);
+            req[target] = validatedData;
             return next();
         } catch (error) {
             if (error instanceof ZodError) {
-                throw new AppError(error.issues[0].message, 400);
+                const errors = error.issues.map((issue) => ({
+                    field: issue.path.join("."),
+                    message: issue.message,
+                }));
+
+                throw new AppError(
+                    "Erro de validação",
+                    HttpStatus.BAD_REQUEST,
+                    errors,
+                );
             }
             next(error);
         }
