@@ -1,8 +1,6 @@
 import { z } from "zod";
 import { UserRole } from "../entities/user";
 
-const userRole = z.enum(UserRole);
-
 export const createUserSchema = z.object({
     email: z.email({ error: "Formato de e-mail inválido" }),
     password_encrypted: z
@@ -16,6 +14,17 @@ export const createUserSchema = z.object({
     }),
 });
 
+export const findUserByEmailSchema = z.object({
+    email: z.email({ error: "Formato de e-mail inválido" }),
+});
+
+export const findUserByIdSchema = z.object({
+    id: z.uuid().min(1, { error: "Id inválido" }),
+});
+
+//PARTIAL(): It takes the fields from the create event and adds an optional() at the end.
+export const updateUserSchema = createUserSchema.partial();
+
 export const deleteUserSchema = z.object({
-    id: z.string().min(1, { error: "Id inválido" }),
+    id: z.uuid().min(1, { error: "Id inválido" }),
 });

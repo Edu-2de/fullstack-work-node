@@ -13,16 +13,38 @@ export class UserRepository implements IUserRepository {
     async create(data: Partial<User>): Promise<User> {
         const user = this.ormRepository.create(data);
         await this.ormRepository.save(user);
-
         return user;
     }
 
     async findByEmail(email: string): Promise<User | null> {
-        return this.ormRepository.findOne({ where: { email } });
+        return this.ormRepository.findOne({
+            where: { email },
+            relations: ["events"],
+        });
     }
 
     async findById(id: string): Promise<User | null> {
-        return this.ormRepository.findOne({ where: { id } });
+        return this.ormRepository.findOne({
+            where: { id },
+            relations: ["events"],
+        });
+    }
+
+    async findAll(): Promise<User[]> {
+        return this.ormRepository.find({
+            relations: ["events"],
+        });
+    }
+
+    async update(id: string, data: Partial<User>): Promise<User | null> {
+        const user = await this.ormRepository.findOne({ where: { id } });
+        if (!user) {
+            return null;
+        }
+        //MERGE: overwrites only what comes from the data
+        this.ormRepository.merge(user, data);
+        const updatedUser = await this.ormRepository.save(user);
+        return updatedUser;
     }
 
     async delete(id: string): Promise<void> {
