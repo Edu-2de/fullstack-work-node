@@ -6,11 +6,10 @@
         "start": "node dist/app.js",
         "build": "tsc",
         "dev": "nodemon src/app.ts --exec ts-node",
-        "typeorm": "typeorm",
-        "migration:create": "typeorm migration:create",
-        "migration:generate": "typeorm migration:generate",
-        "migration:run": "typeorm migration:run",
-        "migration:revert": "typeorm migration:revert"
+        "typeorm": "ts-node ./node_modules/typeorm/cli.js",
+        "migration:generate": "npm run typeorm -- migration:generate -d src/data-source.ts",
+        "migration:run": "npm run typeorm -- migration:run -d src/data-source.ts",
+        "migration:revert": "npm run typeorm -- migration:revert -d src/data-source.ts"
     },
     "keywords": [],
     "author": "",
