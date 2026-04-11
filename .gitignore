@@ -3,3 +3,4 @@
 /uploads
 /my-uploads
 package-lock.json
+.env
