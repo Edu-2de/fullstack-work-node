@@ -14,12 +14,6 @@ export class UserController {
         return res.status(201).json(user);
     }
 
-    async findByEmail(req: Request, res: Response) {
-        const userEmail = req.params.email as string;
-        const user = await userService.findByEmail(userEmail);
-        return res.status(200).json(user);
-    }
-
     async findById(req: Request, res: Response) {
         const userId = req.params.id as string;
         const user = await userService.findById(userId);
