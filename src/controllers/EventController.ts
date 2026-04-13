@@ -2,9 +2,11 @@ import { Request, Response } from "express";
 import fs from "fs";
 import path from "path";
 import { AppError } from "../errors/AppError";
-import { eventService } from "../factories/services-factory";
+import { EventService } from "../services/event-service";
 
 export class EventController {
+    constructor(private eventService: EventService) {}
+
     async create(req: Request, res: Response) {
         const {
             title,
@@ -28,16 +30,20 @@ export class EventController {
         const banner_url = req.file.filename;
 
         try {
-            const event = await eventService.create(organizer_id, categories, {
-                title,
-                description,
-                start_date,
-                location,
-                total_capacity,
-                available_capacity,
-                price,
-                banner_url,
-            });
+            const event = await this.eventService.create(
+                organizer_id,
+                categories,
+                {
+                    title,
+                    description,
+                    start_date,
+                    location,
+                    total_capacity,
+                    available_capacity,
+                    price,
+                    banner_url,
+                },
+            );
 
             const { id, ...restOfEvent } = event;
 

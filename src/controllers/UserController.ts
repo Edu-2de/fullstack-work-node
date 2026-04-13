@@ -1,12 +1,14 @@
 import { Request, Response } from "express";
 import { ValidMessages } from "../constants/messages";
-import { userService } from "../factories/services-factory";
+import { UserService } from "../services/user-service";
 
 //ZOD already validates the request data
 export class UserController {
+    constructor(private userService: UserService) {}
+
     async create(req: Request, res: Response) {
         const { name, email, password_encrypted, role } = req.body;
-        const user = await userService.create({
+        const user = await this.userService.create({
             name,
             email,
             password_encrypted,
@@ -17,25 +19,25 @@ export class UserController {
 
     async findById(req: Request, res: Response) {
         const userId = req.params.id as string;
-        const user = await userService.findById(userId);
+        const user = await this.userService.findById(userId);
         return res.status(200).json(user);
     }
 
     async findAll(req: Request, res: Response) {
-        const users = await userService.findAll();
+        const users = await this.userService.findAll();
         return res.status(200).json(users);
     }
 
     async update(req: Request, res: Response) {
         const userId = req.params.id as string;
         const data = req.body;
-        const updateUser = await userService.update(userId, data);
+        const updateUser = await this.userService.update(userId, data);
         return res.status(200).json(updateUser);
     }
 
     async delete(req: Request, res: Response) {
         const userId = req.params.id as string;
-        await userService.delete(userId);
+        await this.userService.delete(userId);
         return res.status(200).json(ValidMessages.DELETED("Usuário"));
     }
 }
