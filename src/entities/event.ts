@@ -20,7 +20,7 @@ export class Event {
     @Column()
     description!: string;
 
-    @Column({ type: "timestamp", precision: 3 })
+    @Column({ type: "timestamp" })
     start_date!: Date;
 
     @Column()
@@ -32,7 +32,7 @@ export class Event {
     @Column({ type: "int" })
     available_capacity!: number;
 
-    @Column({ type: "int" })
+    @Column({ type: "decimal", precision: 10, scale: 2 })
     price!: number;
 
     @Column({ type: "varchar", nullable: true })

@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { ValidMessages } from "../constants/messages";
 import { userService } from "../factories/services-factory";
 
 //ZOD already validates the request data
@@ -35,8 +36,6 @@ export class UserController {
     async delete(req: Request, res: Response) {
         const userId = req.params.id as string;
         await userService.delete(userId);
-        return res
-            .status(200)
-            .json({ message: "Usuário removido com sucesso!" });
+        return res.status(200).json(ValidMessages.DELETED("Usuário"));
     }
 }
