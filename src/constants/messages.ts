@@ -8,9 +8,18 @@ export const ValidationMessages = {
 };
 
 export const ErrorMessages = {
-    USER_NOT_FOUND: "Usuário não encontrado no sistema",
-    EMAIL_ALREADY_IN_USE: "Este email já está em uso!",
+    NOT_FOUND: (resource: string) =>
+        `${resource} não encontrado(a) no sistema.`,
 
-    CATEGORY_ALREADY_EXISTS: "Esta categoria já existe",
-    CATEGORY_NOT_FOUND: "Categoria nao encontrada no sistema",
+    ALREADY_EXISTS: (resource: string) =>
+        `Este(a) ${resource} já existe no sistema.`,
+
+    IN_USE: (resource: string, dependencies: string) =>
+        `Não é possível deletar este(a) ${resource} pois existem ${dependencies} associados a ele(a).`,
+
+    UNAUTHORIZED: () => `Voce nao tem autorização para realizar essa ação `,
+};
+
+export const ValidMessages = {
+    DELETED: (resource: string) => `${resource} deletado(a) com sucesso!`,
 };
