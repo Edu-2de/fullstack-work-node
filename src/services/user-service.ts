@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import { ErrorMessages } from "../constants/messages";
 import { User } from "../entities/user";
 import { AppError, HttpStatus } from "../errors/AppError";
 import { UserRepository } from "../repositories/user/user.repository";
@@ -10,7 +11,7 @@ export class UserService {
         const userExists = await this.userRepository.findByEmail(data.email!);
         if (userExists) {
             throw new AppError(
-                "Este email já está em uso!",
+                ErrorMessages.EMAIL_ALREADY_IN_USE,
                 HttpStatus.BAD_REQUEST,
             );
         }
@@ -19,39 +20,33 @@ export class UserService {
             10,
         );
         const user = await this.userRepository.create(data);
-        //It was necessary to remove the password in the create function ( select: false doesn't work here).
+        //It was necessary to remove the password in the create function ( "select: false" doesn't work here).
         const { password_encrypted, ...userWithoutPassword } = user;
         return userWithoutPassword;
-    }
-
-    async findByEmail(email: string) {
-        const user = await this.userRepository.findByEmail(email);
-        if (!user) {
-            throw new AppError(
-                "Usuário com esse e-mail não foi encontrado",
-                404,
-            );
-        }
-        return user;
     }
 
     async findById(id: string) {
         const user = await this.userRepository.findById(id);
         if (!user) {
-            throw new AppError("Usuário com esse id não foi encontrado", 404);
+            throw new AppError(
+                ErrorMessages.USER_NOT_FOUND,
+                HttpStatus.NOT_FOUND,
+            );
         }
         return user;
     }
 
     async findAll() {
-        const users = await this.userRepository.findAll();
-        return users;
+        return await this.userRepository.findAll();
     }
 
     async update(id: string, data: Partial<User>) {
         const user = await this.userRepository.findById(id);
         if (!user) {
-            throw new AppError("Usuário com esse id não foi encontrado", 404);
+            throw new AppError(
+                ErrorMessages.USER_NOT_FOUND,
+                HttpStatus.NOT_FOUND,
+            );
         }
 
         if (data.password_encrypted) {
@@ -70,7 +65,7 @@ export class UserService {
 
         if (!userExists) {
             throw new AppError(
-                "Esse id nao pertence a nenhum usuário",
+                ErrorMessages.USER_NOT_FOUND,
                 HttpStatus.NOT_FOUND,
             );
         }

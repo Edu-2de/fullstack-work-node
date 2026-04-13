@@ -1,30 +1,38 @@
 import { z } from "zod";
+import { ValidationMessages } from "../constants/messages";
 import { UserRole } from "../entities/user";
 
 export const createUserSchema = z.object({
-    email: z.email({ error: "Formato de e-mail inválido" }),
-    password_encrypted: z
-        .string()
-        .min(6, { error: "A senha deve ter no minimo 6 caracteres" }),
     name: z
-        .string()
-        .min(3, { error: "O nome deve ter no minimo 3 caracteres" }),
+        .string(ValidationMessages.REQUIRED)
+        .min(3, ValidationMessages.MIN_LENGTH(3))
+        .max(255, ValidationMessages.MAX_LENGTH(255)),
+    email: z.email({
+        error: (issue) =>
+            issue.input === undefined
+                ? ValidationMessages.REQUIRED
+                : ValidationMessages.INVALID_EMAIL,
+    }),
+    password_encrypted: z
+        .string(ValidationMessages.REQUIRED)
+        .min(6, ValidationMessages.MIN_LENGTH(6))
+        .max(255, ValidationMessages.MAX_LENGTH(255)),
+
     role: z.enum(UserRole, {
-        error: "O cargo deve ser: customer ou organizer",
+        error: (issue) =>
+            issue.input === undefined
+                ? ValidationMessages.REQUIRED
+                : ValidationMessages.INVALID_ROLE,
     }),
 });
 
-export const findUserByEmailSchema = z.object({
-    email: z.email({ error: "Formato de e-mail inválido" }),
-});
-
 export const findUserByIdSchema = z.object({
-    id: z.uuid().min(1, { error: "Id inválido" }),
+    id: z.uuid(ValidationMessages.INVALID_UUID),
 });
 
 //PARTIAL(): It takes the fields from the create event and adds an optional() at the end.
 export const updateUserSchema = createUserSchema.partial();
 
 export const deleteUserSchema = z.object({
-    id: z.uuid().min(1, { error: "Id inválido" }),
+    id: z.uuid(ValidationMessages.INVALID_UUID),
 });
