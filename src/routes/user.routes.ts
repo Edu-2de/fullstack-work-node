@@ -4,7 +4,6 @@ import { validateData } from "../middlewares/validateRequest";
 import {
     createUserSchema,
     deleteUserSchema,
-    findUserByEmailSchema,
     findUserByIdSchema,
     updateUserSchema,
 } from "../validators/user.validator";
@@ -14,13 +13,6 @@ const userController = new UserController();
 
 //CREATE user
 userRoutes.post("/", validateData(createUserSchema), userController.create);
-
-//GET user BY EMAIL
-userRoutes.get(
-    "/email/:email",
-    validateData(findUserByEmailSchema, "params"),
-    userController.findByEmail,
-);
 
 //GET user BY ID
 userRoutes.get(
