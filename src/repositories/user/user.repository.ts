@@ -19,21 +19,25 @@ export class UserRepository implements IUserRepository {
     async findByEmail(email: string): Promise<User | null> {
         return this.ormRepository.findOne({
             where: { email },
-            relations: ["events"],
+            relations: {
+                events: true,
+            },
         });
     }
 
     async findById(id: string): Promise<User | null> {
         return this.ormRepository.findOne({
             where: { id },
-            relations: ["events"],
+            relations: {
+                events: {
+                    categories: true,
+                },
+            },
         });
     }
 
     async findAll(): Promise<User[]> {
-        return this.ormRepository.find({
-            relations: ["events"],
-        });
+        return this.ormRepository.find();
     }
 
     async update(id: string, data: Partial<User>): Promise<User | null> {

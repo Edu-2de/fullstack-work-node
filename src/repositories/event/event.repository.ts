@@ -1,5 +1,6 @@
 import { Repository } from "typeorm";
 import { AppDataSource } from "../../data-source";
+import { Category } from "../../entities/category";
 import { Event } from "../../entities/event";
 import { IEventRepository } from "./IEventRepository";
 
@@ -10,8 +11,16 @@ export class EventRepository implements IEventRepository {
         this.ormRepository = AppDataSource.getRepository(Event);
     }
 
-    async create(data: Partial<Event>): Promise<Event> {
-        const event = this.ormRepository.create(data);
+    async create(
+        organizer_id: string,
+        categories: Category[],
+        data: Partial<Event>,
+    ): Promise<Event> {
+        const event = this.ormRepository.create({
+            ...data,
+            organizer: { id: organizer_id },
+            categories: categories,
+        });
         await this.ormRepository.save(event);
         return event;
     }
@@ -19,13 +28,18 @@ export class EventRepository implements IEventRepository {
     async findById(id: string): Promise<Event | null> {
         return this.ormRepository.findOne({
             where: { id },
-            relations: ["organizer", "categories"],
+            relations: {
+                organizer: true,
+                categories: true,
+            },
         });
     }
 
     async findAll(): Promise<Event[]> {
         return this.ormRepository.find({
-            relations: ["categories"],
+            relations: {
+                categories: true,
+            },
         });
     }
 
