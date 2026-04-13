@@ -19,4 +19,8 @@ export class CategoryRepository implements ICategoryRepository {
     async findByName(name: string): Promise<Category | null> {
         return this.ormRepository.findOne({ where: { name } });
     }
+
+    async findAll(): Promise<Category[]> {
+        return this.ormRepository.find();
+    }
 }
