@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { AppDataSource } from "../../data-source";
 import { Category } from "../../entities/category";
 import { ICategoryRepository } from "./ICategoryRepository";
@@ -30,5 +30,13 @@ export class CategoryRepository implements ICategoryRepository {
 
     async delete(id: string): Promise<void> {
         await this.ormRepository.delete(id);
+    }
+
+    async findByNames(names: string[]): Promise<Category[]> {
+        return this.ormRepository.find({
+            where: {
+                name: In(names),
+            },
+        });
     }
 }
