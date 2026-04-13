@@ -1,0 +1,28 @@
+import z from "zod";
+import { ValidationMessages } from "../constants/messages";
+
+export const createEvent = z.object({
+    title: z
+        .string(ValidationMessages.REQUIRED)
+        .min(5, ValidationMessages.MIN_LENGTH(5))
+        .max(255, ValidationMessages.MAX_LENGTH(255))
+        .trim()
+        .toLowerCase(),
+    description: z
+        .string(ValidationMessages.REQUIRED)
+        .min(5, ValidationMessages.MIN_LENGTH(5))
+        .max(255, ValidationMessages.MAX_LENGTH(255)),
+    start_date: z.coerce.date(ValidationMessages.REQUIRED),
+    location: z
+        .string(ValidationMessages.REQUIRED)
+        .min(5, ValidationMessages.MIN_LENGTH(5))
+        .max(255, ValidationMessages.MAX_LENGTH(255)),
+    total_capacity: z.coerce.number(ValidationMessages.REQUIRED).int(),
+    available_capacity: z.coerce.number(ValidationMessages.REQUIRED).int(),
+    price: z.coerce.number(ValidationMessages.REQUIRED),
+    organizer_id: z.uuid(ValidationMessages.REQUIRED),
+    categories: z.preprocess(
+        (val) => (Array.isArray(val) ? val : [val]),
+        z.array(z.string(ValidationMessages.REQUIRED)),
+    ),
+});

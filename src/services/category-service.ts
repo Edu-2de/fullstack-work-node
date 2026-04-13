@@ -14,7 +14,7 @@ export class CategoryService {
         const category = await this.categoryRepository.findByName(data.name!);
         if (category) {
             throw new AppError(
-                ErrorMessages.CATEGORY_ALREADY_EXISTS,
+                ErrorMessages.ALREADY_EXISTS("Categoria"),
                 HttpStatus.BAD_REQUEST,
             );
         }
@@ -30,9 +30,19 @@ export class CategoryService {
         const category = await this.categoryRepository.findById(id);
         if (!category) {
             throw new AppError(
-                ErrorMessages.CATEGORY_NOT_FOUND,
+                ErrorMessages.NOT_FOUND("Categoria"),
                 HttpStatus.NOT_FOUND,
             );
         }
+
+        const isCategoryInUse = await this.eventRepository.findByCategoryId(id);
+        if (isCategoryInUse) {
+            throw new AppError(
+                ErrorMessages.IN_USE("categoria", "eventos"),
+                HttpStatus.CONFLICT,
+            );
+        }
+
+        await this.categoryRepository.delete(id);
     }
 }

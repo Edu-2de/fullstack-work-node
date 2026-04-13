@@ -11,7 +11,7 @@ export class UserService {
         const userExists = await this.userRepository.findByEmail(data.email!);
         if (userExists) {
             throw new AppError(
-                ErrorMessages.EMAIL_ALREADY_IN_USE,
+                ErrorMessages.ALREADY_EXISTS("email"),
                 HttpStatus.BAD_REQUEST,
             );
         }
@@ -29,7 +29,7 @@ export class UserService {
         const user = await this.userRepository.findById(id);
         if (!user) {
             throw new AppError(
-                ErrorMessages.USER_NOT_FOUND,
+                ErrorMessages.NOT_FOUND("Usuário"),
                 HttpStatus.NOT_FOUND,
             );
         }
@@ -44,7 +44,7 @@ export class UserService {
         const user = await this.userRepository.findById(id);
         if (!user) {
             throw new AppError(
-                ErrorMessages.USER_NOT_FOUND,
+                ErrorMessages.NOT_FOUND("Usuário"),
                 HttpStatus.NOT_FOUND,
             );
         }
@@ -65,7 +65,7 @@ export class UserService {
 
         if (!userExists) {
             throw new AppError(
-                ErrorMessages.USER_NOT_FOUND,
+                ErrorMessages.NOT_FOUND("Usuário"),
                 HttpStatus.NOT_FOUND,
             );
         }
