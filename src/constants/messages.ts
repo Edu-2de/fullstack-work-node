@@ -10,5 +10,7 @@ export const ValidationMessages = {
 export const ErrorMessages = {
     USER_NOT_FOUND: "Usuário não encontrado no sistema",
     EMAIL_ALREADY_IN_USE: "Este email já está em uso!",
+
     CATEGORY_ALREADY_EXISTS: "Esta categoria já existe",
+    CATEGORY_NOT_FOUND: "Categoria nao encontrada no sistema",
 };

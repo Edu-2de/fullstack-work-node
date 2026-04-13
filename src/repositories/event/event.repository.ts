@@ -28,4 +28,17 @@ export class EventRepository implements IEventRepository {
             relations: ["categories"],
         });
     }
+
+    async findByCategoryId(categoryId: string): Promise<boolean> {
+        return this.ormRepository.exists({
+            relations: {
+                categories: true,
+            },
+            where: {
+                categories: {
+                    id: categoryId,
+                },
+            },
+        });
+    }
 }

@@ -23,4 +23,12 @@ export class CategoryRepository implements ICategoryRepository {
     async findAll(): Promise<Category[]> {
         return this.ormRepository.find();
     }
+
+    async findById(id: string): Promise<Category | null> {
+        return this.ormRepository.findOne({ where: { id } });
+    }
+
+    async delete(id: string): Promise<void> {
+        await this.ormRepository.delete(id);
+    }
 }
