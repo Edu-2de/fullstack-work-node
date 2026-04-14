@@ -31,7 +31,12 @@ export const findUserByIdSchema = z.object({
 });
 
 //PARTIAL(): It takes the fields from the create event and adds an optional() at the end.
-export const updateUserSchema = createUserSchema.partial();
+export const updateUserSchema = createUserSchema
+    .partial()
+    .refine(
+        (data) => Object.keys(data).length > 0,
+        ValidationMessages.EMPTY_REQUEST,
+    );
 
 export const deleteUserSchema = z.object({
     id: z.uuid(ValidationMessages.INVALID_UUID),

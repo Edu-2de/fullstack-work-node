@@ -26,3 +26,7 @@ export const createEvent = z.object({
         z.array(z.string(ValidationMessages.REQUIRED)),
     ),
 });
+
+export const findByIdEvent = z.object({
+    id: z.uuid(ValidationMessages.INVALID_UUID),
+});
