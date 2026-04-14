@@ -55,4 +55,23 @@ export class EventRepository implements IEventRepository {
             },
         });
     }
+
+    async update(
+        id: string,
+        organizer_id: string,
+        categories: Category[],
+        data: Partial<Event>,
+    ): Promise<Event | null> {
+        const event = await this.ormRepository.findOne({ where: { id } });
+        if (!event) {
+            return null;
+        }
+        this.ormRepository.merge(event, data);
+
+        event.organizer = { id: organizer_id } as any;
+        event.categories = categories;
+
+        const updatedEvent = await this.ormRepository.save(event);
+        return updatedEvent;
+    }
 }
