@@ -28,15 +28,28 @@ export class CategoryRepository implements ICategoryRepository {
         return this.ormRepository.findOne({ where: { id } });
     }
 
-    async delete(id: string): Promise<void> {
-        await this.ormRepository.delete(id);
-    }
-
     async findByNames(names: string[]): Promise<Category[]> {
         return this.ormRepository.find({
             where: {
                 name: In(names),
             },
         });
+    }
+
+    async update(
+        id: string,
+        data: Partial<Category>,
+    ): Promise<Category | null> {
+        const category = await this.ormRepository.findOne({ where: { id } });
+        if (!category) {
+            return null;
+        }
+        this.ormRepository.merge(category, data);
+        const updatedCategory = await this.ormRepository.save(category);
+        return updatedCategory;
+    }
+
+    async delete(id: string): Promise<void> {
+        await this.ormRepository.delete(id);
     }
 }
