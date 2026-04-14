@@ -1,29 +1,32 @@
 import { Router } from "express";
-import { CategoryController } from "../controllers/CategoryController";
+import { categoryController } from "../factories/services-factory";
 import { validateData } from "../middlewares/validateRequest";
 import {
     createCategory,
     deleteCategory,
+    updateCategory,
 } from "../validators/category.validator";
 
 const categoryRoutes = Router();
-const categoryController = new CategoryController();
 
 //CREATE category
-categoryRoutes.post(
-    "/",
-    validateData(createCategory),
-    categoryController.create,
+categoryRoutes.post("/", validateData(createCategory), (req, res) =>
+    categoryController.create(req, res),
 );
 
 //GET all categories
-categoryRoutes.get("/", categoryController.findAll);
+categoryRoutes.get("/", (req, res) => categoryController.findAll(req, res));
+
+//UPDATE category
+categoryRoutes.put("/:id", validateData(updateCategory), (req, res) =>
+    categoryController.update(req, res),
+);
 
 //DELETE category
 categoryRoutes.delete(
     "/:id",
-    validateData(deleteCategory),
-    categoryController.delete,
+    validateData(deleteCategory, "params"),
+    (req, res) => categoryController.delete(req, res),
 );
 
 export { categoryRoutes };

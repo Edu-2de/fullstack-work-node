@@ -40,6 +40,19 @@ export class UserRepository implements IUserRepository {
         return this.ormRepository.find();
     }
 
+    async findByEmailForLogin(email: string): Promise<User | null> {
+        return this.ormRepository.findOne({
+            where: { email },
+            select: [
+                "id",
+                "name",
+                "email",
+                "password_encrypted", //Password return for login
+                "role",
+            ],
+        });
+    }
+
     async update(id: string, data: Partial<User>): Promise<User | null> {
         const user = await this.ormRepository.findOne({ where: { id } });
         if (!user) {
