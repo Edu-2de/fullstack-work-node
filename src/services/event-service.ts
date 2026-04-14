@@ -18,20 +18,6 @@ export class EventService {
         categories: string[],
         data: Partial<Event>,
     ) {
-        const userExists = await this.userRepository.findById(organizer_id);
-        if (!userExists) {
-            throw new AppError(
-                ErrorMessages.NOT_FOUND("Usuário"),
-                HttpStatus.NOT_FOUND,
-            );
-        }
-        if (userExists.role !== UserRole.ORGANIZER) {
-            throw new AppError(
-                ErrorMessages.UNAUTHORIZED(),
-                HttpStatus.FORBIDDEN,
-            );
-        }
-
         const foundCategories =
             await this.categoryRepository.findByNames(categories);
 
@@ -50,7 +36,7 @@ export class EventService {
     }
 
     async findById(id: string) {
-        const event = this.eventRepository.findById(id);
+        const event = await this.eventRepository.findById(id);
         if (!event) {
             throw new AppError(
                 ErrorMessages.NOT_FOUND("Evento"),
@@ -61,7 +47,7 @@ export class EventService {
     }
 
     async findAll() {
-        return this.eventRepository.findAll();
+        return await this.eventRepository.findAll();
     }
 
     async update(
@@ -102,7 +88,7 @@ export class EventService {
             );
         }
 
-        const updatedEvent = this.eventRepository.update(
+        const updatedEvent = await this.eventRepository.update(
             id,
             organizer_id,
             foundCategories,

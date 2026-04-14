@@ -20,7 +20,6 @@ export const createEvent = z.object({
     total_capacity: z.coerce.number(ValidationMessages.REQUIRED).int(),
     available_capacity: z.coerce.number(ValidationMessages.REQUIRED).int(),
     price: z.coerce.number(ValidationMessages.REQUIRED),
-    organizer_id: z.uuid(ValidationMessages.REQUIRED),
     categories: z.preprocess(
         (val) => (Array.isArray(val) ? val : [val]),
         z.array(z.string(ValidationMessages.REQUIRED)),
