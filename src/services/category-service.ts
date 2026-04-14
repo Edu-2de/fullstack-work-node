@@ -26,6 +26,32 @@ export class CategoryService {
         return await this.categoryRepository.findAll();
     }
 
+    async update(id: string, data: Partial<Category>) {
+        const category = await this.categoryRepository.findById(id);
+
+        if (!category) {
+            throw new AppError(
+                ErrorMessages.NOT_FOUND("Categoria"),
+                HttpStatus.NOT_FOUND,
+            );
+        }
+
+        if (data.name) {
+            const categoryExists = await this.categoryRepository.findByName(
+                data.name,
+            );
+            if (categoryExists) {
+                throw new AppError(
+                    ErrorMessages.ALREADY_EXISTS("Categoria"),
+                    HttpStatus.BAD_REQUEST,
+                );
+            }
+        }
+
+        const updatedCategory = await this.categoryRepository.update(id, data);
+        return updatedCategory;
+    }
+
     async delete(id: string) {
         const category = await this.categoryRepository.findById(id);
         if (!category) {

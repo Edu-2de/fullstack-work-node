@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { UserController } from "../controllers/UserController";
+import { userController } from "../factories/services-factory";
 import { validateData } from "../middlewares/validateRequest";
 import {
     createUserSchema,
@@ -9,33 +9,30 @@ import {
 } from "../validators/user.validator";
 
 const userRoutes = Router();
-const userController = new UserController();
 
 //CREATE user
-userRoutes.post("/", validateData(createUserSchema), userController.create);
+userRoutes.post("/", validateData(createUserSchema), (req, res) =>
+    userController.create(req, res),
+);
 
 //GET user BY ID
-userRoutes.get(
-    "/:id",
-    validateData(findUserByIdSchema, "params"),
-    userController.findById,
+userRoutes.get("/:id", validateData(findUserByIdSchema, "params"), (req, res) =>
+    userController.findById(req, res),
 );
 
 //GET ALL users
-userRoutes.get("/", userController.findAll);
+userRoutes.get("/", (req, res) => userController.findAll(req, res));
 
 //UPDATE user
-userRoutes.put(
-    "/:id",
-    validateData(updateUserSchema, "body"),
-    userController.update,
+userRoutes.put("/:id", validateData(updateUserSchema, "body"), (req, res) =>
+    userController.update(req, res),
 );
 
 //DELETE user
 userRoutes.delete(
     "/:id",
     validateData(deleteUserSchema, "params"),
-    userController.delete,
+    (req, res) => userController.delete(req, res),
 );
 
 export { userRoutes };
