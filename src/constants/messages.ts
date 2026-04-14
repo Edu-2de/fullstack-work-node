@@ -3,6 +3,7 @@ export const ValidationMessages = {
     INVALID_EMAIL: "Formato de e-mail inválido",
     INVALID_UUID: "ID inválido",
     INVALID_ROLE: "Role inválido",
+    EMPTY_REQUEST: "Nenhum dado foi fornecido",
     MIN_LENGTH: (min: number) => `O campo deve ter no mínimo ${min} caracteres`,
     MAX_LENGTH: (max: number) => `O campo deve ter no máximo ${max} caracteres`,
 };

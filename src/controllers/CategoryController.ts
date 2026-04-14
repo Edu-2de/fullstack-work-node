@@ -19,6 +19,14 @@ export class CategoryController {
         return res.status(201).json(categories);
     }
 
+    async update(req: Request, res: Response) {
+        const categoryId = req.params.id as string;
+        const data = req.body;
+
+        const category = await this.categoryService.update(categoryId, data);
+        return res.status(201).json(category);
+    }
+
     async delete(req: Request, res: Response) {
         const categoryId = req.params.id as string;
         await this.categoryService.delete(categoryId);
