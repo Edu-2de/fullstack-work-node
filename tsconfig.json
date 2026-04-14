@@ -11,6 +11,10 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true,
-        "declaration": true
+        "declaration": true,
+        "typeRoots": ["./node_modules/@types", "./src/@types"]
+    },
+    "ts-node": {
+        "files": true
     }
 }
