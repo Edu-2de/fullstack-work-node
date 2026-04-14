@@ -1,4 +1,4 @@
-import { NextFunction, Request } from "express";
+import { NextFunction, Request, Response } from "express";
 import { verify } from "jsonwebtoken";
 import { AppError, HttpStatus } from "../errors/AppError";
 
@@ -13,15 +13,16 @@ export function ensureAuthenticated(
         throw new AppError("Token JWT nao informado", HttpStatus.UNAUTHORIZED);
     }
 
-    const [, token] = authHeader.split("");
+    const [, token] = authHeader.split(" ");
 
     try {
-        const decoded = verify(token, "CHAVE");
+        const decoded = verify(token, "CHAVE AQUI");
 
-        const { sub } = decoded as { sub: string };
+        const { sub, role } = decoded as { sub: string; role: string };
 
         req.user = {
             id: sub,
+            role: role,
         };
 
         return next();

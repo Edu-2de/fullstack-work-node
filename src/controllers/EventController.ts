@@ -16,9 +16,10 @@ export class EventController {
             total_capacity,
             available_capacity,
             price,
-            organizer_id,
             categories,
         } = req.body;
+
+        const organizer_id = req.user.id;
 
         if (!req.file) {
             throw new AppError(
@@ -79,20 +80,5 @@ export class EventController {
     async findAll(req: Request, res: Response) {
         const events = await this.eventService.findAll();
         return res.status(201).json(events);
-    }
-
-    async update(req: Request, res: Response) {
-        const id = req.params.id as string;
-        const {
-            title,
-            description,
-            start_date,
-            location,
-            total_capacity,
-            available_capacity,
-            price,
-            organizer_id,
-            categories,
-        } = req.body;
     }
 }
