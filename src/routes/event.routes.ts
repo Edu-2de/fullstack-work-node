@@ -38,14 +38,39 @@ eventRoutes.get("/:id", validateData(findByIdEvent, "params"), (req, res) =>
 eventRoutes.put(
     "/:id",
     (req, res, next) => {
-        console.log("PUT /events/:id atingido");
+        console.log("🟡 [1] Log middleware atingido");
+        next();
+    },
+    (req, res, next) => {
+        console.log("🟡 [2] Antes de ensureAuthenticated");
         next();
     },
     ensureAuthenticated,
+    (req, res, next) => {
+        console.log(
+            "🟡 [3] Depois de ensureAuthenticated, antes de ensureRole",
+        );
+        next();
+    },
     ensureRole([UserRole.ORGANIZER]),
+    (req, res, next) => {
+        console.log("🟡 [4] Depois de ensureRole, antes de multer");
+        next();
+    },
     upload.single("banner"),
+    (req, res, next) => {
+        console.log("🟡 [5] Depois de multer, antes de validateData");
+        next();
+    },
     validateData(updateEvent),
-    (req, res) => eventController.update(req, res),
+    (req, res, next) => {
+        console.log("🟡 [6] Depois de validateData, antes do handler");
+        next();
+    },
+    (req, res) => {
+        console.log("🟡 [7] HANDLER ATINGIDO!");
+        eventController.update(req, res);
+    },
 );
 
 export { eventRoutes };
