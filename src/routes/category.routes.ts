@@ -1,5 +1,8 @@
 import { Router } from "express";
+import { UserRole } from "../entities/user";
 import { categoryController } from "../factories/services-factory";
+import { ensureAuthenticated } from "../middlewares/ensureAuthenticated";
+import { ensureRole } from "../middlewares/ensureRole";
 import { validateData } from "../middlewares/validateRequest";
 import {
     createCategory,
@@ -10,21 +13,31 @@ import {
 const categoryRoutes = Router();
 
 //CREATE category
-categoryRoutes.post("/", validateData(createCategory), (req, res) =>
-    categoryController.create(req, res),
+categoryRoutes.post(
+    "/",
+    ensureAuthenticated,
+    ensureRole([UserRole.ORGANIZER]),
+    validateData(createCategory),
+    (req, res) => categoryController.create(req, res),
 );
 
 //GET all categories
 categoryRoutes.get("/", (req, res) => categoryController.findAll(req, res));
 
 //UPDATE category
-categoryRoutes.put("/:id", validateData(updateCategory), (req, res) =>
-    categoryController.update(req, res),
+categoryRoutes.put(
+    "/:id",
+    ensureAuthenticated,
+    ensureRole([UserRole.ORGANIZER]),
+    validateData(updateCategory),
+    (req, res) => categoryController.update(req, res),
 );
 
 //DELETE category
 categoryRoutes.delete(
     "/:id",
+    ensureAuthenticated,
+    ensureRole([UserRole.ORGANIZER]),
     validateData(deleteCategory, "params"),
     (req, res) => categoryController.delete(req, res),
 );

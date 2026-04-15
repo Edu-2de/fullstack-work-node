@@ -6,7 +6,11 @@ import { eventController } from "../factories/services-factory";
 import { ensureAuthenticated } from "../middlewares/ensureAuthenticated";
 import { ensureRole } from "../middlewares/ensureRole";
 import { validateData } from "../middlewares/validateRequest";
-import { createEvent, findByIdEvent } from "../validators/event-validator";
+import {
+    createEvent,
+    findByIdEvent,
+    updateEvent,
+} from "../validators/event-validator";
 
 const eventRoutes = Router();
 
@@ -22,12 +26,26 @@ eventRoutes.post(
     (req, res) => eventController.create(req, res),
 );
 
+//GET all events
+eventRoutes.get("/", (req, res) => eventController.findAll(req, res));
+
 //GET event by id
 eventRoutes.get("/:id", validateData(findByIdEvent, "params"), (req, res) =>
     eventController.findById(req, res),
 );
 
-//GET all events
-eventRoutes.get("/", (req, res) => eventController.findAll(req, res));
+//UPDATE event
+eventRoutes.put(
+    "/:id",
+    (req, res, next) => {
+        console.log("PUT /events/:id atingido");
+        next();
+    },
+    ensureAuthenticated,
+    ensureRole([UserRole.ORGANIZER]),
+    upload.single("banner"),
+    validateData(updateEvent),
+    (req, res) => eventController.update(req, res),
+);
 
 export { eventRoutes };
