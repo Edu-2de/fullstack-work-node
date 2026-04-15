@@ -60,6 +60,25 @@ export class UserService {
         return updateUser;
     }
 
+    async updateProfile(id: string, data: Partial<User>) {
+        if (data.password_encrypted) {
+            data.password_encrypted = await bcrypt.hash(
+                data.password_encrypted!,
+                10,
+            );
+        }
+
+        const updatedUser = await this.userRepository.update(id, data);
+
+        if (!updatedUser) {
+            throw new AppError(
+                ErrorMessages.NOT_FOUND("Usuário"),
+                HttpStatus.NOT_FOUND,
+            );
+        }
+        return updatedUser;
+    }
+
     async delete(id: string) {
         const userExists = await this.userRepository.findById(id);
 
