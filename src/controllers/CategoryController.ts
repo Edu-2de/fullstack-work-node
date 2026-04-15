@@ -11,7 +11,12 @@ export class CategoryController {
         const category = await this.categoryService.create({
             name,
         });
-        return res.status(201).json(category);
+        const { id, ...restOfCategory } = category;
+
+        return res.status(201).json({
+            id: id,
+            ...restOfCategory,
+        });
     }
 
     async findAll(req: Request, res: Response) {
