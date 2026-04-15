@@ -10,7 +10,10 @@ export function ensureAuthenticated(
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
-        throw new AppError("Token JWT nao informado", HttpStatus.UNAUTHORIZED);
+        throw new AppError(
+            "Login necessário para essa ação",
+            HttpStatus.UNAUTHORIZED,
+        );
     }
 
     const [, token] = authHeader.split(" ");
