@@ -29,3 +29,10 @@ export const createEvent = z.object({
 export const findByIdEvent = z.object({
     id: z.uuid(ValidationMessages.INVALID_UUID),
 });
+
+export const updateEvent = createEvent
+    .partial()
+    .refine(
+        (data) => Object.keys(data).length > 0,
+        ValidationMessages.EMPTY_REQUEST,
+    );

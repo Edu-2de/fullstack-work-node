@@ -1,6 +1,7 @@
+import fs from "fs";
+import path from "path";
 import { ErrorMessages } from "../constants/messages";
 import { Event } from "../entities/event";
-import { UserRole } from "../entities/user";
 import { AppError, HttpStatus } from "../errors/AppError";
 import { CategoryRepository } from "../repositories/category/category.repository";
 import { EventRepository } from "../repositories/event/event.repository";
@@ -56,25 +57,11 @@ export class EventService {
         categories: string[],
         data: Partial<Event>,
     ) {
-        const eventExists = await this.categoryRepository.findById(id);
+        const eventExists = await this.eventRepository.findById(id);
         if (!eventExists) {
             throw new AppError(
                 ErrorMessages.NOT_FOUND("Evento"),
                 HttpStatus.FORBIDDEN,
-            );
-        }
-        const organizerExists =
-            await this.userRepository.findById(organizer_id);
-        if (!organizerExists) {
-            throw new AppError(
-                ErrorMessages.NOT_FOUND("Usuário"),
-                HttpStatus.FORBIDDEN,
-            );
-        }
-        if (organizerExists.role != UserRole.ORGANIZER) {
-            throw new AppError(
-                ErrorMessages.UNAUTHORIZED(),
-                HttpStatus.UNAUTHORIZED,
             );
         }
 
@@ -86,6 +73,20 @@ export class EventService {
                 "Uma ou mais categorias fornecidas nao existem no sistema",
                 HttpStatus.BAD_REQUEST,
             );
+        }
+
+        if (data.banner_url && eventExists.banner_url) {
+            const filePath = path.resolve(
+                __dirname,
+                "..",
+                "..",
+                "uploads",
+                eventExists.banner_url,
+            );
+
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
         }
 
         const updatedEvent = await this.eventRepository.update(
