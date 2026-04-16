@@ -39,6 +39,12 @@ export class UserController {
         });
     }
 
+    async findProfile(req: Request, res: Response) {
+        const userId = req.user.id;
+        const user = await this.userService.findById(userId);
+        return res.status(200).json(user);
+    }
+
     async findById(req: Request, res: Response) {
         const userId = req.params.id as string;
         const user = await this.userService.findById(userId);
@@ -50,6 +56,13 @@ export class UserController {
         return res.status(200).json(users);
     }
 
+    async updateProfile(req: Request, res: Response) {
+        const userId = req.user.id;
+        const data = req.body;
+        const updateUser = await this.userService.updateProfile(userId, data);
+        return res.status(200).json(updateUser);
+    }
+
     async update(req: Request, res: Response) {
         const userId = req.params.id as string;
         const data = req.body;
@@ -57,11 +70,10 @@ export class UserController {
         return res.status(200).json(updateUser);
     }
 
-    async updateProfile(req: Request, res: Response) {
+    async deleteProfile(req: Request, res: Response) {
         const userId = req.user.id;
-        const data = req.body;
-        const updateUser = await this.userService.updateProfile(userId, data);
-        return res.status(200).json(updateUser);
+        await this.userService.delete(userId);
+        return res.status(200).json(ValidMessages.DELETED("Usuário"));
     }
 
     async delete(req: Request, res: Response) {

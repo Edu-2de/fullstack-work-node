@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import fs from "fs";
 import path from "path";
+import { ValidMessages } from "../constants/messages";
 import { AppError } from "../errors/AppError";
 import { EventService } from "../services/event-service";
 
@@ -14,7 +15,6 @@ export class EventController {
             start_date,
             location,
             total_capacity,
-            available_capacity,
             price,
             categories,
         } = req.body;
@@ -40,7 +40,6 @@ export class EventController {
                     start_date,
                     location,
                     total_capacity,
-                    available_capacity,
                     price,
                     banner_url,
                 },
@@ -74,48 +73,35 @@ export class EventController {
     async findById(req: Request, res: Response) {
         const eventId = req.params.id as string;
         const event = await this.eventService.findById(eventId);
-        return res.status(201).json(event);
+        return res.status(200).json(event);
     }
 
     async findAll(req: Request, res: Response) {
         const events = await this.eventService.findAll();
-        return res.status(201).json(events);
+        return res.status(200).json(events);
     }
 
     async update(req: Request, res: Response) {
-        const {
-            title,
-            description,
-            start_date,
-            location,
-            total_capacity,
-            available_capacity,
-            price,
-            categories,
-        } = req.body;
+        const { categories, ...eventData } = req.body;
 
-        const organizer_id = req.user.id;
+        const loggedUserId = req.user.id;
         const event_id = req.params.id as string;
+        const userRole = req.user.role;
         const banner_url = req.file ? req.file.filename : undefined;
 
         try {
             const event = await this.eventService.update(
                 event_id,
-                organizer_id,
+                loggedUserId,
+                userRole,
                 categories,
                 {
-                    title,
-                    description,
-                    start_date,
-                    location,
-                    total_capacity,
-                    available_capacity,
-                    price,
+                    ...eventData,
                     ...(banner_url && { banner_url }),
                 },
             );
 
-            return res.status(201).json(event);
+            return res.status(200).json(event);
         } catch (error) {
             if (banner_url) {
                 const filePath = path.resolve(
@@ -132,5 +118,13 @@ export class EventController {
             }
             throw error;
         }
+    }
+
+    async delete(req: Request, res: Response) {
+        const eventId = req.params.id as string;
+        const organizerId = req.user.id;
+        const userRole = req.user.role;
+        await this.eventService.delete(eventId, organizerId, userRole);
+        return res.status(200).json(ValidMessages.DELETED("Evento"));
     }
 }
