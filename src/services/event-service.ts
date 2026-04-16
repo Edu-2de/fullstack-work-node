@@ -29,6 +29,7 @@ export class EventService {
 
         const foundCategories =
             await this.categoryRepository.findByNames(categories);
+
         if (foundCategories.length !== categories.length) {
             throw new AppError(
                 "Uma ou mais categorias fornecidas nao existem",

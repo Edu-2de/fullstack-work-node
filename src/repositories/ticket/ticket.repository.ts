@@ -15,4 +15,21 @@ export class TicketRepository implements ITicketRepository {
             where: { id },
         });
     }
+
+    async findAll(): Promise<Ticket[]> {
+        return this.ormRepository.find({
+            relations: {
+                customer: true,
+                events: {
+                    categories: true,
+                },
+            },
+            select: {
+                customer: {
+                    id: true,
+                    name: true,
+                },
+            },
+        });
+    }
 }

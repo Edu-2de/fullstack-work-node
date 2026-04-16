@@ -16,10 +16,12 @@ export class EventRepository implements IEventRepository {
         categories: Category[],
         data: Partial<Event>,
     ): Promise<Event> {
+        const categoriesSend = categories ? categories : [];
+
         const event = this.ormRepository.create({
             ...data,
             organizer: { id: organizer_id },
-            categories: categories,
+            categories: categoriesSend,
         });
         await this.ormRepository.save(event);
         return event;

@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+} from "typeorm";
 import { Event } from "./event";
 import { User } from "./user";
 
@@ -19,7 +25,7 @@ export class Ticket {
     @ManyToOne(() => User)
     customer!: User;
 
-    @Column({ type: "timestamp", precision: 2 })
+    @CreateDateColumn()
     purchase_date!: Date;
 
     @Column({

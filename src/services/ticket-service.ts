@@ -3,16 +3,10 @@ import { AppDataSource } from "../data-source";
 import { Event } from "../entities/event";
 import { Ticket } from "../entities/ticket";
 import { AppError, HttpStatus } from "../errors/AppError";
-import { EventRepository } from "../repositories/event/event.repository";
 import { TicketRepository } from "../repositories/ticket/ticket.repository";
-import { UserRepository } from "../repositories/user/user.repository";
 
 export class TicketService {
-    constructor(
-        private ticketRepository: TicketRepository,
-        private eventRepository: EventRepository,
-        private userRepository: UserRepository,
-    ) {}
+    constructor(private ticketRepository: TicketRepository) {}
 
     async create(eventId: string, customerId: string, data?: Partial<Ticket>) {
         const queryRunner = AppDataSource.createQueryRunner();
@@ -34,12 +28,15 @@ export class TicketService {
             if (event.available_capacity <= 0) {
                 throw new AppError("Ingressos esgotados!", HttpStatus.CONFLICT);
             }
-            event.available_capacity -= 1;
+            const newAvailable_capacity = (event.available_capacity -= 1);
+            await queryRunner.manager.update(Event, eventId, {
+                available_capacity: newAvailable_capacity,
+            });
 
             const ticket = queryRunner.manager.create(Ticket, {
                 events: { id: eventId },
                 customer: { id: customerId },
-                ...data,
+                data,
             });
             await queryRunner.manager.save(Ticket, ticket);
 
@@ -51,5 +48,20 @@ export class TicketService {
         } finally {
             await queryRunner.release();
         }
+    }
+
+    async findById(id: string) {
+        const ticket = await this.ticketRepository.findById(id);
+        if (!ticket) {
+            throw new AppError(
+                ErrorMessages.NOT_FOUND("Ticket"),
+                HttpStatus.NOT_FOUND,
+            );
+        }
+        return ticket;
+    }
+
+    async findAll() {
+        return await this.ticketRepository.findAll();
     }
 }

@@ -19,10 +19,12 @@ export const createEvent = z.object({
         .max(255, ValidationMessages.MAX_LENGTH(255)),
     total_capacity: z.coerce.number(ValidationMessages.REQUIRED).int(),
     price: z.coerce.number(ValidationMessages.REQUIRED),
-    categories: z.preprocess(
-        (val) => (Array.isArray(val) ? val : [val]),
-        z.array(z.string(ValidationMessages.REQUIRED)),
-    ),
+    categories: z
+        .preprocess(
+            (val) => (Array.isArray(val) ? val : [val]),
+            z.array(z.string()),
+        )
+        .optional(),
 });
 
 export const findByIdEvent = z.object({
