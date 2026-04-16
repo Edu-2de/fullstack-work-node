@@ -24,18 +24,32 @@ userRoutes.post("/register", validateData(createUserSchema), (req, res) =>
 userRoutes.post(
     "/",
     ensureAuthenticated,
-    ensureRole([UserRole.ORGANIZER]),
+    ensureRole([UserRole.ADMIN]),
     validateData(createUserAdminSchema),
     (req, res) => userController.createAdmin(req, res),
 );
 
+//GET logged-in user
+userRoutes.get("/profile", ensureAuthenticated, (req, res) =>
+    userController.findProfile(req, res),
+);
+
 //GET user BY ID
-userRoutes.get("/:id", validateData(findUserByIdSchema, "params"), (req, res) =>
-    userController.findById(req, res),
+userRoutes.get(
+    "/:id",
+    ensureAuthenticated,
+    ensureRole([UserRole.ADMIN]),
+    validateData(findUserByIdSchema, "params"),
+    (req, res) => userController.findById(req, res),
 );
 
 //GET ALL users
-userRoutes.get("/", (req, res) => userController.findAll(req, res));
+userRoutes.get(
+    "/",
+    ensureAuthenticated,
+    ensureRole([UserRole.ADMIN]),
+    (req, res) => userController.findAll(req, res),
+);
 
 //UPDATE logged-in user
 userRoutes.put(
@@ -49,14 +63,21 @@ userRoutes.put(
 userRoutes.put(
     "/:id",
     ensureAuthenticated,
-    ensureRole([UserRole.ORGANIZER]),
+    ensureRole([UserRole.ADMIN]),
     validateData(updateUserSchema, "body"),
     (req, res) => userController.update(req, res),
+);
+
+//DELETE logged-in user
+userRoutes.delete("/profile", ensureAuthenticated, (req, res) =>
+    userController.deleteProfile(req, res),
 );
 
 //DELETE user
 userRoutes.delete(
     "/:id",
+    ensureAuthenticated,
+    ensureRole([UserRole.ADMIN]),
     validateData(deleteUserSchema, "params"),
     (req, res) => userController.delete(req, res),
 );
