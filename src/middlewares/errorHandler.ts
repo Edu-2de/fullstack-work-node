@@ -9,6 +9,17 @@ export const errorHandler = (
     next: NextFunction,
 ) => {
     if (error instanceof AppError) {
+        const route = `[${req.method} ${req.url}]`;
+        const details = error.errors ? JSON.stringify(error.errors) : "";
+
+        if (error.statusCode < 500) {
+            logger.warn(
+                `${route} ${error.statusCode} - ${error.message} ${details}`,
+            );
+        } else {
+            logger.error(`${route} ${error.statusCode} - ${error.message}`);
+        }
+
         return res.status(error.statusCode).json({
             status: "error",
             message: error.message,
@@ -16,7 +27,9 @@ export const errorHandler = (
         });
     }
 
-    logger.error(`Mensagem: ${error.message} | Stack: ${error.stack}`);
+    logger.error(
+        `[${req.method} ${req.url}] FATAL: ${error.message} | Stack: ${error.stack}`,
+    );
     return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         status: "error",
         message: "Erro interno do servidor",
