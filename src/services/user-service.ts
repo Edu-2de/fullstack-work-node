@@ -2,30 +2,16 @@ import bcrypt from "bcrypt";
 import { ErrorMessages } from "../constants/messages";
 import { User } from "../entities/user";
 import { AppError, HttpStatus } from "../errors/AppError";
+import { EventRepository } from "../repositories/event/event.repository";
 import { UserRepository } from "../repositories/user/user.repository";
 
 export class UserService {
-    constructor(private userRepository: UserRepository) {}
+    constructor(
+        private userRepository: UserRepository,
+        private eventRepository: EventRepository,
+    ) {}
 
-    async create(data: Partial<User>) {
-        const userExists = await this.userRepository.findByEmail(data.email!);
-        if (userExists) {
-            throw new AppError(
-                ErrorMessages.ALREADY_EXISTS("email"),
-                HttpStatus.BAD_REQUEST,
-            );
-        }
-        data.password_encrypted = await bcrypt.hash(
-            data.password_encrypted!,
-            10,
-        );
-        const user = await this.userRepository.create(data);
-        //It was necessary to remove the password in the create function ( "select: false" doesn't work here).
-        const { password_encrypted, ...userWithoutPassword } = user;
-        return userWithoutPassword;
-    }
-
-    async findById(id: string) {
+    private async findUserOrThrow(id: string) {
         const user = await this.userRepository.findById(id);
         if (!user) {
             throw new AppError(
@@ -36,37 +22,55 @@ export class UserService {
         return user;
     }
 
+    private async ensureEmailIsUnique(email?: string, currentUserId?: string) {
+        if (!email) return;
+        const userWithEmail = await this.userRepository.findByEmail(email);
+        if (userWithEmail && userWithEmail.id !== currentUserId) {
+            throw new AppError(
+                ErrorMessages.ALREADY_EXISTS("Email"),
+                HttpStatus.CONFLICT,
+            );
+        }
+    }
+
+    private async hashPasswordIfNeeded(data: Partial<User>) {
+        if (data.password_encrypted) {
+            data.password_encrypted = await bcrypt.hash(
+                data.password_encrypted,
+                10,
+            );
+        }
+    }
+
+    async create(data: Partial<User>) {
+        await this.ensureEmailIsUnique(data.email);
+        await this.hashPasswordIfNeeded(data);
+        const user = await this.userRepository.create(data);
+        //It was necessary to remove the password in the create function ( "select: false" doesn't work here).
+        const { password_encrypted, ...userWithoutPassword } = user;
+        return userWithoutPassword;
+    }
+
+    async findById(id: string) {
+        return await this.findUserOrThrow(id);
+    }
+
     async findAll() {
         return await this.userRepository.findAll();
     }
 
     async update(id: string, data: Partial<User>) {
-        const user = await this.userRepository.findById(id);
-        if (!user) {
-            throw new AppError(
-                ErrorMessages.NOT_FOUND("Usuário"),
-                HttpStatus.NOT_FOUND,
-            );
-        }
-
-        if (data.password_encrypted) {
-            data.password_encrypted = await bcrypt.hash(
-                data.password_encrypted!,
-                10,
-            );
-        }
+        await this.findUserOrThrow(id);
+        await this.ensureEmailIsUnique(data.email, id);
+        await this.hashPasswordIfNeeded(data);
 
         const updateUser = await this.userRepository.update(id, data);
         return updateUser;
     }
 
     async updateProfile(id: string, data: Partial<User>) {
-        if (data.password_encrypted) {
-            data.password_encrypted = await bcrypt.hash(
-                data.password_encrypted!,
-                10,
-            );
-        }
+        await this.ensureEmailIsUnique(data.email, id);
+        await this.hashPasswordIfNeeded(data);
 
         const updatedUser = await this.userRepository.update(id, data);
 
@@ -80,12 +84,12 @@ export class UserService {
     }
 
     async delete(id: string) {
-        const userExists = await this.userRepository.findById(id);
-
-        if (!userExists) {
+        await this.findUserOrThrow(id);
+        const hasEvents = await this.eventRepository.findByOrganizerId(id);
+        if (hasEvents) {
             throw new AppError(
-                ErrorMessages.NOT_FOUND("Usuário"),
-                HttpStatus.NOT_FOUND,
+                ErrorMessages.IN_USE("usuário", "eventos"),
+                HttpStatus.CONFLICT,
             );
         }
         await this.userRepository.delete(id);

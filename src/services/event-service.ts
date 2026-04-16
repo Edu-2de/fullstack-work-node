@@ -2,17 +2,56 @@ import fs from "fs";
 import path from "path";
 import { ErrorMessages } from "../constants/messages";
 import { Event } from "../entities/event";
+import { UserRole } from "../entities/user";
 import { AppError, HttpStatus } from "../errors/AppError";
 import { CategoryRepository } from "../repositories/category/category.repository";
 import { EventRepository } from "../repositories/event/event.repository";
-import { UserRepository } from "../repositories/user/user.repository";
 
 export class EventService {
     constructor(
         private eventRepository: EventRepository,
-        private userRepository: UserRepository,
         private categoryRepository: CategoryRepository,
     ) {}
+
+    private async findEventOrThrow(id: string) {
+        const event = await this.eventRepository.findById(id);
+        if (!event) {
+            throw new AppError(
+                ErrorMessages.NOT_FOUND("Evento"),
+                HttpStatus.NOT_FOUND,
+            );
+        }
+        return event;
+    }
+
+    private async validateCategoriesOrThrow(categories?: string[]) {
+        if (!categories || categories.length === 0) return [];
+
+        const foundCategories =
+            await this.categoryRepository.findByNames(categories);
+        if (foundCategories.length !== categories.length) {
+            throw new AppError(
+                "Uma ou mais categorias fornecidas nao existem",
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+        return foundCategories;
+    }
+
+    private ensureOwnerShip(
+        event: Event,
+        loggedUserId: string,
+        loggedUserRole: string,
+    ) {
+        if (loggedUserRole === UserRole.ADMIN) return;
+
+        if (event.organizer.id !== loggedUserId) {
+            throw new AppError(
+                "Voce so pode alterar os seus próprios eventos",
+                HttpStatus.FORBIDDEN,
+            );
+        }
+    }
 
     async create(
         organizer_id: string,
@@ -20,31 +59,17 @@ export class EventService {
         data: Partial<Event>,
     ) {
         const foundCategories =
-            await this.categoryRepository.findByNames(categories);
-
-        if (foundCategories.length !== categories.length) {
-            throw new AppError(
-                "Uma ou mais categorias fornecidas nao existem no sistema",
-                HttpStatus.BAD_REQUEST,
-            );
-        }
-        const event = await this.eventRepository.create(
+            await this.validateCategoriesOrThrow(categories);
+        data.available_capacity = data.total_capacity;
+        return await this.eventRepository.create(
             organizer_id,
             foundCategories,
             data,
         );
-        return event;
     }
 
     async findById(id: string) {
-        const event = await this.eventRepository.findById(id);
-        if (!event) {
-            throw new AppError(
-                ErrorMessages.NOT_FOUND("Evento"),
-                HttpStatus.FORBIDDEN,
-            );
-        }
-        return event;
+        return await this.findEventOrThrow(id);
     }
 
     async findAll() {
@@ -53,26 +78,34 @@ export class EventService {
 
     async update(
         id: string,
-        organizer_id: string,
+        loggedUserId: string,
+        userRole: string,
         categories: string[],
         data: Partial<Event>,
     ) {
-        const eventExists = await this.eventRepository.findById(id);
-        if (!eventExists) {
-            throw new AppError(
-                ErrorMessages.NOT_FOUND("Evento"),
-                HttpStatus.FORBIDDEN,
-            );
-        }
+        const eventExists = await this.findEventOrThrow(id);
+        this.ensureOwnerShip(eventExists, loggedUserId, userRole);
 
-        const foundCategories =
-            await this.categoryRepository.findByNames(categories);
+        const foundCategories = categories
+            ? await this.validateCategoriesOrThrow(categories)
+            : eventExists.categories;
 
-        if (foundCategories.length !== categories.length) {
-            throw new AppError(
-                "Uma ou mais categorias fornecidas nao existem no sistema",
-                HttpStatus.BAD_REQUEST,
-            );
+        const updatedEvent = await this.eventRepository.update(
+            id,
+            foundCategories,
+            data,
+        );
+
+        if (data.available_capacity) {
+            if (
+                data.available_capacity < 0 ||
+                data.available_capacity > eventExists.total_capacity
+            ) {
+                throw new AppError(
+                    "A capacidade disponível deve ser maior que 0 e menor que a capacidade total",
+                    HttpStatus.BAD_REQUEST,
+                );
+            }
         }
 
         if (data.banner_url && eventExists.banner_url) {
@@ -88,14 +121,13 @@ export class EventService {
                 fs.unlinkSync(filePath);
             }
         }
-
-        const updatedEvent = await this.eventRepository.update(
-            id,
-            organizer_id,
-            foundCategories,
-            data,
-        );
-
         return updatedEvent;
+    }
+
+    async delete(id: string, organizerId: string, userRole: string) {
+        const eventExists = await this.findEventOrThrow(id);
+        this.ensureOwnerShip(eventExists, organizerId, userRole);
+
+        await this.eventRepository.delete(id);
     }
 }

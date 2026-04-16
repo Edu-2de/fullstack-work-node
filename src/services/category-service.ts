@@ -10,14 +10,33 @@ export class CategoryService {
         private eventRepository: EventRepository,
     ) {}
 
-    async create(data: Partial<Category>) {
-        const category = await this.categoryRepository.findByName(data.name!);
-        if (category) {
+    private async findCategoryOrThrow(id: string) {
+        const category = await this.categoryRepository.findById(id);
+        if (!category) {
+            throw new AppError(
+                ErrorMessages.NOT_FOUND("Categoria"),
+                HttpStatus.NOT_FOUND,
+            );
+        }
+        return category;
+    }
+
+    private async ensureCategoryIsUnique(
+        name?: string,
+        currentCategoryId?: string,
+    ) {
+        if (!name) return;
+        const category = await this.categoryRepository.findByName(name);
+        if (category && category.id !== currentCategoryId) {
             throw new AppError(
                 ErrorMessages.ALREADY_EXISTS("Categoria"),
                 HttpStatus.BAD_REQUEST,
             );
         }
+    }
+
+    async create(data: Partial<Category>) {
+        await this.ensureCategoryIsUnique(data.name);
         const newCategory = await this.categoryRepository.create(data);
         return newCategory;
     }
@@ -27,39 +46,15 @@ export class CategoryService {
     }
 
     async update(id: string, data: Partial<Category>) {
-        const category = await this.categoryRepository.findById(id);
-
-        if (!category) {
-            throw new AppError(
-                ErrorMessages.NOT_FOUND("Categoria"),
-                HttpStatus.NOT_FOUND,
-            );
-        }
-
-        if (data.name) {
-            const categoryExists = await this.categoryRepository.findByName(
-                data.name,
-            );
-            if (categoryExists) {
-                throw new AppError(
-                    ErrorMessages.ALREADY_EXISTS("Categoria"),
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
-        }
+        await this.findCategoryOrThrow(id);
+        await this.ensureCategoryIsUnique(data.name, id);
 
         const updatedCategory = await this.categoryRepository.update(id, data);
         return updatedCategory;
     }
 
     async delete(id: string) {
-        const category = await this.categoryRepository.findById(id);
-        if (!category) {
-            throw new AppError(
-                ErrorMessages.NOT_FOUND("Categoria"),
-                HttpStatus.NOT_FOUND,
-            );
-        }
+        await this.findCategoryOrThrow(id);
 
         const isCategoryInUse = await this.eventRepository.findByCategoryId(id);
         if (isCategoryInUse) {
