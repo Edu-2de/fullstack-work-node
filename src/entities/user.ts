@@ -11,6 +11,7 @@ import { Event } from "./event";
 export enum UserRole {
     ORGANIZER = "organizer",
     CUSTOMER = "customer",
+    ADMIN = "admin",
 }
 
 @Entity("users")

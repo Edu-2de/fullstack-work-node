@@ -16,10 +16,9 @@ export const userRepository = new UserRepository();
 export const eventRepository = new EventRepository();
 export const categoryRepository = new CategoryRepository();
 
-export const userService = new UserService(userRepository);
+export const userService = new UserService(userRepository, eventRepository);
 export const eventService = new EventService(
     eventRepository,
-    userRepository,
     categoryRepository,
 );
 export const categoryService = new CategoryService(

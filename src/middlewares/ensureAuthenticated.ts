@@ -7,29 +7,37 @@ export function ensureAuthenticated(
     res: Response,
     next: NextFunction,
 ) {
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader) {
-        throw new AppError(
-            "Login necessário para essa ação",
-            HttpStatus.UNAUTHORIZED,
-        );
-    }
-
-    const [, token] = authHeader.split(" ");
-
     try {
-        const decoded = verify(token, "CHAVE AQUI");
+        const authHeader = req.headers.authorization;
 
-        const { sub, role } = decoded as { sub: string; role: string };
+        if (!authHeader) {
+            return next(
+                new AppError(
+                    "Login necessário para essa ação",
+                    HttpStatus.UNAUTHORIZED,
+                ),
+            );
+        }
 
-        req.user = {
-            id: sub,
-            role: role,
-        };
+        const [, token] = authHeader.split(" ");
 
-        return next();
+        try {
+            const decoded = verify(token, "CHAVE AQUI");
+
+            const { sub, role } = decoded as { sub: string; role: string };
+
+            req.user = {
+                id: sub,
+                role: role,
+            };
+
+            return next();
+        } catch (error) {
+            return next(
+                new AppError("Token JWT inválido", HttpStatus.UNAUTHORIZED),
+            );
+        }
     } catch (error) {
-        throw new AppError("Token JWT inválido", HttpStatus.UNAUTHORIZED);
+        return next(error);
     }
 }
