@@ -16,7 +16,7 @@ const categoryRoutes = Router();
 categoryRoutes.post(
     "/",
     ensureAuthenticated,
-    ensureRole([UserRole.ORGANIZER]),
+    ensureRole([UserRole.ADMIN]),
     validateData(createCategory),
     (req, res) => categoryController.create(req, res),
 );
@@ -28,7 +28,7 @@ categoryRoutes.get("/", (req, res) => categoryController.findAll(req, res));
 categoryRoutes.put(
     "/:id",
     ensureAuthenticated,
-    ensureRole([UserRole.ORGANIZER]),
+    ensureRole([UserRole.ADMIN]),
     validateData(updateCategory),
     (req, res) => categoryController.update(req, res),
 );
@@ -37,7 +37,7 @@ categoryRoutes.put(
 categoryRoutes.delete(
     "/:id",
     ensureAuthenticated,
-    ensureRole([UserRole.ORGANIZER]),
+    ensureRole([UserRole.ADMIN]),
     validateData(deleteCategory, "params"),
     (req, res) => categoryController.delete(req, res),
 );

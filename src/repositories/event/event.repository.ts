@@ -32,6 +32,12 @@ export class EventRepository implements IEventRepository {
                 organizer: true,
                 categories: true,
             },
+            select: {
+                organizer: {
+                    id: true,
+                    name: true,
+                },
+            },
         });
     }
 
@@ -39,6 +45,13 @@ export class EventRepository implements IEventRepository {
         return this.ormRepository.find({
             relations: {
                 categories: true,
+                organizer: true,
+            },
+            select: {
+                organizer: {
+                    id: true,
+                    name: true,
+                },
             },
         });
     }
@@ -56,22 +69,37 @@ export class EventRepository implements IEventRepository {
         });
     }
 
+    async findByOrganizerId(organizerId: string): Promise<boolean> {
+        return this.ormRepository.exists({
+            where: {
+                organizer: {
+                    id: organizerId,
+                },
+            },
+        });
+    }
+
     async update(
         id: string,
-        organizer_id: string,
         categories: Category[],
         data: Partial<Event>,
     ): Promise<Event | null> {
-        const event = await this.ormRepository.findOne({ where: { id } });
+        const event = await this.ormRepository.findOne({
+            where: { id },
+            relations: { organizer: true, categories: true },
+        });
         if (!event) {
             return null;
         }
         this.ormRepository.merge(event, data);
 
-        event.organizer = { id: organizer_id } as any;
         event.categories = categories;
 
         const updatedEvent = await this.ormRepository.save(event);
         return updatedEvent;
+    }
+
+    async delete(id: string): Promise<void> {
+        await this.ormRepository.delete(id);
     }
 }
