@@ -1,86 +1,288 @@
 {
     "_type": "export",
     "__export_format": 4,
-    "__export_date": "2026-04-11T12:00:00.000Z",
+    "__export_date": "2026-04-16T18:45:00.000Z",
     "__export_source": "insomnia.desktop.app:v2023.5.8",
     "resources": [
         {
-            "_id": "wrk_events_api",
-            "_type": "workspace",
-            "name": "Events API"
+            "_id": "wrk_nexus_final",
+            "parentId": null,
+            "name": "Nexus EventPass - Full API",
+            "description": "Cópia completa com Headers JSON forçados",
+            "scope": "design",
+            "_type": "workspace"
         },
         {
-            "_id": "env_base_url",
-            "parentId": "wrk_events_api",
-            "_type": "environment",
+            "_id": "env_nexus",
+            "parentId": "wrk_nexus_final",
             "name": "Base Environment",
             "data": {
-                "base_url": "http://localhost:3000"
-            }
+                "base_url": "http://localhost:3000",
+                "token": "SEU_TOKEN_AQUI"
+            },
+            "_type": "environment"
+        },
+        {
+            "_id": "fld_auth",
+            "parentId": "wrk_nexus_final",
+            "name": "1. Auth",
+            "_type": "request_group"
+        },
+        {
+            "_id": "req_login",
+            "parentId": "fld_auth",
+            "url": "{{ _.base_url }}/login",
+            "name": "Login",
+            "method": "POST",
+            "headers": [
+                { "name": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"email\": \"admin@nexus.com\",\n  \"password\": \"SuaSenhaForte\"\n}"
+            },
+            "_type": "request"
         },
         {
             "_id": "fld_users",
-            "parentId": "wrk_events_api",
-            "_type": "request_group",
-            "name": "Users"
+            "parentId": "wrk_nexus_final",
+            "name": "2. Users",
+            "_type": "request_group"
         },
         {
-            "_id": "req_create_user",
+            "_id": "req_u_reg",
             "parentId": "fld_users",
-            "_type": "request",
-            "name": "1. Create User",
+            "url": "{{ _.base_url }}/users/register",
+            "name": "Register (Public)",
             "method": "POST",
-            "url": "{{ _.base_url }}/users",
+            "headers": [
+                { "name": "Content-Type", "value": "application/json" }
+            ],
             "body": {
                 "mimeType": "application/json",
-                "text": "{\n\t\"name\": \"Eduardo Paim\",\n\t\"email\": \"eduardo@example.com\",\n\t\"password_encrypted\": \"senha123\",\n\t\"role\": \"customer\"\n}"
+                "text": "{\n  \"name\": \"Novo Usuario\",\n  \"email\": \"teste@email.com\",\n  \"password_encrypted\": \"123456\"\n}"
             },
-            "headers": [{ "name": "Content-Type", "value": "application/json" }]
+            "_type": "request"
         },
         {
-            "_id": "req_get_all_users",
+            "_id": "req_u_prof",
             "parentId": "fld_users",
-            "_type": "request",
-            "name": "2. Get All Users",
+            "url": "{{ _.base_url }}/users/profile",
+            "name": "Get My Profile",
             "method": "GET",
-            "url": "{{ _.base_url }}/users"
+            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
+            "_type": "request"
         },
         {
-            "_id": "req_get_user_by_id",
+            "_id": "req_u_up_prof",
             "parentId": "fld_users",
-            "_type": "request",
-            "name": "3. Get User By ID",
-            "method": "GET",
-            "url": "{{ _.base_url }}/users/COLE_O_UUID_AQUI"
-        },
-        {
-            "_id": "req_get_user_by_email",
-            "parentId": "fld_users",
-            "_type": "request",
-            "name": "4. Get User By Email",
-            "method": "GET",
-            "url": "{{ _.base_url }}/users/email/eduardo@example.com"
-        },
-        {
-            "_id": "req_update_user",
-            "parentId": "fld_users",
-            "_type": "request",
-            "name": "5. Update User",
+            "url": "{{ _.base_url }}/users/profile",
+            "name": "Update My Profile",
             "method": "PUT",
-            "url": "{{ _.base_url }}/users/COLE_O_UUID_AQUI",
+            "headers": [
+                { "name": "Content-Type", "value": "application/json" }
+            ],
+            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
             "body": {
                 "mimeType": "application/json",
-                "text": "{\n\t\"name\": \"Eduardo Paim (Atualizado)\",\n\t\"role\": \"organizer\"\n}"
+                "text": "{\n  \"name\": \"Nome Atualizado\"\n}"
             },
-            "headers": [{ "name": "Content-Type", "value": "application/json" }]
+            "_type": "request"
         },
         {
-            "_id": "req_delete_user",
+            "_id": "req_u_del_prof",
             "parentId": "fld_users",
-            "_type": "request",
-            "name": "6. Delete User",
+            "url": "{{ _.base_url }}/users/profile",
+            "name": "Delete My Account (Self)",
             "method": "DELETE",
-            "url": "{{ _.base_url }}/users/COLE_O_UUID_AQUI"
+            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
+            "_type": "request"
+        },
+        {
+            "_id": "req_u_all",
+            "parentId": "fld_users",
+            "url": "{{ _.base_url }}/users",
+            "name": "List All (Admin)",
+            "method": "GET",
+            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
+            "_type": "request"
+        },
+        {
+            "_id": "req_u_id",
+            "parentId": "fld_users",
+            "url": "{{ _.base_url }}/users/ID_AQUI",
+            "name": "Find by ID (Admin)",
+            "method": "GET",
+            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
+            "_type": "request"
+        },
+        {
+            "_id": "req_u_up_id",
+            "parentId": "fld_users",
+            "url": "{{ _.base_url }}/users/ID_AQUI",
+            "name": "Update User by ID (Admin)",
+            "method": "PUT",
+            "headers": [
+                { "name": "Content-Type", "value": "application/json" }
+            ],
+            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"role\": \"organizer\"\n}"
+            },
+            "_type": "request"
+        },
+        {
+            "_id": "req_u_del_id",
+            "parentId": "fld_users",
+            "url": "{{ _.base_url }}/users/ID_AQUI",
+            "name": "Delete User by ID (Admin)",
+            "method": "DELETE",
+            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
+            "_type": "request"
+        },
+        {
+            "_id": "fld_cats",
+            "parentId": "wrk_nexus_final",
+            "name": "3. Categories",
+            "_type": "request_group"
+        },
+        {
+            "_id": "req_c_all",
+            "parentId": "fld_cats",
+            "url": "{{ _.base_url }}/categories",
+            "name": "List All",
+            "method": "GET",
+            "_type": "request"
+        },
+        {
+            "_id": "req_c_cre",
+            "parentId": "fld_cats",
+            "url": "{{ _.base_url }}/categories",
+            "name": "Create (Admin)",
+            "method": "POST",
+            "headers": [
+                { "name": "Content-Type", "value": "application/json" }
+            ],
+            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"name\": \"Nova Categoria\"\n}"
+            },
+            "_type": "request"
+        },
+        {
+            "_id": "req_c_up",
+            "parentId": "fld_cats",
+            "url": "{{ _.base_url }}/categories/ID_AQUI",
+            "name": "Update (Admin)",
+            "method": "PUT",
+            "headers": [
+                { "name": "Content-Type", "value": "application/json" }
+            ],
+            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"name\": \"Nome Editado\"\n}"
+            },
+            "_type": "request"
+        },
+        {
+            "_id": "req_c_del",
+            "parentId": "fld_cats",
+            "url": "{{ _.base_url }}/categories/ID_AQUI",
+            "name": "Delete (Admin)",
+            "method": "DELETE",
+            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
+            "_type": "request"
+        },
+        {
+            "_id": "fld_events",
+            "parentId": "wrk_nexus_final",
+            "name": "4. Events",
+            "_type": "request_group"
+        },
+        {
+            "_id": "req_e_all",
+            "parentId": "fld_events",
+            "url": "{{ _.base_url }}/events",
+            "name": "List All (Public)",
+            "method": "GET",
+            "_type": "request"
+        },
+        {
+            "_id": "req_e_id",
+            "parentId": "fld_events",
+            "url": "{{ _.base_url }}/events/ID_AQUI",
+            "name": "Find by ID (Public)",
+            "method": "GET",
+            "_type": "request"
+        },
+        {
+            "_id": "req_e_cre",
+            "parentId": "fld_events",
+            "url": "{{ _.base_url }}/events",
+            "name": "Create (Organizer)",
+            "method": "POST",
+            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
+            "body": {
+                "mimeType": "multipart/form-data",
+                "params": [
+                    { "name": "title", "value": "Evento Teste" },
+                    { "name": "description", "value": "Descricao do evento" },
+                    { "name": "start_date", "value": "2026-10-10T20:00:00Z" },
+                    { "name": "location", "value": "Local Teste" },
+                    { "name": "total_capacity", "value": "100" },
+                    { "name": "price", "value": "50.00" },
+                    { "name": "categories", "value": "Tecnologia" },
+                    { "name": "banner", "type": "file", "value": "" }
+                ]
+            },
+            "_type": "request"
+        },
+        {
+            "_id": "req_e_up",
+            "parentId": "fld_events",
+            "url": "{{ _.base_url }}/events/ID_AQUI",
+            "name": "Update (Owner/Admin)",
+            "method": "PUT",
+            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
+            "body": {
+                "mimeType": "multipart/form-data",
+                "params": [
+                    { "name": "title", "value": "Titulo Atualizado" },
+                    { "name": "banner", "type": "file", "value": "" }
+                ]
+            },
+            "_type": "request"
+        },
+        {
+            "_id": "req_e_del",
+            "parentId": "fld_events",
+            "url": "{{ _.base_url }}/events/ID_AQUI",
+            "name": "Delete (Owner/Admin)",
+            "method": "DELETE",
+            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
+            "_type": "request"
+        },
+        {
+            "_id": "fld_tickets",
+            "parentId": "wrk_nexus_final",
+            "name": "5. Tickets",
+            "_type": "request_group"
+        },
+        {
+            "_id": "req_t_cre",
+            "parentId": "fld_tickets",
+            "url": "{{ _.base_url }}/tickets/ID_DO_EVENTO_AQUI",
+            "name": "Buy Ticket (Customer)",
+            "method": "POST",
+            "headers": [
+                { "name": "Content-Type", "value": "application/json" }
+            ],
+            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
+            "body": { "mimeType": "application/json", "text": "{}" },
+            "_type": "request"
         }
     ]
 }
