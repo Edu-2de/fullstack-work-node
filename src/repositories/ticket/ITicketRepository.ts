@@ -6,5 +6,5 @@ export interface ITicketRepository {
     findByUserId(userId: string): Promise<Ticket[]>;
     findByEventId(eventId: string): Promise<Ticket[]>;
     update(id: string, data: Partial<Ticket>): Promise<Ticket | null>;
-    useTicket(id: string): Promise<Ticket | null>;
+    cancelTicket(id: string): Promise<Ticket | null>;
 }

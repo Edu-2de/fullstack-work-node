@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
 import { AppDataSource } from "../../data-source";
-import { Ticket } from "../../entities/ticket";
+import { Ticket, TicketStatus } from "../../entities/ticket";
 import { ITicketRepository } from "./ITicketRepository";
 
 export class TicketRepository implements ITicketRepository {
@@ -101,7 +101,15 @@ export class TicketRepository implements ITicketRepository {
         return ticketUpdate;
     }
 
-    async useTicket(id: string): Promise<Ticket | null> {
-        return await this.ormRepository.findOne({ where: { id } });
+    async cancelTicket(id: string): Promise<Ticket | null> {
+        const ticket = await this.ormRepository.findOne({ where: { id } });
+        if (!ticket) {
+            return null;
+        }
+        await this.ormRepository.update(ticket, {
+            status: TicketStatus.CANCELLED,
+        });
+        const ticketUpdate = await this.ormRepository.save(ticket);
+        return ticketUpdate;
     }
 }
