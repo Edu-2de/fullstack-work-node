@@ -20,7 +20,6 @@ export class CategoryService {
         }
         return category;
     }
-
     private async ensureCategoryIsUnique(
         name?: string,
         currentCategoryId?: string,

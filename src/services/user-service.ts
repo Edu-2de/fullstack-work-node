@@ -3,12 +3,14 @@ import { ErrorMessages } from "../constants/messages";
 import { User } from "../entities/user";
 import { AppError, HttpStatus } from "../errors/AppError";
 import { EventRepository } from "../repositories/event/event.repository";
+import { TicketRepository } from "../repositories/ticket/ticket.repository";
 import { UserRepository } from "../repositories/user/user.repository";
 
 export class UserService {
     constructor(
         private userRepository: UserRepository,
         private eventRepository: EventRepository,
+        private ticketRepository: TicketRepository,
     ) {}
 
     private async findUserOrThrow(id: string) {
@@ -93,5 +95,9 @@ export class UserService {
             );
         }
         await this.userRepository.delete(id);
+    }
+
+    async findTickets(id: string) {
+        return await this.ticketRepository.findByUserId(id);
     }
 }

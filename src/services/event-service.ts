@@ -6,11 +6,13 @@ import { UserRole } from "../entities/user";
 import { AppError, HttpStatus } from "../errors/AppError";
 import { CategoryRepository } from "../repositories/category/category.repository";
 import { EventRepository } from "../repositories/event/event.repository";
+import { TicketRepository } from "../repositories/ticket/ticket.repository";
 
 export class EventService {
     constructor(
         private eventRepository: EventRepository,
         private categoryRepository: CategoryRepository,
+        private ticketRepository: TicketRepository,
     ) {}
 
     private async findEventOrThrow(id: string) {
@@ -48,7 +50,7 @@ export class EventService {
 
         if (event.organizer.id !== loggedUserId) {
             throw new AppError(
-                "Voce so pode alterar os seus próprios eventos",
+                ErrorMessages.UNAUTHORIZED(),
                 HttpStatus.FORBIDDEN,
             );
         }
@@ -130,5 +132,12 @@ export class EventService {
         this.ensureOwnerShip(eventExists, organizerId, userRole);
 
         await this.eventRepository.delete(id);
+    }
+
+    async findTickets(eventId: string, organizerId: string, userRole: string) {
+        const event = await this.findEventOrThrow(eventId);
+        this.ensureOwnerShip(event, organizerId, userRole);
+
+        return await this.ticketRepository.findByEventId(eventId);
     }
 }

@@ -74,7 +74,12 @@ export class TicketService {
         return await this.ticketRepository.findAll();
     }
 
-    async useTicket(id: string, userId: string, userRole: string) {
+    async useTicket(
+        id: string,
+        userId: string,
+        userRole: string,
+        eventId: string,
+    ) {
         const ticket = await this.ticketRepository.findById(id);
         if (!ticket) {
             throw new AppError(
@@ -93,6 +98,12 @@ export class TicketService {
         }
         if (ticket.status !== TicketStatus.VALID) {
             throw new AppError("Ticket inválido", HttpStatus.CONFLICT);
+        }
+        if (ticket.events.id !== eventId) {
+            throw new AppError(
+                "Esse ticket nao pertence a esse evento",
+                HttpStatus.BAD_REQUEST,
+            );
         }
 
         return await this.ticketRepository.update(id, {
