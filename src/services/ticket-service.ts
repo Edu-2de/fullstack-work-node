@@ -1,7 +1,8 @@
 import { ErrorMessages } from "../constants/messages";
 import { AppDataSource } from "../data-source";
 import { Event } from "../entities/event";
-import { Ticket } from "../entities/ticket";
+import { Ticket, TicketStatus } from "../entities/ticket";
+import { UserRole } from "../entities/user";
 import { AppError, HttpStatus } from "../errors/AppError";
 import { TicketRepository } from "../repositories/ticket/ticket.repository";
 
@@ -25,6 +26,14 @@ export class TicketService {
                     HttpStatus.NOT_FOUND,
                 );
             }
+
+            if (new Date(event.start_date) < new Date()) {
+                throw new AppError(
+                    "Não é possível comprar ingressos para um evento que já ocorreu.",
+                    HttpStatus.BAD_REQUEST,
+                );
+            }
+
             if (event.available_capacity <= 0) {
                 throw new AppError("Ingressos esgotados!", HttpStatus.CONFLICT);
             }
@@ -63,5 +72,31 @@ export class TicketService {
 
     async findAll() {
         return await this.ticketRepository.findAll();
+    }
+
+    async useTicket(id: string, userId: string, userRole: string) {
+        const ticket = await this.ticketRepository.findById(id);
+        if (!ticket) {
+            throw new AppError(
+                ErrorMessages.NOT_FOUND("ticket"),
+                HttpStatus.NOT_FOUND,
+            );
+        }
+        if (
+            userRole !== UserRole.ADMIN &&
+            ticket.events.organizer.id !== userId
+        ) {
+            throw new AppError(
+                ErrorMessages.UNAUTHORIZED(),
+                HttpStatus.UNAUTHORIZED,
+            );
+        }
+        if (ticket.status !== TicketStatus.VALID) {
+            throw new AppError("Ticket inválido", HttpStatus.CONFLICT);
+        }
+
+        return await this.ticketRepository.update(id, {
+            status: TicketStatus.USED,
+        });
     }
 }

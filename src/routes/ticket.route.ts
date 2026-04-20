@@ -1,6 +1,8 @@
 import { Router } from "express";
+import { UserRole } from "../entities/user";
 import { ticketController } from "../factories/services-factory";
 import { ensureAuthenticated } from "../middlewares/ensureAuthenticated";
+import { ensureRole } from "../middlewares/ensureRole";
 import { validateData } from "../middlewares/validateRequest";
 import { createTicket, getTicketById } from "../validators/ticket.validator";
 
@@ -25,8 +27,17 @@ ticketRoutes.get(
 //GET all Tickets
 ticketRoutes.get(
     "/",
-
+    ensureAuthenticated,
+    ensureRole([UserRole.ADMIN, UserRole.ORGANIZER]),
     (req, res) => ticketController.findAll(req, res),
+);
+
+//UPDATE ticket
+ticketRoutes.patch(
+    "/:id",
+    ensureAuthenticated,
+    ensureRole([UserRole.ADMIN]),
+    (req, res) => ticketController.useTicket(req, res),
 );
 
 export { ticketRoutes };
