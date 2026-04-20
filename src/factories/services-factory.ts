@@ -20,10 +20,15 @@ export const eventRepository = new EventRepository();
 export const categoryRepository = new CategoryRepository();
 export const ticketRepository = new TicketRepository();
 
-export const userService = new UserService(userRepository, eventRepository);
+export const userService = new UserService(
+    userRepository,
+    eventRepository,
+    ticketRepository,
+);
 export const eventService = new EventService(
     eventRepository,
     categoryRepository,
+    ticketRepository,
 );
 export const categoryService = new CategoryService(
     categoryRepository,

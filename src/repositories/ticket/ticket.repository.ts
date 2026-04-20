@@ -26,13 +26,66 @@ export class TicketRepository implements ITicketRepository {
         return await this.ormRepository.find({
             relations: {
                 customer: true,
-                events: true,
+                events: {
+                    organizer: true,
+                    categories: true,
+                },
             },
             select: {
                 customer: {
                     id: true,
                     name: true,
                     role: true,
+                },
+                events: {
+                    id: true,
+                    title: true,
+                    start_date: true,
+                    organizer: {
+                        id: true,
+                        name: true,
+                    },
+                },
+            },
+        });
+    }
+
+    async findByUserId(userId: string): Promise<Ticket[]> {
+        return await this.ormRepository.find({
+            where: {
+                customer: {
+                    id: userId,
+                },
+            },
+            relations: {
+                events: true,
+            },
+            select: {
+                events: {
+                    id: true,
+                    title: true,
+                    start_date: true,
+                    location: true,
+                    banner_url: true,
+                },
+            },
+        });
+    }
+
+    async findByEventId(eventId: string): Promise<Ticket[]> {
+        return await this.ormRepository.find({
+            where: {
+                events: {
+                    id: eventId,
+                },
+            },
+            relations: {
+                customer: true,
+            },
+            select: {
+                customer: {
+                    id: true,
+                    name: true,
                 },
             },
         });
@@ -43,7 +96,8 @@ export class TicketRepository implements ITicketRepository {
         if (!ticket) {
             return null;
         }
-        const ticketUpdate = this.ormRepository.merge(ticket, data);
+        this.ormRepository.merge(ticket, data);
+        const ticketUpdate = await this.ormRepository.save(ticket);
         return ticketUpdate;
     }
 
