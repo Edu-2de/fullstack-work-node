@@ -53,4 +53,12 @@ eventRoutes.delete(
     (req, res) => eventController.delete(req, res),
 );
 
+//GET all tickets of event
+eventRoutes.get(
+    "/:id/tickets",
+    ensureAuthenticated,
+    ensureRole([UserRole.ORGANIZER, UserRole.ADMIN]),
+    (req, res) => eventController.findTickets(req, res),
+);
+
 export { eventRoutes };

@@ -4,7 +4,11 @@ import { ticketController } from "../factories/services-factory";
 import { ensureAuthenticated } from "../middlewares/ensureAuthenticated";
 import { ensureRole } from "../middlewares/ensureRole";
 import { validateData } from "../middlewares/validateRequest";
-import { createTicket, getTicketById } from "../validators/ticket.validator";
+import {
+    createTicket,
+    getTicketById,
+    useTicket,
+} from "../validators/ticket.validator";
 
 const ticketRoutes = Router();
 
@@ -20,6 +24,7 @@ ticketRoutes.post(
 ticketRoutes.get(
     "/:id",
     ensureAuthenticated,
+    ensureRole([UserRole.ADMIN]),
     validateData(getTicketById, "params"),
     (req, res) => ticketController.findById(req, res),
 );
@@ -28,7 +33,7 @@ ticketRoutes.get(
 ticketRoutes.get(
     "/",
     ensureAuthenticated,
-    ensureRole([UserRole.ADMIN, UserRole.ORGANIZER]),
+    ensureRole([UserRole.ADMIN]),
     (req, res) => ticketController.findAll(req, res),
 );
 
@@ -36,7 +41,8 @@ ticketRoutes.get(
 ticketRoutes.patch(
     "/:id",
     ensureAuthenticated,
-    ensureRole([UserRole.ADMIN]),
+    ensureRole([UserRole.ADMIN, UserRole.ORGANIZER]),
+    validateData(useTicket),
     (req, res) => ticketController.useTicket(req, res),
 );
 

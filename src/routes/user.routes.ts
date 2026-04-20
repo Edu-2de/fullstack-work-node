@@ -82,4 +82,9 @@ userRoutes.delete(
     (req, res) => userController.delete(req, res),
 );
 
+//GET logged-in user tickets
+userRoutes.get("/profile/tickets", ensureAuthenticated, (req, res) =>
+    userController.findTickets(req, res),
+);
+
 export { userRoutes };
