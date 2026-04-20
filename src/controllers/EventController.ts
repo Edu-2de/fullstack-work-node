@@ -127,4 +127,16 @@ export class EventController {
         await this.eventService.delete(eventId, organizerId, userRole);
         return res.status(200).json(ValidMessages.DELETED("Evento"));
     }
+
+    async findTickets(req: Request, res: Response) {
+        const eventId = req.params.id as string;
+        const organizerId = req.user.id;
+        const userRole = req.user.role;
+        const tickets = await this.eventService.findTickets(
+            eventId,
+            organizerId,
+            userRole,
+        );
+        return res.status(200).json(tickets);
+    }
 }

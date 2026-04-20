@@ -30,8 +30,14 @@ export class TicketController {
         const id = req.params.id as string;
         const userId = req.user.id;
         const userRole = req.user.role;
+        const { eventId } = req.body;
 
-        const ticket = await this.ticketService.useTicket(id, userId, userRole);
+        const ticket = await this.ticketService.useTicket(
+            id,
+            userId,
+            userRole,
+            eventId,
+        );
         res.status(200).json(ticket);
     }
 }

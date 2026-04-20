@@ -81,4 +81,10 @@ export class UserController {
         await this.userService.delete(userId);
         return res.status(200).json(ValidMessages.DELETED("Usuário"));
     }
+
+    async findTickets(req: Request, res: Response) {
+        const userId = req.user.id;
+        const tickets = await this.userService.findTickets(userId);
+        return res.status(200).json(tickets);
+    }
 }
