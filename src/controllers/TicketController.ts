@@ -22,6 +22,16 @@ export class TicketController {
 
     async findAll(req: Request, res: Response) {
         const tickets = await this.ticketService.findAll();
+
         res.status(200).json(tickets);
+    }
+
+    async useTicket(req: Request, res: Response) {
+        const id = req.params.id as string;
+        const userId = req.user.id;
+        const userRole = req.user.role;
+
+        const ticket = await this.ticketService.useTicket(id, userId, userRole);
+        res.status(200).json(ticket);
     }
 }
