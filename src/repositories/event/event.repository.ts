@@ -43,8 +43,12 @@ export class EventRepository implements IEventRepository {
         });
     }
 
-    async findAll(): Promise<Event[]> {
-        return this.ormRepository.find({
+    async findAll(page: number, limit: number) {
+        const skip = (page - 1) * limit;
+
+        const [events, total] = await this.ormRepository.findAndCount({
+            skip: skip,
+            take: limit,
             relations: {
                 categories: true,
                 organizer: true,
@@ -56,6 +60,13 @@ export class EventRepository implements IEventRepository {
                 },
             },
         });
+
+        return {
+            data: events,
+            total_items: total,
+            current_page: page,
+            total_pages: Math.ceil(total / limit),
+        };
     }
 
     async findByCategoryId(categoryId: string): Promise<boolean> {
