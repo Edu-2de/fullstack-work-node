@@ -8,7 +8,7 @@ export interface IEventRepository {
         data: Partial<Event>,
     ): Promise<Event>;
     findById(id: string): Promise<Event | null>;
-    findAll(): Promise<Event[]>;
+    findAll(page: number, limit: number): any;
     findByCategoryId(categoryId: string): Promise<boolean>;
     findByOrganizerId(organizerId: string): Promise<boolean>;
     update(
