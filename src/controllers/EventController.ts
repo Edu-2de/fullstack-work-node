@@ -77,7 +77,10 @@ export class EventController {
     }
 
     async findAll(req: Request, res: Response) {
-        const events = await this.eventService.findAll();
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+
+        const events = await this.eventService.findAll(page, limit);
         return res.status(200).json(events);
     }
 
