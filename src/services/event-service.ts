@@ -75,8 +75,8 @@ export class EventService {
         return await this.findEventOrThrow(id);
     }
 
-    async findAll() {
-        return await this.eventRepository.findAll();
+    async findAll(page: number, limit: number) {
+        return await this.eventRepository.findAll(page, limit);
     }
 
     async update(
