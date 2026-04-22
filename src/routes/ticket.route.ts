@@ -46,4 +46,12 @@ ticketRoutes.patch(
     (req, res) => ticketController.useTicket(req, res),
 );
 
+//CANCEL ticket
+ticketRoutes.patch(
+    "/:id/cancel",
+    ensureAuthenticated,
+    validateData(getTicketById, "params"),
+    (req, res) => ticketController.cancelTicket(req, res),
+);
+
 export { ticketRoutes };

@@ -42,4 +42,17 @@ export class TicketController {
         );
         res.status(200).json(ticket);
     }
+
+    async cancelTicket(req: Request, res: Response) {
+        const id = req.params.id as string;
+        const userId = req.user.id;
+        const userRole = req.user.role;
+
+        const ticket = await this.ticketService.cancelTicket(
+            id,
+            userId,
+            userRole,
+        );
+        res.status(200).json(ticket);
+    }
 }

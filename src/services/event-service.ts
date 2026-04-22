@@ -131,6 +131,19 @@ export class EventService {
         const eventExists = await this.findEventOrThrow(id);
         this.ensureOwnerShip(eventExists, organizerId, userRole);
 
+        if (eventExists.banner_url) {
+            const filePath = path.resolve(
+                __dirname,
+                "..",
+                "..",
+                "uploads",
+                eventExists.banner_url,
+            );
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+        }
+
         await this.eventRepository.delete(id);
     }
 
