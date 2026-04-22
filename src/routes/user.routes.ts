@@ -4,11 +4,10 @@ import { userController } from "../factories/services-factory";
 import { ensureAuthenticated } from "../middlewares/ensureAuthenticated";
 import { ensureRole } from "../middlewares/ensureRole";
 import { validateData } from "../middlewares/validateRequest";
+import { idParamSchema } from "../validators/common.validator";
 import {
     createUserAdminSchema,
     createUserSchema,
-    deleteUserSchema,
-    findUserByIdSchema,
     updateProfileSchema,
     updateUserSchema,
 } from "../validators/user.validator";
@@ -39,7 +38,7 @@ userRoutes.get(
     "/:id",
     ensureAuthenticated,
     ensureRole([UserRole.ADMIN]),
-    validateData(findUserByIdSchema, "params"),
+    validateData(idParamSchema, "params"),
     (req, res) => userController.findById(req, res),
 );
 
@@ -78,7 +77,7 @@ userRoutes.delete(
     "/:id",
     ensureAuthenticated,
     ensureRole([UserRole.ADMIN]),
-    validateData(deleteUserSchema, "params"),
+    validateData(idParamSchema, "params"),
     (req, res) => userController.delete(req, res),
 );
 

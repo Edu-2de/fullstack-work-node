@@ -1,4 +1,6 @@
+import cors from "cors";
 import express from "express";
+import helmet from "helmet";
 import "reflect-metadata";
 import logger from "./config/logger";
 import { AppDataSource } from "./data-source";
@@ -8,6 +10,16 @@ import { router } from "./routes";
 
 const app = express();
 const port = 3000;
+
+app.use(helmet());
+
+app.use(
+    cors({
+        origin: "*",
+        methods: ["GET", "POST", "PATCH", "DELETE"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+    }),
+);
 
 app.use(express.json());
 app.use((req, res, next) => {

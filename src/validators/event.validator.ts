@@ -27,12 +27,4 @@ export const createEvent = z.object({
         .optional(),
 });
 
-export const findByIdEvent = z.object({
-    id: z.uuid(ValidationMessages.INVALID_UUID),
-});
-
 export const updateEvent = createEvent.partial();
-
-export const deleteEvent = z.object({
-    id: z.uuid(ValidationMessages.INVALID_UUID),
-});

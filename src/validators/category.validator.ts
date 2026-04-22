@@ -16,7 +16,3 @@ export const updateCategory = createCategory
         (data) => Object.keys(data).length > 0,
         ValidationMessages.EMPTY_REQUEST,
     );
-
-export const deleteCategory = z.object({
-    id: z.uuid(ValidationMessages.INVALID_UUID),
-});

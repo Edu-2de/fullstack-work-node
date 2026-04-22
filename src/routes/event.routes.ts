@@ -6,12 +6,8 @@ import { eventController } from "../factories/services-factory";
 import { ensureAuthenticated } from "../middlewares/ensureAuthenticated";
 import { ensureRole } from "../middlewares/ensureRole";
 import { validateData } from "../middlewares/validateRequest";
-import {
-    createEvent,
-    deleteEvent,
-    findByIdEvent,
-    updateEvent,
-} from "../validators/event.validator";
+import { idParamSchema } from "../validators/common.validator";
+import { createEvent, updateEvent } from "../validators/event.validator";
 
 const eventRoutes = Router();
 const upload = multer(uploadConfig);
@@ -30,7 +26,7 @@ eventRoutes.post(
 eventRoutes.get("/", async (req, res) => eventController.findAll(req, res));
 
 //GET event by id
-eventRoutes.get("/:id", validateData(findByIdEvent, "params"), (req, res) =>
+eventRoutes.get("/:id", validateData(idParamSchema, "params"), (req, res) =>
     eventController.findById(req, res),
 );
 
@@ -49,7 +45,7 @@ eventRoutes.delete(
     "/:id",
     ensureAuthenticated,
     ensureRole([UserRole.ORGANIZER, UserRole.ADMIN]),
-    validateData(deleteEvent, "params"),
+    validateData(idParamSchema, "params"),
     (req, res) => eventController.delete(req, res),
 );
 

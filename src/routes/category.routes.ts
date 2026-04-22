@@ -6,9 +6,9 @@ import { ensureRole } from "../middlewares/ensureRole";
 import { validateData } from "../middlewares/validateRequest";
 import {
     createCategory,
-    deleteCategory,
     updateCategory,
 } from "../validators/category.validator";
+import { idParamSchema } from "../validators/common.validator";
 
 const categoryRoutes = Router();
 
@@ -38,7 +38,7 @@ categoryRoutes.delete(
     "/:id",
     ensureAuthenticated,
     ensureRole([UserRole.ADMIN]),
-    validateData(deleteCategory, "params"),
+    validateData(idParamSchema, "params"),
     (req, res) => categoryController.delete(req, res),
 );
 
