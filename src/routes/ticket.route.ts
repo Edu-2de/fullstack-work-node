@@ -37,7 +37,7 @@ ticketRoutes.get(
     (req, res) => ticketController.findAll(req, res),
 );
 
-//UPDATE ticket
+//USE ticket
 ticketRoutes.patch(
     "/:id",
     ensureAuthenticated,
