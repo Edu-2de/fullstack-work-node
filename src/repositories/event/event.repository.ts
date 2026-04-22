@@ -49,6 +49,9 @@ export class EventRepository implements IEventRepository {
         const [events, total] = await this.ormRepository.findAndCount({
             skip: skip,
             take: limit,
+            order: {
+                start_date: "DESC",
+            },
             relations: {
                 categories: true,
                 organizer: true,
