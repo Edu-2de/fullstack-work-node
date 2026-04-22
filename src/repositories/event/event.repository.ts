@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { FindOptionsWhere, ILike, MoreThanOrEqual, Repository } from "typeorm";
 import { AppDataSource } from "../../data-source";
 import { Category } from "../../entities/category";
 import { Event } from "../../entities/event";
@@ -43,10 +43,31 @@ export class EventRepository implements IEventRepository {
         });
     }
 
-    async findAll(page: number, limit: number) {
+    async findAll(
+        page: number,
+        limit: number,
+        search?: string,
+        categoryId?: string,
+        startDate?: Date,
+    ) {
         const skip = (page - 1) * limit;
 
+        const where: FindOptionsWhere<Event> = {};
+
+        if (search) {
+            where.title = ILike(`%${search}%`);
+        }
+
+        if (categoryId) {
+            where.categories = { id: categoryId };
+        }
+
+        if (startDate) {
+            where.start_date = MoreThanOrEqual(startDate);
+        }
+
         const [events, total] = await this.ormRepository.findAndCount({
+            where: where,
             skip: skip,
             take: limit,
             order: {

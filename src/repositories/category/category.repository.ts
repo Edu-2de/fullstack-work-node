@@ -1,4 +1,4 @@
-import { In, Repository } from "typeorm";
+import { FindOptionsWhere, ILike, In, Repository } from "typeorm";
 import { AppDataSource } from "../../data-source";
 import { Category } from "../../entities/category";
 import { ICategoryRepository } from "./ICategoryRepository";
@@ -20,10 +20,17 @@ export class CategoryRepository implements ICategoryRepository {
         return this.ormRepository.findOne({ where: { name } });
     }
 
-    async findAll(page: number, limit: number) {
+    async findAll(page: number, limit: number, search?: string) {
         const skip = (page - 1) * limit;
 
+        const where: FindOptionsWhere<Category> = {};
+
+        if (search) {
+            where.name = ILike(`%${search}%`);
+        }
+
         const [categories, total] = await this.ormRepository.findAndCount({
+            where: where,
             skip: skip,
             take: limit,
         });

@@ -80,7 +80,21 @@ export class EventController {
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;
 
-        const events = await this.eventService.findAll(page, limit);
+        const search = req.query.search as string;
+        const categoryId = req.query.categoryId as string;
+        const startDateString = req.query.startDate as string;
+
+        const startDate = startDateString
+            ? new Date(startDateString)
+            : undefined;
+
+        const events = await this.eventService.findAll(
+            page,
+            limit,
+            search,
+            categoryId,
+            startDate,
+        );
         return res.status(200).json(events);
     }
 

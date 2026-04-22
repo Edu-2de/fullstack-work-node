@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { FindOptionsWhere, ILike, Repository } from "typeorm";
 import { AppDataSource } from "../../data-source";
 import { User } from "../../entities/user";
 import { IUserRepository } from "./IUserRepository";
@@ -36,10 +36,17 @@ export class UserRepository implements IUserRepository {
         });
     }
 
-    async findAll(page: number, limit: number) {
+    async findAll(page: number, limit: number, search?: string) {
         const skip = (page - 1) * limit;
 
+        const where: FindOptionsWhere<User> = {};
+
+        if (search) {
+            where.name = ILike(`%${search}%`);
+        }
+
         const [users, total] = await this.ormRepository.findAndCount({
+            where: where,
             skip: skip,
             take: limit,
             order: {

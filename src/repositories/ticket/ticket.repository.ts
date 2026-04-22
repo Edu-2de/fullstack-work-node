@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { FindOptionsWhere, ILike, Repository } from "typeorm";
 import { AppDataSource } from "../../data-source";
 import { Ticket, TicketStatus } from "../../entities/ticket";
 import { ITicketRepository } from "./ITicketRepository";
@@ -22,10 +22,26 @@ export class TicketRepository implements ITicketRepository {
         });
     }
 
-    async findAll(page: number, limit: number) {
+    async findAll(
+        page: number,
+        limit: number,
+        search?: string,
+        eventId?: string,
+    ) {
         const skip = (page - 1) * limit;
 
+        const where: FindOptionsWhere<Ticket> = {};
+
+        if (search) {
+            where.customer = ILike(`%${search}%`);
+        }
+
+        if (eventId) {
+            where.events = { id: eventId };
+        }
+
         const [tickets, total] = await this.ormRepository.findAndCount({
+            where: where,
             skip: skip,
             take: limit,
             order: {
