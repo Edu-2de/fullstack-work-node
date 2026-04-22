@@ -135,10 +135,15 @@ export class EventController {
         const eventId = req.params.id as string;
         const organizerId = req.user.id;
         const userRole = req.user.role;
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+
         const tickets = await this.eventService.findTickets(
             eventId,
             organizerId,
             userRole,
+            page,
+            limit,
         );
         return res.status(200).json(tickets);
     }

@@ -20,7 +20,9 @@ export class CategoryController {
     }
 
     async findAll(req: Request, res: Response) {
-        const categories = await this.categoryService.findAll();
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        const categories = await this.categoryService.findAll(page, limit);
         return res.status(201).json(categories);
     }
 
