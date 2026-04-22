@@ -57,8 +57,8 @@ export class UserService {
         return await this.findUserOrThrow(id);
     }
 
-    async findAll(page: number, limit: number) {
-        return await this.userRepository.findAll(page, limit);
+    async findAll(page: number, limit: number, search?: string) {
+        return await this.userRepository.findAll(page, limit, search);
     }
 
     async update(id: string, data: Partial<User>) {

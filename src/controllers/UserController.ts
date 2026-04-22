@@ -54,8 +54,9 @@ export class UserController {
     async findAll(req: Request, res: Response) {
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;
+        const search = req.query.search as string;
 
-        const users = await this.userService.findAll(page, limit);
+        const users = await this.userService.findAll(page, limit, search);
         return res.status(200).json(users);
     }
 

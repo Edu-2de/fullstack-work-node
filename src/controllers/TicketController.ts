@@ -23,8 +23,15 @@ export class TicketController {
     async findAll(req: Request, res: Response) {
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;
+        const search = req.query.search as string;
+        const eventId = req.query.eventId as string;
 
-        const tickets = await this.ticketService.findAll(page, limit);
+        const tickets = await this.ticketService.findAll(
+            page,
+            limit,
+            search,
+            eventId,
+        );
         res.status(200).json(tickets);
     }
 
