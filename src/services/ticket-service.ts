@@ -4,14 +4,10 @@ import { Event } from "../entities/event";
 import { Ticket, TicketStatus } from "../entities/ticket";
 import { UserRole } from "../entities/user";
 import { AppError, HttpStatus } from "../errors/AppError";
-import { EventRepository } from "../repositories/event/event.repository";
-import { TicketRepository } from "../repositories/ticket/ticket.repository";
+import { ITicketRepository } from "../repositories/ticket/ITicketRepository";
 
 export class TicketService {
-    constructor(
-        private ticketRepository: TicketRepository,
-        private eventRepository: EventRepository,
-    ) {}
+    constructor(private ticketRepository: ITicketRepository) {}
 
     private async findTicketOrThrow(ticketId: string) {
         const ticket = await this.ticketRepository.findById(ticketId);

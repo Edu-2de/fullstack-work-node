@@ -1,13 +1,13 @@
 import { ErrorMessages } from "../constants/messages";
 import { Category } from "../entities/category";
 import { AppError, HttpStatus } from "../errors/AppError";
-import { CategoryRepository } from "../repositories/category/category.repository";
-import { EventRepository } from "../repositories/event/event.repository";
+import { ICategoryRepository } from "../repositories/category/ICategoryRepository";
+import { IEventRepository } from "../repositories/event/IEventRepository";
 
 export class CategoryService {
     constructor(
-        private categoryRepository: CategoryRepository,
-        private eventRepository: EventRepository,
+        private categoryRepository: ICategoryRepository,
+        private eventRepository: IEventRepository,
     ) {}
 
     private async findCategoryOrThrow(id: string) {

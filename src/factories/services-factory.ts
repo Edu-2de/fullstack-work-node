@@ -35,10 +35,7 @@ export const categoryService = new CategoryService(
     eventRepository,
 );
 export const authService = new AuthService(userRepository);
-export const ticketService = new TicketService(
-    ticketRepository,
-    eventRepository,
-);
+export const ticketService = new TicketService(ticketRepository);
 
 export const userController = new UserController(userService);
 export const eventController = new EventController(eventService);

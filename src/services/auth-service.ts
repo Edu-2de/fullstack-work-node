@@ -1,10 +1,10 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { AppError, HttpStatus } from "../errors/AppError";
-import { UserRepository } from "../repositories/user/user.repository";
+import { IUserRepository } from "../repositories/user/IUserRepository";
 
 export class AuthService {
-    constructor(private userRepository: UserRepository) {}
+    constructor(private userRepository: IUserRepository) {}
 
     async login(email: string, password: string) {
         const user = await this.userRepository.findByEmailForLogin(email);

@@ -1,30 +1,33 @@
 {
     "_type": "export",
     "__export_format": 4,
-    "__export_date": "2026-04-16T18:45:00.000Z",
+    "__export_date": "2026-04-22T15:00:00.000Z",
     "__export_source": "insomnia.desktop.app:v2023.5.8",
     "resources": [
         {
-            "_id": "wrk_nexus_final",
+            "_id": "wrk_eventpass",
             "parentId": null,
-            "name": "Nexus EventPass - Full API",
-            "description": "Cópia completa com Headers JSON forçados",
-            "scope": "design",
+            "name": "EventPass API - Completa",
+            "description": "Workspace completo para testes de integração",
+            "scope": "collection",
             "_type": "workspace"
         },
         {
-            "_id": "env_nexus",
-            "parentId": "wrk_nexus_final",
+            "_id": "env_eventpass",
+            "parentId": "wrk_eventpass",
             "name": "Base Environment",
             "data": {
                 "base_url": "http://localhost:3000",
-                "token": "SEU_TOKEN_AQUI"
+                "admin_token": "COLE_AQUI_O_TOKEN_ADMIN",
+                "organizer_token": "COLE_AQUI_O_TOKEN_ORGANIZER",
+                "customer_token": "COLE_AQUI_O_TOKEN_CUSTOMER"
             },
+            "color": "#7d69cb",
             "_type": "environment"
         },
         {
             "_id": "fld_auth",
-            "parentId": "wrk_nexus_final",
+            "parentId": "wrk_eventpass",
             "name": "1. Auth",
             "_type": "request_group"
         },
@@ -34,254 +37,426 @@
             "url": "{{ _.base_url }}/login",
             "name": "Login",
             "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"email\": \"admin@teste.com\",\n\t\"password\": \"123456\"\n}"
+            },
             "headers": [
                 { "name": "Content-Type", "value": "application/json" }
             ],
-            "body": {
-                "mimeType": "application/json",
-                "text": "{\n  \"email\": \"admin@nexus.com\",\n  \"password\": \"SuaSenhaForte\"\n}"
-            },
+            "authentication": {},
             "_type": "request"
         },
         {
             "_id": "fld_users",
-            "parentId": "wrk_nexus_final",
+            "parentId": "wrk_eventpass",
             "name": "2. Users",
             "_type": "request_group"
         },
         {
-            "_id": "req_u_reg",
+            "_id": "req_register_user",
             "parentId": "fld_users",
             "url": "{{ _.base_url }}/users/register",
             "name": "Register (Public)",
             "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"name\": \"Novo Cliente\",\n\t\"email\": \"cliente@teste.com\",\n\t\"password_encrypted\": \"123456\"\n}"
+            },
             "headers": [
                 { "name": "Content-Type", "value": "application/json" }
             ],
+            "authentication": {},
+            "_type": "request"
+        },
+        {
+            "_id": "req_create_admin",
+            "parentId": "fld_users",
+            "url": "{{ _.base_url }}/users",
+            "name": "Create User (Admin Only)",
+            "method": "POST",
             "body": {
                 "mimeType": "application/json",
-                "text": "{\n  \"name\": \"Novo Usuario\",\n  \"email\": \"teste@email.com\",\n  \"password_encrypted\": \"123456\"\n}"
+                "text": "{\n\t\"name\": \"Novo Organizador\",\n\t\"email\": \"organizer@teste.com\",\n\t\"password_encrypted\": \"123456\",\n\t\"role\": \"organizer\"\n}"
+            },
+            "headers": [
+                { "name": "Content-Type", "value": "application/json" }
+            ],
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.admin_token }}"
             },
             "_type": "request"
         },
         {
-            "_id": "req_u_prof",
+            "_id": "req_get_users",
+            "parentId": "fld_users",
+            "url": "{{ _.base_url }}/users?page=1&limit=10",
+            "name": "Get All Users (Admin)",
+            "method": "GET",
+            "body": {},
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.admin_token }}"
+            },
+            "_type": "request"
+        },
+        {
+            "_id": "req_get_user_by_id",
+            "parentId": "fld_users",
+            "url": "{{ _.base_url }}/users/COLE_ID_AQUI",
+            "name": "Get User By ID (Admin)",
+            "method": "GET",
+            "body": {},
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.admin_token }}"
+            },
+            "_type": "request"
+        },
+        {
+            "_id": "req_update_user",
+            "parentId": "fld_users",
+            "url": "{{ _.base_url }}/users/COLE_ID_AQUI",
+            "name": "Update User By ID (Admin)",
+            "method": "PUT",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"name\": \"Nome Atualizado\"\n}"
+            },
+            "headers": [
+                { "name": "Content-Type", "value": "application/json" }
+            ],
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.admin_token }}"
+            },
+            "_type": "request"
+        },
+        {
+            "_id": "req_delete_user",
+            "parentId": "fld_users",
+            "url": "{{ _.base_url }}/users/COLE_ID_AQUI",
+            "name": "Delete User By ID (Admin)",
+            "method": "DELETE",
+            "body": {},
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.admin_token }}"
+            },
+            "_type": "request"
+        },
+        {
+            "_id": "req_get_profile",
             "parentId": "fld_users",
             "url": "{{ _.base_url }}/users/profile",
             "name": "Get My Profile",
             "method": "GET",
-            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
+            "body": {},
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.customer_token }}"
+            },
             "_type": "request"
         },
         {
-            "_id": "req_u_up_prof",
+            "_id": "req_update_profile",
             "parentId": "fld_users",
             "url": "{{ _.base_url }}/users/profile",
             "name": "Update My Profile",
             "method": "PUT",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"name\": \"Meu Novo Nome\"\n}"
+            },
             "headers": [
                 { "name": "Content-Type", "value": "application/json" }
             ],
-            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
-            "body": {
-                "mimeType": "application/json",
-                "text": "{\n  \"name\": \"Nome Atualizado\"\n}"
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.customer_token }}"
             },
             "_type": "request"
         },
         {
-            "_id": "req_u_del_prof",
+            "_id": "req_delete_profile",
             "parentId": "fld_users",
             "url": "{{ _.base_url }}/users/profile",
-            "name": "Delete My Account (Self)",
+            "name": "Delete My Profile",
             "method": "DELETE",
-            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
-            "_type": "request"
-        },
-        {
-            "_id": "req_u_all",
-            "parentId": "fld_users",
-            "url": "{{ _.base_url }}/users",
-            "name": "List All (Admin)",
-            "method": "GET",
-            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
-            "_type": "request"
-        },
-        {
-            "_id": "req_u_id",
-            "parentId": "fld_users",
-            "url": "{{ _.base_url }}/users/ID_AQUI",
-            "name": "Find by ID (Admin)",
-            "method": "GET",
-            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
-            "_type": "request"
-        },
-        {
-            "_id": "req_u_up_id",
-            "parentId": "fld_users",
-            "url": "{{ _.base_url }}/users/ID_AQUI",
-            "name": "Update User by ID (Admin)",
-            "method": "PUT",
-            "headers": [
-                { "name": "Content-Type", "value": "application/json" }
-            ],
-            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
-            "body": {
-                "mimeType": "application/json",
-                "text": "{\n  \"role\": \"organizer\"\n}"
+            "body": {},
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.customer_token }}"
             },
             "_type": "request"
         },
         {
-            "_id": "req_u_del_id",
+            "_id": "req_get_user_tickets",
             "parentId": "fld_users",
-            "url": "{{ _.base_url }}/users/ID_AQUI",
-            "name": "Delete User by ID (Admin)",
-            "method": "DELETE",
-            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
+            "url": "{{ _.base_url }}/users/profile/tickets?page=1&limit=10",
+            "name": "Get My Tickets",
+            "method": "GET",
+            "body": {},
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.customer_token }}"
+            },
             "_type": "request"
         },
         {
-            "_id": "fld_cats",
-            "parentId": "wrk_nexus_final",
+            "_id": "fld_categories",
+            "parentId": "wrk_eventpass",
             "name": "3. Categories",
             "_type": "request_group"
         },
         {
-            "_id": "req_c_all",
-            "parentId": "fld_cats",
+            "_id": "req_create_category",
+            "parentId": "fld_categories",
             "url": "{{ _.base_url }}/categories",
-            "name": "List All",
-            "method": "GET",
-            "_type": "request"
-        },
-        {
-            "_id": "req_c_cre",
-            "parentId": "fld_cats",
-            "url": "{{ _.base_url }}/categories",
-            "name": "Create (Admin)",
+            "name": "Create Category",
             "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"name\": \"Tecnologia\"\n}"
+            },
             "headers": [
                 { "name": "Content-Type", "value": "application/json" }
             ],
-            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
-            "body": {
-                "mimeType": "application/json",
-                "text": "{\n  \"name\": \"Nova Categoria\"\n}"
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.admin_token }}"
             },
             "_type": "request"
         },
         {
-            "_id": "req_c_up",
-            "parentId": "fld_cats",
-            "url": "{{ _.base_url }}/categories/ID_AQUI",
-            "name": "Update (Admin)",
+            "_id": "req_get_categories",
+            "parentId": "fld_categories",
+            "url": "{{ _.base_url }}/categories?page=1&limit=10",
+            "name": "List Categories",
+            "method": "GET",
+            "body": {},
+            "authentication": {},
+            "_type": "request"
+        },
+        {
+            "_id": "req_update_category",
+            "parentId": "fld_categories",
+            "url": "{{ _.base_url }}/categories/COLE_ID_AQUI",
+            "name": "Update Category",
             "method": "PUT",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"name\": \"Nova Tecnologia\"\n}"
+            },
             "headers": [
                 { "name": "Content-Type", "value": "application/json" }
             ],
-            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
-            "body": {
-                "mimeType": "application/json",
-                "text": "{\n  \"name\": \"Nome Editado\"\n}"
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.admin_token }}"
             },
             "_type": "request"
         },
         {
-            "_id": "req_c_del",
-            "parentId": "fld_cats",
-            "url": "{{ _.base_url }}/categories/ID_AQUI",
-            "name": "Delete (Admin)",
+            "_id": "req_delete_category",
+            "parentId": "fld_categories",
+            "url": "{{ _.base_url }}/categories/COLE_ID_AQUI",
+            "name": "Delete Category",
             "method": "DELETE",
-            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
+            "body": {},
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.admin_token }}"
+            },
             "_type": "request"
         },
         {
             "_id": "fld_events",
-            "parentId": "wrk_nexus_final",
+            "parentId": "wrk_eventpass",
             "name": "4. Events",
             "_type": "request_group"
         },
         {
-            "_id": "req_e_all",
+            "_id": "req_create_event",
             "parentId": "fld_events",
             "url": "{{ _.base_url }}/events",
-            "name": "List All (Public)",
-            "method": "GET",
-            "_type": "request"
-        },
-        {
-            "_id": "req_e_id",
-            "parentId": "fld_events",
-            "url": "{{ _.base_url }}/events/ID_AQUI",
-            "name": "Find by ID (Public)",
-            "method": "GET",
-            "_type": "request"
-        },
-        {
-            "_id": "req_e_cre",
-            "parentId": "fld_events",
-            "url": "{{ _.base_url }}/events",
-            "name": "Create (Organizer)",
+            "name": "Create Event (Multipart)",
             "method": "POST",
-            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
             "body": {
                 "mimeType": "multipart/form-data",
                 "params": [
-                    { "name": "title", "value": "Evento Teste" },
-                    { "name": "description", "value": "Descricao do evento" },
-                    { "name": "start_date", "value": "2026-10-10T20:00:00Z" },
-                    { "name": "location", "value": "Local Teste" },
-                    { "name": "total_capacity", "value": "100" },
-                    { "name": "price", "value": "50.00" },
-                    { "name": "categories", "value": "Tecnologia" },
-                    { "name": "banner", "type": "file", "value": "" }
+                    { "name": "title", "value": "Conferência Tech 2026" },
+                    {
+                        "name": "description",
+                        "value": "O maior evento de tecnologia do RS."
+                    },
+                    { "name": "start_date", "value": "2026-12-01T10:00:00Z" },
+                    { "name": "location", "value": "Fiergs, Porto Alegre" },
+                    { "name": "total_capacity", "value": "500" },
+                    { "name": "price", "value": "150.00" },
+                    { "name": "categories", "value": "COLE_ID_AQUI" },
+                    { "name": "banner", "type": "file", "fileName": "" }
                 ]
+            },
+            "headers": [
+                { "name": "Content-Type", "value": "multipart/form-data" }
+            ],
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.organizer_token }}"
             },
             "_type": "request"
         },
         {
-            "_id": "req_e_up",
+            "_id": "req_get_events",
             "parentId": "fld_events",
-            "url": "{{ _.base_url }}/events/ID_AQUI",
-            "name": "Update (Owner/Admin)",
+            "url": "{{ _.base_url }}/events?page=1&limit=10",
+            "name": "List All Events",
+            "method": "GET",
+            "body": {},
+            "authentication": {},
+            "_type": "request"
+        },
+        {
+            "_id": "req_get_event_by_id",
+            "parentId": "fld_events",
+            "url": "{{ _.base_url }}/events/COLE_ID_AQUI",
+            "name": "Get Event By ID",
+            "method": "GET",
+            "body": {},
+            "authentication": {},
+            "_type": "request"
+        },
+        {
+            "_id": "req_update_event",
+            "parentId": "fld_events",
+            "url": "{{ _.base_url }}/events/COLE_ID_AQUI",
+            "name": "Update Event (Multipart)",
             "method": "PUT",
-            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
             "body": {
                 "mimeType": "multipart/form-data",
                 "params": [
-                    { "name": "title", "value": "Titulo Atualizado" },
-                    { "name": "banner", "type": "file", "value": "" }
+                    { "name": "price", "value": "180.00" },
+                    { "name": "banner", "type": "file", "fileName": "" }
                 ]
+            },
+            "headers": [
+                { "name": "Content-Type", "value": "multipart/form-data" }
+            ],
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.organizer_token }}"
             },
             "_type": "request"
         },
         {
-            "_id": "req_e_del",
+            "_id": "req_delete_event",
             "parentId": "fld_events",
-            "url": "{{ _.base_url }}/events/ID_AQUI",
-            "name": "Delete (Owner/Admin)",
+            "url": "{{ _.base_url }}/events/COLE_ID_AQUI",
+            "name": "Delete Event",
             "method": "DELETE",
-            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
+            "body": {},
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.organizer_token }}"
+            },
+            "_type": "request"
+        },
+        {
+            "_id": "req_get_event_tickets",
+            "parentId": "fld_events",
+            "url": "{{ _.base_url }}/events/COLE_ID_AQUI/tickets?page=1&limit=10",
+            "name": "Get Tickets of Event",
+            "method": "GET",
+            "body": {},
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.organizer_token }}"
+            },
             "_type": "request"
         },
         {
             "_id": "fld_tickets",
-            "parentId": "wrk_nexus_final",
+            "parentId": "wrk_eventpass",
             "name": "5. Tickets",
             "_type": "request_group"
         },
         {
-            "_id": "req_t_cre",
+            "_id": "req_buy_ticket",
             "parentId": "fld_tickets",
-            "url": "{{ _.base_url }}/tickets/ID_DO_EVENTO_AQUI",
-            "name": "Buy Ticket (Customer)",
+            "url": "{{ _.base_url }}/tickets/COLE_ID_EVENTO_AQUI",
+            "name": "Buy Ticket (Create)",
             "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{}"
+            },
             "headers": [
                 { "name": "Content-Type", "value": "application/json" }
             ],
-            "authentication": { "type": "bearer", "token": "{{ _.token }}" },
-            "body": { "mimeType": "application/json", "text": "{}" },
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.customer_token }}"
+            },
+            "_type": "request"
+        },
+        {
+            "_id": "req_get_all_tickets",
+            "parentId": "fld_tickets",
+            "url": "{{ _.base_url }}/tickets?page=1&limit=10",
+            "name": "Get All Tickets (Admin)",
+            "method": "GET",
+            "body": {},
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.admin_token }}"
+            },
+            "_type": "request"
+        },
+        {
+            "_id": "req_get_ticket_by_id",
+            "parentId": "fld_tickets",
+            "url": "{{ _.base_url }}/tickets/COLE_ID_AQUI",
+            "name": "Get Ticket By ID (Admin)",
+            "method": "GET",
+            "body": {},
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.admin_token }}"
+            },
+            "_type": "request"
+        },
+        {
+            "_id": "req_use_ticket",
+            "parentId": "fld_tickets",
+            "url": "{{ _.base_url }}/tickets/COLE_ID_TICKET_AQUI",
+            "name": "Check-in (Use Ticket)",
+            "method": "PATCH",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"eventId\": \"COLE_ID_EVENTO_AQUI\"\n}"
+            },
+            "headers": [
+                { "name": "Content-Type", "value": "application/json" }
+            ],
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.organizer_token }}"
+            },
+            "_type": "request"
+        },
+        {
+            "_id": "req_cancel_ticket",
+            "parentId": "fld_tickets",
+            "url": "{{ _.base_url }}/tickets/COLE_ID_TICKET_AQUI/cancel",
+            "name": "Cancel Ticket",
+            "method": "PATCH",
+            "body": {},
+            "authentication": {
+                "type": "bearer",
+                "token": "{{ _.customer_token }}"
+            },
             "_type": "request"
         }
     ]

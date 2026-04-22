@@ -4,15 +4,15 @@ import { ErrorMessages } from "../constants/messages";
 import { Event } from "../entities/event";
 import { UserRole } from "../entities/user";
 import { AppError, HttpStatus } from "../errors/AppError";
-import { CategoryRepository } from "../repositories/category/category.repository";
-import { EventRepository } from "../repositories/event/event.repository";
-import { TicketRepository } from "../repositories/ticket/ticket.repository";
+import { ICategoryRepository } from "../repositories/category/ICategoryRepository";
+import { IEventRepository } from "../repositories/event/IEventRepository";
+import { ITicketRepository } from "../repositories/ticket/ITicketRepository";
 
 export class EventService {
     constructor(
-        private eventRepository: EventRepository,
-        private categoryRepository: CategoryRepository,
-        private ticketRepository: TicketRepository,
+        private eventRepository: IEventRepository,
+        private categoryRepository: ICategoryRepository,
+        private ticketRepository: ITicketRepository,
     ) {}
 
     private async findEventOrThrow(id: string) {

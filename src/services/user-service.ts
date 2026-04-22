@@ -2,15 +2,15 @@ import bcrypt from "bcrypt";
 import { ErrorMessages } from "../constants/messages";
 import { User } from "../entities/user";
 import { AppError, HttpStatus } from "../errors/AppError";
-import { EventRepository } from "../repositories/event/event.repository";
-import { TicketRepository } from "../repositories/ticket/ticket.repository";
-import { UserRepository } from "../repositories/user/user.repository";
+import { IEventRepository } from "../repositories/event/IEventRepository";
+import { ITicketRepository } from "../repositories/ticket/ITicketRepository";
+import { IUserRepository } from "../repositories/user/IUserRepository";
 
 export class UserService {
     constructor(
-        private userRepository: UserRepository,
-        private eventRepository: EventRepository,
-        private ticketRepository: TicketRepository,
+        private userRepository: IUserRepository,
+        private eventRepository: IEventRepository,
+        private ticketRepository: ITicketRepository,
     ) {}
 
     private async findUserOrThrow(id: string) {
