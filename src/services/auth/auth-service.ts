@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { AppError, HttpStatus } from "../errors/AppError";
-import { IUserRepository } from "../repositories/user/IUserRepository";
+import { AppError, HttpStatus } from "../../errors/AppError";
+import { IUserRepository } from "../../repositories/user/IUserRepository";
 
 export class AuthService {
     constructor(private userRepository: IUserRepository) {}

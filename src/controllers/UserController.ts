@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ValidMessages } from "../constants/messages";
 import { UserRole } from "../entities/user";
-import { UserService } from "../services/user-service";
+import { UserService } from "../services/user/user-service";
 
 //ZOD already validates the request data
 export class UserController {

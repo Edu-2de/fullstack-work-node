@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { ValidMessages } from "../constants/messages";
 import { AppError } from "../errors/AppError";
-import { EventService } from "../services/event-service";
+import { EventService } from "../services/event/event-service";
 
 export class EventController {
     constructor(private eventService: EventService) {}

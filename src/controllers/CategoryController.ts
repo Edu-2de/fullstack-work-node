@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { ValidMessages } from "../constants/messages";
-import { CategoryService } from "../services/category-service";
+import { CategoryService } from "../services/category/category-service";
 
 //ZOD already validates the request data
 export class CategoryController {

@@ -1,19 +1,19 @@
 import { CategoryRepository } from "../repositories/category/category.repository";
 import { EventRepository } from "../repositories/event/event.repository";
+import { TicketRepository } from "../repositories/ticket/ticket.repository";
 import { UserRepository } from "../repositories/user/user.repository";
 
-import { AuthService } from "../services/auth-service";
-import { CategoryService } from "../services/category-service";
-import { EventService } from "../services/event-service";
-import { UserService } from "../services/user-service";
+import { AuthService } from "../services/auth/auth-service";
+import { CategoryService } from "../services/category/category-service";
+import { EventService } from "../services/event/event-service";
+import { TicketService } from "../services/ticket/ticket-service";
+import { UserService } from "../services/user/user-service";
 
 import { AuthController } from "../controllers/AuthController";
 import { CategoryController } from "../controllers/CategoryController";
 import { EventController } from "../controllers/EventController";
 import { TicketController } from "../controllers/TicketController";
 import { UserController } from "../controllers/UserController";
-import { TicketRepository } from "../repositories/ticket/ticket.repository";
-import { TicketService } from "../services/ticket-service";
 
 export const userRepository = new UserRepository();
 export const eventRepository = new EventRepository();

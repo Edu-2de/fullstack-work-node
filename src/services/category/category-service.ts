@@ -1,8 +1,8 @@
-import { ErrorMessages } from "../constants/messages";
-import { Category } from "../entities/category";
-import { AppError, HttpStatus } from "../errors/AppError";
-import { ICategoryRepository } from "../repositories/category/ICategoryRepository";
-import { IEventRepository } from "../repositories/event/IEventRepository";
+import { ErrorMessages } from "../../constants/messages";
+import { Category } from "../../entities/category";
+import { AppError, HttpStatus } from "../../errors/AppError";
+import { ICategoryRepository } from "../../repositories/category/ICategoryRepository";
+import { IEventRepository } from "../../repositories/event/IEventRepository";
 
 export class CategoryService {
     constructor(

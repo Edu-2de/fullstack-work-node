@@ -1,12 +1,12 @@
 import fs from "fs";
 import path from "path";
-import { ErrorMessages } from "../constants/messages";
-import { Event } from "../entities/event";
-import { UserRole } from "../entities/user";
-import { AppError, HttpStatus } from "../errors/AppError";
-import { ICategoryRepository } from "../repositories/category/ICategoryRepository";
-import { IEventRepository } from "../repositories/event/IEventRepository";
-import { ITicketRepository } from "../repositories/ticket/ITicketRepository";
+import { ErrorMessages } from "../../constants/messages";
+import { Event } from "../../entities/event";
+import { UserRole } from "../../entities/user";
+import { AppError, HttpStatus } from "../../errors/AppError";
+import { ICategoryRepository } from "../../repositories/category/ICategoryRepository";
+import { IEventRepository } from "../../repositories/event/IEventRepository";
+import { ITicketRepository } from "../../repositories/ticket/ITicketRepository";
 
 export class EventService {
     constructor(

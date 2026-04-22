@@ -1,10 +1,10 @@
 import bcrypt from "bcrypt";
-import { ErrorMessages } from "../constants/messages";
-import { User } from "../entities/user";
-import { AppError, HttpStatus } from "../errors/AppError";
-import { IEventRepository } from "../repositories/event/IEventRepository";
-import { ITicketRepository } from "../repositories/ticket/ITicketRepository";
-import { IUserRepository } from "../repositories/user/IUserRepository";
+import { ErrorMessages } from "../../constants/messages";
+import { User } from "../../entities/user";
+import { AppError, HttpStatus } from "../../errors/AppError";
+import { IEventRepository } from "../../repositories/event/IEventRepository";
+import { ITicketRepository } from "../../repositories/ticket/ITicketRepository";
+import { IUserRepository } from "../../repositories/user/IUserRepository";
 
 export class UserService {
     constructor(

@@ -1,10 +1,10 @@
-import { ErrorMessages } from "../constants/messages";
-import { AppDataSource } from "../data-source";
-import { Event } from "../entities/event";
-import { Ticket, TicketStatus } from "../entities/ticket";
-import { UserRole } from "../entities/user";
-import { AppError, HttpStatus } from "../errors/AppError";
-import { ITicketRepository } from "../repositories/ticket/ITicketRepository";
+import { ErrorMessages } from "../../constants/messages";
+import { AppDataSource } from "../../data-source";
+import { Event } from "../../entities/event";
+import { Ticket, TicketStatus } from "../../entities/ticket";
+import { UserRole } from "../../entities/user";
+import { AppError, HttpStatus } from "../../errors/AppError";
+import { ITicketRepository } from "../../repositories/ticket/ITicketRepository";
 
 export class TicketService {
     constructor(private ticketRepository: ITicketRepository) {}
