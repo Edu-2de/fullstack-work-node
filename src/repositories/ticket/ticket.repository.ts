@@ -22,8 +22,15 @@ export class TicketRepository implements ITicketRepository {
         });
     }
 
-    async findAll(): Promise<Ticket[]> {
-        return await this.ormRepository.find({
+    async findAll(page: number, limit: number) {
+        const skip = (page - 1) * limit;
+
+        const [tickets, total] = await this.ormRepository.findAndCount({
+            skip: skip,
+            take: limit,
+            order: {
+                purchase_date: "DESC",
+            },
             relations: {
                 customer: true,
                 events: {
@@ -48,10 +55,21 @@ export class TicketRepository implements ITicketRepository {
                 },
             },
         });
+
+        return {
+            data: tickets,
+            total_items: total,
+            current_page: page,
+            total_pages: Math.ceil(total / limit),
+        };
     }
 
-    async findByUserId(userId: string): Promise<Ticket[]> {
-        return await this.ormRepository.find({
+    async findByUserId(userId: string, page: number, limit: number) {
+        const skip = (page - 1) * limit;
+
+        const [tickets, total] = await this.ormRepository.findAndCount({
+            skip: skip,
+            take: limit,
             where: {
                 customer: {
                     id: userId,
@@ -59,6 +77,9 @@ export class TicketRepository implements ITicketRepository {
             },
             relations: {
                 events: true,
+            },
+            order: {
+                purchase_date: "DESC",
             },
             select: {
                 events: {
@@ -70,10 +91,21 @@ export class TicketRepository implements ITicketRepository {
                 },
             },
         });
+
+        return {
+            data: tickets,
+            total_items: total,
+            current_page: page,
+            total_pages: Math.ceil(total / limit),
+        };
     }
 
-    async findByEventId(eventId: string): Promise<Ticket[]> {
-        return await this.ormRepository.find({
+    async findByEventId(eventId: string, page: number, limit: number) {
+        const skip = (page - 1) * limit;
+
+        const [tickets, total] = await this.ormRepository.findAndCount({
+            skip: skip,
+            take: limit,
             where: {
                 events: {
                     id: eventId,
@@ -82,6 +114,9 @@ export class TicketRepository implements ITicketRepository {
             relations: {
                 customer: true,
             },
+            order: {
+                purchase_date: "DESC",
+            },
             select: {
                 customer: {
                     id: true,
@@ -89,6 +124,13 @@ export class TicketRepository implements ITicketRepository {
                 },
             },
         });
+
+        return {
+            data: tickets,
+            total_items: total,
+            current_page: page,
+            total_pages: Math.ceil(total / limit),
+        };
     }
 
     async update(id: string, data: Partial<Ticket>): Promise<Ticket | null> {

@@ -36,8 +36,23 @@ export class UserRepository implements IUserRepository {
         });
     }
 
-    async findAll(): Promise<User[]> {
-        return this.ormRepository.find();
+    async findAll(page: number, limit: number) {
+        const skip = (page - 1) * limit;
+
+        const [users, total] = await this.ormRepository.findAndCount({
+            skip: skip,
+            take: limit,
+            order: {
+                created_at: "DESC",
+            },
+        });
+
+        return {
+            data: users,
+            total_items: total,
+            current_page: page,
+            total_pages: Math.ceil(total / limit),
+        };
     }
 
     async findByEmailForLogin(email: string): Promise<User | null> {
