@@ -134,10 +134,16 @@ export class EventService {
         await this.eventRepository.delete(id);
     }
 
-    async findTickets(eventId: string, organizerId: string, userRole: string) {
+    async findTickets(
+        eventId: string,
+        organizerId: string,
+        userRole: string,
+        page: number,
+        limit: number,
+    ) {
         const event = await this.findEventOrThrow(eventId);
         this.ensureOwnerShip(event, organizerId, userRole);
 
-        return await this.ticketRepository.findByEventId(eventId);
+        return await this.ticketRepository.findByEventId(eventId, page, limit);
     }
 }

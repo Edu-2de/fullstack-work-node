@@ -40,8 +40,8 @@ export class CategoryService {
         return newCategory;
     }
 
-    async findAll() {
-        return await this.categoryRepository.findAll();
+    async findAll(page: number, limit: number) {
+        return await this.categoryRepository.findAll(page, limit);
     }
 
     async update(id: string, data: Partial<Category>) {

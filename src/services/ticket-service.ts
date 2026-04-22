@@ -78,8 +78,8 @@ export class TicketService {
         return await this.findTicketOrThrow(id);
     }
 
-    async findAll() {
-        return await this.ticketRepository.findAll();
+    async findAll(page: number, limit: number) {
+        return await this.ticketRepository.findAll(page, limit);
     }
 
     async useTicket(

@@ -57,8 +57,8 @@ export class UserService {
         return await this.findUserOrThrow(id);
     }
 
-    async findAll() {
-        return await this.userRepository.findAll();
+    async findAll(page: number, limit: number) {
+        return await this.userRepository.findAll(page, limit);
     }
 
     async update(id: string, data: Partial<User>) {
@@ -97,7 +97,7 @@ export class UserService {
         await this.userRepository.delete(id);
     }
 
-    async findTickets(id: string) {
-        return await this.ticketRepository.findByUserId(id);
+    async findTickets(id: string, page: number, limit: number) {
+        return await this.ticketRepository.findByUserId(id, page, limit);
     }
 }
