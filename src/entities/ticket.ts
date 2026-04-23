@@ -34,4 +34,7 @@ export class Ticket {
         default: TicketStatus.VALID,
     })
     status!: TicketStatus;
+
+    @Column({ nullable: true })
+    used_at!: Date;
 }

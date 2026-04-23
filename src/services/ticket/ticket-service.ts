@@ -120,8 +120,11 @@ export class TicketService {
             );
         }
 
+        const now = (ticket.used_at = new Date());
+
         return await this.ticketRepository.update(id, {
             status: TicketStatus.USED,
+            used_at: now,
         });
     }
 

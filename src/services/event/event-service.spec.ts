@@ -3,9 +3,7 @@ import { FakeEventRepository } from "../../repositories/event/event.repository.f
 import { EventService } from "./event-service";
 
 const fakeCategoryRepository = {
-    findByNames: jest
-        .fn()
-        .mockResolvedValue([{ id: "id23456789", name: "Rock" }]),
+    findByNames: jest.fn().mockResolvedValue([{ id: "id-rock", name: "Rock" }]),
 } as any;
 
 const fakeTicketRepository = {
@@ -50,10 +48,10 @@ describe("EventService", () => {
 
             expect(event).toHaveProperty("id");
             expect(event.title).toBe("Show de Rock");
-
             expect(event.available_capacity).toBe(100);
             expect(event.organizer.id).toBe(organizerId);
         });
+
         it("nao deve ser possível criar um evento com categorias que nao estão cadastradas", async () => {
             fakeCategoryRepository.findByNames.mockResolvedValueOnce([]);
             const organizerId = "id12345678";
@@ -66,7 +64,6 @@ describe("EventService", () => {
                 location: "Campo Belo",
                 total_capacity: 100,
                 price: 10.5,
-                banner_url: "Teste.png",
             };
 
             await expect(
@@ -78,52 +75,62 @@ describe("EventService", () => {
             ).rejects.toBeInstanceOf(AppError);
         });
     });
-    describe("update", () => {
-        it("deve ser possível fazer o update do evento", async () => {
-            const organizerId = "id12345678";
-            const requestedCategories = ["Rock"];
-            const newCategories = ["Tecnologia"];
 
-            const eventData = {
+    describe("findById", () => {
+        it("deve ser possível encontrar um evento pelo id", async () => {
+            const event = await eventService.create("id12345678", ["Rock"], {
                 title: "Show de Rock",
                 description: "Um show ao ar livre",
                 start_date: new Date("2026-05-26T20:00:00"),
                 location: "Campo Belo",
                 total_capacity: 100,
                 price: 10.5,
-                banner_url: "Teste.png",
-            };
+            });
 
-            const event = await eventService.create(
-                organizerId,
-                requestedCategories,
-                eventData,
-            );
+            const foundEvent = await eventService.findById(event.id);
 
-            fakeCategoryRepository.findByNames.mockResolvedValueOnce([
-                { id: "id-tech", name: "Tecnologia" },
-            ]);
-
-            const updatedEvent = await eventService.update(
-                event.id,
-                organizerId,
-                "organizer",
-                newCategories,
-                {
-                    title: "Novo Titulo",
-                },
-            );
-            expect(updatedEvent?.title).toBe("Novo Titulo");
-            expect(updatedEvent?.categories[0].name).toBe("Tecnologia");
+            expect(foundEvent).toHaveProperty("id");
+            expect(foundEvent.id).toBe(event.id);
         });
 
-        it("nao deve ser possível atualizar um evento se o usuário nao for o organizador real", async () => {
-            const organizerId = "organizador-legitimo-123";
-            const hackerId = "hacker-malicioso-999";
+        it("nao deve ser possível encontrar um evento com id inexistente", async () => {
+            await expect(
+                eventService.findById("id-inexistente"),
+            ).rejects.toBeInstanceOf(AppError);
+        });
+    });
 
-            fakeCategoryRepository.findByNames.mockResolvedValueOnce([
-                { id: "id-rock", name: "Rock" },
-            ]);
+    describe("findAll", () => {
+        it("deve ser possível listar todos os eventos", async () => {
+            await eventService.create("id12345678", ["Rock"], {
+                title: "Show de Rock 1",
+                description: "Um show ao ar livre",
+                start_date: new Date("2026-05-26T20:00:00"),
+                location: "Campo Belo",
+                total_capacity: 100,
+                price: 10.5,
+            });
+
+            await eventService.create("id12345678", ["Rock"], {
+                title: "Show de Rock 2",
+                description: "Outro show ao ar livre",
+                start_date: new Date("2026-06-26T20:00:00"),
+                location: "Estadio",
+                total_capacity: 500,
+                price: 50.0,
+            });
+
+            const result = await eventService.findAll(1, 10);
+
+            expect(result).toHaveProperty("data");
+            expect(result.total_items).toBe(2);
+            expect(result.data.length).toBe(2);
+        });
+    });
+
+    describe("update", () => {
+        it("deve ser possível fazer o update do evento", async () => {
+            const organizerId = "id12345678";
 
             const event = await eventService.create(organizerId, ["Rock"], {
                 title: "Show de Rock",
@@ -134,19 +141,53 @@ describe("EventService", () => {
                 price: 10.5,
             });
 
+            fakeCategoryRepository.findByNames.mockResolvedValueOnce([
+                { id: "id-tech", name: "Tecnologia" },
+            ]);
+
+            const updatedEvent = await eventService.update(
+                event.id,
+                organizerId,
+                "organizer",
+                ["Tecnologia"],
+                {
+                    title: "Novo Titulo",
+                },
+            );
+
+            expect(updatedEvent?.title).toBe("Novo Titulo");
+            expect(updatedEvent?.categories[0].name).toBe("Tecnologia");
+        });
+
+        it("nao deve ser possível atualizar um evento se o usuário nao for o organizador real", async () => {
+            const event = await eventService.create(
+                "organizador-legitimo",
+                ["Rock"],
+                {
+                    title: "Show de Rock",
+                    description: "Um show ao ar livre",
+                    start_date: new Date("2026-05-26T20:00:00"),
+                    location: "Campo Belo",
+                    total_capacity: 100,
+                    price: 10.5,
+                },
+            );
+
             await expect(
-                eventService.update(event.id, hackerId, "customer", ["Rock"], {
-                    title: "Titulo Hackeado",
-                }),
+                eventService.update(
+                    event.id,
+                    "hacker-999",
+                    "customer",
+                    ["Rock"],
+                    {
+                        title: "Titulo Hackeado",
+                    },
+                ),
             ).rejects.toBeInstanceOf(AppError);
         });
 
         it("nao deve ser possível atualizar a capacidade disponível para um valor maior que a total", async () => {
             const organizerId = "id12345678";
-
-            fakeCategoryRepository.findByNames.mockResolvedValueOnce([
-                { id: "id-rock", name: "Rock" },
-            ]);
 
             const event = await eventService.create(organizerId, ["Rock"], {
                 title: "Show de Rock",
@@ -177,10 +218,6 @@ describe("EventService", () => {
         it("deve ser possível deletar um evento (Soft Delete)", async () => {
             const organizerId = "id12345678";
 
-            fakeCategoryRepository.findByNames.mockResolvedValueOnce([
-                { id: "id-rock", name: "Rock" },
-            ]);
-
             const event = await eventService.create(organizerId, ["Rock"], {
                 title: "Show de Rock",
                 description: "Um show",
@@ -199,10 +236,6 @@ describe("EventService", () => {
         it("nao deve ser possível deletar um evento se o usuário nao for o organizador real", async () => {
             const organizerId = "organizador-legitimo-123";
             const hackerId = "hacker-malicioso-999";
-
-            fakeCategoryRepository.findByNames.mockResolvedValueOnce([
-                { id: "id-rock", name: "Rock" },
-            ]);
 
             const event = await eventService.create(organizerId, ["Rock"], {
                 title: "Show de Rock",
