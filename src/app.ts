@@ -1,6 +1,8 @@
 import cors from "cors";
 import express from "express";
+import rateLimit from "express-rate-limit";
 import helmet from "helmet";
+import path from "path";
 import "reflect-metadata";
 import logger from "./config/logger";
 import { AppDataSource } from "./data-source";
@@ -20,8 +22,16 @@ app.use(
         allowedHeaders: ["Content-Type", "Authorization"],
     }),
 );
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    message:
+        "Muitas requisições deste IP, por favor tente novamente mais tarde.",
+});
+app.use(limiter);
 
 app.use(express.json());
+app.use("/files", express.static(path.resolve(__dirname, "..", "uploads")));
 app.use((req, res, next) => {
     logger.info(`Recebendo: ${req.method} ${req.url}`);
     next();

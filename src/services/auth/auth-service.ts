@@ -19,10 +19,14 @@ export class AuthService {
             throw new AppError("Senha Errada", HttpStatus.UNAUTHORIZED);
         }
 
-        const token = jwt.sign({ role: user.role }, "CHAVE AQUI", {
-            subject: user.id,
-            expiresIn: "1d",
-        });
+        const token = jwt.sign(
+            { role: user.role },
+            process.env.JWT_SECRET || "default_dev_secret",
+            {
+                subject: user.id,
+                expiresIn: "1d",
+            },
+        );
 
         return {
             user: {

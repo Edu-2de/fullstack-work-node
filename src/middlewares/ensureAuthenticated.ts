@@ -22,7 +22,10 @@ export function ensureAuthenticated(
         const [, token] = authHeader.split(" ");
 
         try {
-            const decoded = verify(token, "CHAVE AQUI");
+            const decoded = verify(
+                token,
+                process.env.JWT_SECRET || "default_dev_secret",
+            );
 
             const { sub, role } = decoded as { sub: string; role: string };
 
