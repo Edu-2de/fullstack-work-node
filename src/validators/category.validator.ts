@@ -7,7 +7,10 @@ export const createCategory = z.object({
         .min(1, ValidationMessages.MIN_LENGTH(1))
         .max(255, ValidationMessages.MAX_LENGTH(255))
         .trim() //REMOVE starting and ending spaces
-        .toLowerCase(),
+        .toLowerCase()
+        .transform((val) => {
+            return val.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }),
 });
 
 export const updateCategory = createCategory

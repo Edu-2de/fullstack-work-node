@@ -137,6 +137,14 @@ export class EventController {
         }
     }
 
+    async cancel(req: Request, res: Response) {
+        const eventId = req.params.id as string;
+        const organizerId = req.user.id;
+        const userRole = req.user.role;
+        await this.eventService.cancel(eventId, organizerId, userRole);
+        return res.status(200).json("Evento cancelado com sucesso");
+    }
+
     async delete(req: Request, res: Response) {
         const eventId = req.params.id as string;
         const organizerId = req.user.id;

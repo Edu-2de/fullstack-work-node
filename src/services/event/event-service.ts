@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { ErrorMessages } from "../../constants/messages";
-import { Event } from "../../entities/event";
+import { Event, EventStatus } from "../../entities/event";
 import { UserRole } from "../../entities/user";
 import { AppError, HttpStatus } from "../../errors/AppError";
 import { ICategoryRepository } from "../../repositories/category/ICategoryRepository";
@@ -128,6 +128,7 @@ export class EventService {
                 __dirname,
                 "..",
                 "..",
+                "..",
                 "uploads",
                 eventExists.banner_url,
             );
@@ -139,13 +140,37 @@ export class EventService {
         return updatedEvent;
     }
 
+    async cancel(id: string, organizerId: string, userRole: string) {
+        const eventExists = await this.findEventOrThrow(id);
+        this.ensureOwnerShip(eventExists, organizerId, userRole);
+
+        if (eventExists.status !== EventStatus.CANCELLED) {
+            await this.eventRepository.update(
+                eventExists.id,
+                eventExists.categories,
+                { status: EventStatus.CANCELLED },
+            );
+        }
+
+        await this.ticketRepository.cancelAllTicketsByEventId(eventExists.id);
+    }
+
     async delete(id: string, organizerId: string, userRole: string) {
         const eventExists = await this.findEventOrThrow(id);
         this.ensureOwnerShip(eventExists, organizerId, userRole);
 
+        const tickets = await this.ticketRepository.findByEventId(id, 1, 1);
+        if (tickets.total_items > 0) {
+            throw new AppError(
+                "Não é possível excluir um evento que já possui ingressos vendidos. Utilize a opção de cancelar o evento.",
+                HttpStatus.CONFLICT,
+            );
+        }
+
         if (eventExists.banner_url) {
             const filePath = path.resolve(
                 __dirname,
+                "..",
                 "..",
                 "..",
                 "uploads",
@@ -155,6 +180,8 @@ export class EventService {
                 fs.unlinkSync(filePath);
             }
         }
+
+        this.ticketRepository.cancelAllTicketsByEventId(eventExists.id);
 
         await this.eventRepository.delete(id);
     }

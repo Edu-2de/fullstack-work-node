@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { ErrorMessages } from "../../constants/messages";
-import { User } from "../../entities/user";
+import { User, UserRole } from "../../entities/user";
 import { AppError, HttpStatus } from "../../errors/AppError";
 import { IEventRepository } from "../../repositories/event/IEventRepository";
 import { ITicketRepository } from "../../repositories/ticket/ITicketRepository";
@@ -86,7 +86,20 @@ export class UserService {
     }
 
     async delete(id: string) {
-        await this.findUserOrThrow(id);
+        const user = await this.findUserOrThrow(id);
+
+        if (user.role === UserRole.ORGANIZER) {
+            const hasActiveEvents =
+                await this.eventRepository.findByOrganizerId(id);
+
+            if (hasActiveEvents) {
+                throw new AppError(
+                    "Você possui eventos ativos (Publicados). Por favor, cancele todos os seus eventos antes de excluir a sua conta.",
+                    HttpStatus.CONFLICT,
+                );
+            }
+        }
+
         await this.userRepository.delete(id);
     }
 

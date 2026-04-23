@@ -1,7 +1,7 @@
 import { FindOptionsWhere, ILike, MoreThanOrEqual, Repository } from "typeorm";
 import { AppDataSource } from "../../data-source";
 import { Category } from "../../entities/category";
-import { Event } from "../../entities/event";
+import { Event, EventStatus } from "../../entities/event";
 import { IEventRepository } from "./IEventRepository";
 
 export class EventRepository implements IEventRepository {
@@ -112,6 +112,7 @@ export class EventRepository implements IEventRepository {
                 organizer: {
                     id: organizerId,
                 },
+                status: EventStatus.PUBLISHED,
             },
         });
     }

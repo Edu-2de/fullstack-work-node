@@ -159,6 +159,13 @@ export class TicketRepository implements ITicketRepository {
         return ticketUpdate;
     }
 
+    async cancelAllTicketsByEventId(eventId: string): Promise<void> {
+        await this.ormRepository.update(
+            { events: { id: eventId } },
+            { status: TicketStatus.CANCELLED },
+        );
+    }
+
     async cancelTicket(id: string): Promise<Ticket | null> {
         const ticket = await this.ormRepository.findOne({ where: { id } });
         if (!ticket) {

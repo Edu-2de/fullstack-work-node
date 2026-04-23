@@ -11,5 +11,6 @@ export interface ITicketRepository {
     findByUserId(userId: string, page: number, limit: number): any;
     findByEventId(eventId: string, page: number, limit: number): any;
     update(id: string, data: Partial<Ticket>): Promise<Ticket | null>;
+    cancelAllTicketsByEventId(eventId: string): Promise<void>;
     cancelTicket(id: string): Promise<Ticket | null>;
 }

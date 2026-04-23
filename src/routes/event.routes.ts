@@ -40,6 +40,15 @@ eventRoutes.put(
     (req, res) => eventController.update(req, res),
 );
 
+// CANCEL event
+eventRoutes.patch(
+    "/:id/cancel",
+    ensureAuthenticated,
+    ensureRole([UserRole.ORGANIZER, UserRole.ADMIN]),
+    validateData(idParamSchema, "params"),
+    (req, res) => eventController.cancel(req, res),
+);
+
 //DELETE event
 eventRoutes.delete(
     "/:id",
