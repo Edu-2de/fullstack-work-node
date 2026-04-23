@@ -87,6 +87,15 @@ export class FakeTicketRepository implements ITicketRepository {
         return ticket;
     }
 
+    async cancelAllTicketsByEventId(eventId: string): Promise<void> {
+        this.tickets = this.tickets.map((ticket) => {
+            if (ticket.events?.id === eventId) {
+                ticket.status = TicketStatus.CANCELLED;
+            }
+            return ticket;
+        });
+    }
+
     async cancelTicket(id: string): Promise<Ticket | null> {
         const ticket = this.tickets.find((t) => t.id === id);
         if (!ticket) {

@@ -1,3 +1,4 @@
+import { EventStatus } from "../../entities/event";
 import { AppError } from "../../errors/AppError";
 import { FakeEventRepository } from "../../repositories/event/event.repository.fake";
 import { EventService } from "./event-service";
@@ -8,6 +9,7 @@ const fakeCategoryRepository = {
 
 const fakeTicketRepository = {
     findByEventId: jest.fn().mockResolvedValue({ total_items: 0 }),
+    cancelAllTicketsByEventId: jest.fn().mockResolvedValue(undefined),
 } as any;
 
 describe("EventService", () => {
@@ -26,18 +28,18 @@ describe("EventService", () => {
     });
 
     describe("create", () => {
-        it("deve ser possível criar um evento", async () => {
+        it("should be able to create an event", async () => {
             const organizerId = "id12345678";
             const requestedCategories = ["Rock"];
 
             const eventData = {
-                title: "Show de Rock",
-                description: "Um show ao ar livre",
+                title: "Rock Concert",
+                description: "An outdoor rock concert",
                 start_date: new Date("2026-05-26T20:00:00"),
-                location: "Campo Belo",
+                location: "Central Park",
                 total_capacity: 100,
                 price: 10.5,
-                banner_url: "Teste.png",
+                banner_url: "Test.png",
             };
 
             const event = await eventService.create(
@@ -47,21 +49,22 @@ describe("EventService", () => {
             );
 
             expect(event).toHaveProperty("id");
-            expect(event.title).toBe("Show de Rock");
+            expect(event.title).toBe("Rock Concert");
             expect(event.available_capacity).toBe(100);
             expect(event.organizer.id).toBe(organizerId);
+            expect(event.status).toBe(EventStatus.PUBLISHED);
         });
 
-        it("nao deve ser possível criar um evento com categorias que nao estão cadastradas", async () => {
+        it("should not be able to create an event with unregistered categories", async () => {
             fakeCategoryRepository.findByNames.mockResolvedValueOnce([]);
             const organizerId = "id12345678";
-            const requestedCategories = ["TESTE"];
+            const requestedCategories = ["TEST"];
 
             const eventData = {
-                title: "Show de Rock",
-                description: "Um show ao ar livre",
+                title: "Rock Concert",
+                description: "An outdoor rock concert",
                 start_date: new Date("2026-05-26T20:00:00"),
-                location: "Campo Belo",
+                location: "Central Park",
                 total_capacity: 100,
                 price: 10.5,
             };
@@ -77,12 +80,12 @@ describe("EventService", () => {
     });
 
     describe("findById", () => {
-        it("deve ser possível encontrar um evento pelo id", async () => {
+        it("should be able to find an event by id", async () => {
             const event = await eventService.create("id12345678", ["Rock"], {
-                title: "Show de Rock",
-                description: "Um show ao ar livre",
+                title: "Rock Concert",
+                description: "An outdoor rock concert",
                 start_date: new Date("2026-05-26T20:00:00"),
-                location: "Campo Belo",
+                location: "Central Park",
                 total_capacity: 100,
                 price: 10.5,
             });
@@ -93,29 +96,29 @@ describe("EventService", () => {
             expect(foundEvent.id).toBe(event.id);
         });
 
-        it("nao deve ser possível encontrar um evento com id inexistente", async () => {
+        it("should not be able to find a non-existing event", async () => {
             await expect(
-                eventService.findById("id-inexistente"),
+                eventService.findById("non-existing-id"),
             ).rejects.toBeInstanceOf(AppError);
         });
     });
 
     describe("findAll", () => {
-        it("deve ser possível listar todos os eventos", async () => {
+        it("should be able to list all events", async () => {
             await eventService.create("id12345678", ["Rock"], {
-                title: "Show de Rock 1",
-                description: "Um show ao ar livre",
+                title: "Rock Concert 1",
+                description: "An outdoor rock concert",
                 start_date: new Date("2026-05-26T20:00:00"),
-                location: "Campo Belo",
+                location: "Central Park",
                 total_capacity: 100,
                 price: 10.5,
             });
 
             await eventService.create("id12345678", ["Rock"], {
-                title: "Show de Rock 2",
-                description: "Outro show ao ar livre",
+                title: "Rock Concert 2",
+                description: "Another outdoor rock concert",
                 start_date: new Date("2026-06-26T20:00:00"),
-                location: "Estadio",
+                location: "Stadium",
                 total_capacity: 500,
                 price: 50.0,
             });
@@ -129,45 +132,45 @@ describe("EventService", () => {
     });
 
     describe("update", () => {
-        it("deve ser possível fazer o update do evento", async () => {
+        it("should be able to update an event", async () => {
             const organizerId = "id12345678";
 
             const event = await eventService.create(organizerId, ["Rock"], {
-                title: "Show de Rock",
-                description: "Um show ao ar livre",
+                title: "Rock Concert",
+                description: "An outdoor rock concert",
                 start_date: new Date("2026-05-26T20:00:00"),
-                location: "Campo Belo",
+                location: "Central Park",
                 total_capacity: 100,
                 price: 10.5,
             });
 
             fakeCategoryRepository.findByNames.mockResolvedValueOnce([
-                { id: "id-tech", name: "Tecnologia" },
+                { id: "id-tech", name: "Technology" },
             ]);
 
             const updatedEvent = await eventService.update(
                 event.id,
                 organizerId,
                 "organizer",
-                ["Tecnologia"],
+                ["Technology"],
                 {
-                    title: "Novo Titulo",
+                    title: "New Title",
                 },
             );
 
-            expect(updatedEvent?.title).toBe("Novo Titulo");
-            expect(updatedEvent?.categories[0].name).toBe("Tecnologia");
+            expect(updatedEvent?.title).toBe("New Title");
+            expect(updatedEvent?.categories[0].name).toBe("Technology");
         });
 
-        it("nao deve ser possível atualizar um evento se o usuário nao for o organizador real", async () => {
+        it("should not be able to update if the user is not the real organizer", async () => {
             const event = await eventService.create(
-                "organizador-legitimo",
+                "legit-organizer",
                 ["Rock"],
                 {
-                    title: "Show de Rock",
-                    description: "Um show ao ar livre",
+                    title: "Rock Concert",
+                    description: "An outdoor rock concert",
                     start_date: new Date("2026-05-26T20:00:00"),
-                    location: "Campo Belo",
+                    location: "Central Park",
                     total_capacity: 100,
                     price: 10.5,
                 },
@@ -180,20 +183,20 @@ describe("EventService", () => {
                     "customer",
                     ["Rock"],
                     {
-                        title: "Titulo Hackeado",
+                        title: "Hacked Title",
                     },
                 ),
             ).rejects.toBeInstanceOf(AppError);
         });
 
-        it("nao deve ser possível atualizar a capacidade disponível para um valor maior que a total", async () => {
+        it("should not be able to update available capacity to a value greater than total capacity", async () => {
             const organizerId = "id12345678";
 
             const event = await eventService.create(organizerId, ["Rock"], {
-                title: "Show de Rock",
-                description: "Um show ao ar livre",
+                title: "Rock Concert",
+                description: "An outdoor rock concert",
                 start_date: new Date("2026-05-26T20:00:00"),
-                location: "Campo Belo",
+                location: "Central Park",
                 total_capacity: 100,
                 price: 10.5,
             });
@@ -214,17 +217,65 @@ describe("EventService", () => {
         });
     });
 
-    describe("delete", () => {
-        it("deve ser possível deletar um evento (Soft Delete)", async () => {
+    describe("cancel", () => {
+        it("should be able to cancel an event and cascade to tickets", async () => {
             const organizerId = "id12345678";
 
             const event = await eventService.create(organizerId, ["Rock"], {
-                title: "Show de Rock",
-                description: "Um show",
+                title: "Rock Concert",
+                description: "An outdoor rock concert",
                 start_date: new Date("2026-05-26T20:00:00"),
-                location: "Campo Belo",
+                location: "Central Park",
                 total_capacity: 100,
                 price: 10.5,
+            });
+
+            await eventService.cancel(event.id, organizerId, "organizer");
+
+            const canceledEvent = await fakeEventRepository.findById(event.id);
+
+            expect(canceledEvent?.status).toBe(EventStatus.CANCELLED);
+            expect(
+                fakeTicketRepository.cancelAllTicketsByEventId,
+            ).toHaveBeenCalledWith(event.id);
+        });
+
+        it("should not be able to cancel an event if the user is not the real organizer", async () => {
+            const event = await eventService.create(
+                "legit-organizer",
+                ["Rock"],
+                {
+                    title: "Rock Concert",
+                    description: "An outdoor rock concert",
+                    start_date: new Date("2026-05-26T20:00:00"),
+                    location: "Central Park",
+                    total_capacity: 100,
+                    price: 10.5,
+                },
+            );
+
+            await expect(
+                eventService.cancel(event.id, "hacker-999", "customer"),
+            ).rejects.toBeInstanceOf(AppError);
+        });
+    });
+
+    describe("delete", () => {
+        it("should be able to soft delete an event with no sold tickets", async () => {
+            const organizerId = "id12345678";
+
+            const event = await eventService.create(organizerId, ["Rock"], {
+                title: "Rock Concert",
+                description: "A concert",
+                start_date: new Date("2026-05-26T20:00:00"),
+                location: "Central Park",
+                total_capacity: 100,
+                price: 10.5,
+            });
+
+            // Simulamos que não há ingressos vendidos
+            fakeTicketRepository.findByEventId.mockResolvedValueOnce({
+                total_items: 0,
             });
 
             await eventService.delete(event.id, organizerId, "organizer");
@@ -233,21 +284,44 @@ describe("EventService", () => {
             expect(deletedEvent).toBeNull();
         });
 
-        it("nao deve ser possível deletar um evento se o usuário nao for o organizador real", async () => {
-            const organizerId = "organizador-legitimo-123";
-            const hackerId = "hacker-malicioso-999";
+        it("should not be able to delete an event that has sold tickets", async () => {
+            const organizerId = "id12345678";
 
             const event = await eventService.create(organizerId, ["Rock"], {
-                title: "Show de Rock",
-                description: "Um show ao ar livre",
+                title: "Rock Concert",
+                description: "A concert",
                 start_date: new Date("2026-05-26T20:00:00"),
-                location: "Campo Belo",
+                location: "Central Park",
                 total_capacity: 100,
                 price: 10.5,
             });
 
+            // Simulamos que existem 5 ingressos já vendidos para este evento
+            fakeTicketRepository.findByEventId.mockResolvedValueOnce({
+                total_items: 5,
+            });
+
             await expect(
-                eventService.delete(event.id, hackerId, "customer"),
+                eventService.delete(event.id, organizerId, "organizer"),
+            ).rejects.toBeInstanceOf(AppError);
+        });
+
+        it("should not be able to delete an event if the user is not the real organizer", async () => {
+            const event = await eventService.create(
+                "legit-organizer",
+                ["Rock"],
+                {
+                    title: "Rock Concert",
+                    description: "An outdoor rock concert",
+                    start_date: new Date("2026-05-26T20:00:00"),
+                    location: "Central Park",
+                    total_capacity: 100,
+                    price: 10.5,
+                },
+            );
+
+            await expect(
+                eventService.delete(event.id, "hacker-999", "customer"),
             ).rejects.toBeInstanceOf(AppError);
         });
     });

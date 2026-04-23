@@ -1,5 +1,5 @@
 import { Category } from "../../entities/category";
-import { Event } from "../../entities/event";
+import { Event, EventStatus } from "../../entities/event";
 import { IEventRepository } from "./IEventRepository";
 
 export class FakeEventRepository implements IEventRepository {
@@ -14,6 +14,7 @@ export class FakeEventRepository implements IEventRepository {
 
         Object.assign(event, {
             id: Math.random().toString(),
+            status: EventStatus.PUBLISHED,
             ...data,
             organizer: { id: organizer_id },
             categories: categories ? categories : [],
