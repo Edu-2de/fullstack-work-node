@@ -19,6 +19,7 @@ export class TicketRepository implements ITicketRepository {
                     organizer: true,
                 },
             },
+            withDeleted: true,
         });
     }
 

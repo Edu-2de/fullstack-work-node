@@ -60,6 +60,14 @@ export class UserController {
         return res.status(200).json(users);
     }
 
+    async findAllDeleted(req: Request, res: Response) {
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+
+        const users = await this.userService.findAllDeleted(page, limit);
+        return res.status(200).json(users);
+    }
+
     async updateProfile(req: Request, res: Response) {
         const userId = req.user.id;
         const data = req.body;

@@ -62,6 +62,10 @@ export class UserService {
         return await this.userRepository.findAll(page, limit, search);
     }
 
+    async findAllDeleted(page: number, limit: number) {
+        return await this.userRepository.findAllDeleted(page, limit);
+    }
+
     async update(id: string, data: Partial<User>) {
         await this.findUserOrThrow(id);
         await this.ensureEmailIsUnique(data.email, id);

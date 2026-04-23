@@ -64,6 +64,21 @@ export class FakeUserRepository implements IUserRepository {
         return user;
     }
 
+    async findAllDeleted(page: number, limit: number) {
+        let filteredUsers = this.users;
+        filteredUsers = filteredUsers.filter((u) => u.deleted_at !== null);
+        const skip = (page - 1) * limit;
+
+        const paginatedUsers = filteredUsers.slice(skip, skip + limit);
+
+        return {
+            data: paginatedUsers,
+            total_items: filteredUsers.length,
+            current_page: page,
+            total_pages: Math.ceil(filteredUsers.length / limit),
+        };
+    }
+
     async delete(id: string): Promise<void> {
         const index = this.users.findIndex((u) => u.id === id);
         if (index !== -1) {

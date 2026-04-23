@@ -78,6 +78,19 @@ export class FakeTicketRepository implements ITicketRepository {
         };
     }
 
+    async verifyTicketsValidsByUserId(userId: string): Promise<boolean> {
+        const filteredTickets = this.tickets;
+        filteredTickets.filter((t) => t.customer?.id === userId);
+        const tickets = filteredTickets.find(
+            (t) => t.status === TicketStatus.VALID,
+        );
+        if (tickets) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     async update(id: string, data: Partial<Ticket>): Promise<Ticket | null> {
         const ticket = this.tickets.find((t) => t.id === id);
         if (!ticket) {

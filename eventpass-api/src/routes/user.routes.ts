@@ -33,6 +33,14 @@ userRoutes.get("/profile", ensureAuthenticated, (req, res) =>
     userController.findProfile(req, res),
 );
 
+//GET ALL deleted users
+userRoutes.get(
+    "/teste",
+    ensureAuthenticated,
+    ensureRole([UserRole.ADMIN]),
+    (req, res) => userController.findAllDeleted(req, res),
+);
+
 //GET user BY ID
 userRoutes.get(
     "/:id",
