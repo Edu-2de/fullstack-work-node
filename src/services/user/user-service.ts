@@ -87,13 +87,6 @@ export class UserService {
 
     async delete(id: string) {
         await this.findUserOrThrow(id);
-        const hasEvents = await this.eventRepository.findByOrganizerId(id);
-        if (hasEvents) {
-            throw new AppError(
-                ErrorMessages.IN_USE("usuário", "eventos"),
-                HttpStatus.CONFLICT,
-            );
-        }
         await this.userRepository.delete(id);
     }
 
