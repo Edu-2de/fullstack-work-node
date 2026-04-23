@@ -45,6 +45,6 @@ export class User {
     @OneToMany(() => Event, (event) => event.organizer)
     events!: Event[];
 
-    @DeleteDateColumn()
+    @DeleteDateColumn({ select: false })
     deleted_at!: Date;
 }

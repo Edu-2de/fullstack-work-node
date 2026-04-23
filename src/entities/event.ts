@@ -10,6 +10,11 @@ import {
 import { Category } from "./category";
 import { User } from "./user";
 
+export enum EventStatus {
+    PUBLISHED = "published",
+    CANCELLED = "cancelled",
+}
+
 @Entity("events")
 export class Event {
     @PrimaryGeneratedColumn("uuid")
@@ -46,6 +51,13 @@ export class Event {
     @JoinTable()
     categories!: Category[];
 
-    @DeleteDateColumn()
+    @Column({
+        type: "enum",
+        enum: EventStatus,
+        default: EventStatus.PUBLISHED,
+    })
+    status!: EventStatus;
+
+    @DeleteDateColumn({ select: false })
     deleted_at!: Date;
 }
