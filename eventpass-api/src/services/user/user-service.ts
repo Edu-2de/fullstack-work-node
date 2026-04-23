@@ -48,7 +48,8 @@ export class UserService {
         await this.ensureEmailIsUnique(data.email);
         await this.hashPasswordIfNeeded(data);
         const user = await this.userRepository.create(data);
-        //It was necessary to remove the password in the create function ( "select: false" doesn't work here).
+        //It was necessary to remove the password in the create function
+        //( "select: false" doesn't work here).
         const { password_encrypted, ...userWithoutPassword } = user;
         return userWithoutPassword;
     }
@@ -95,6 +96,18 @@ export class UserService {
             if (hasActiveEvents) {
                 throw new AppError(
                     "Você possui eventos ativos (Publicados). Por favor, cancele todos os seus eventos antes de excluir a sua conta.",
+                    HttpStatus.CONFLICT,
+                );
+            }
+        }
+        if (user.role === UserRole.CUSTOMER) {
+            const hasTicketsActive =
+                await this.ticketRepository.verifyTicketsValidsByUserId(
+                    user.id,
+                );
+            if (hasTicketsActive) {
+                throw new AppError(
+                    "Voce tem tickets ativos, nao pode deletar sua conta ate usar-los ou cancelar-los.",
                     HttpStatus.CONFLICT,
                 );
             }

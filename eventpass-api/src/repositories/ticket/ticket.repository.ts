@@ -47,6 +47,7 @@ export class TicketRepository implements ITicketRepository {
             order: {
                 purchase_date: "DESC",
             },
+            withDeleted: true,
             relations: {
                 customer: true,
                 events: {
@@ -59,6 +60,7 @@ export class TicketRepository implements ITicketRepository {
                     id: true,
                     name: true,
                     role: true,
+                    deleted_at: true,
                 },
                 events: {
                     id: true,
@@ -147,6 +149,17 @@ export class TicketRepository implements ITicketRepository {
             current_page: page,
             total_pages: Math.ceil(total / limit),
         };
+    }
+
+    async verifyTicketsValidsByUserId(userId: string): Promise<boolean> {
+        return await this.ormRepository.exists({
+            where: {
+                customer: {
+                    id: userId,
+                },
+                status: TicketStatus.VALID,
+            },
+        });
     }
 
     async update(id: string, data: Partial<Ticket>): Promise<Ticket | null> {

@@ -68,6 +68,7 @@ export class EventRepository implements IEventRepository {
 
         const [events, total] = await this.ormRepository.findAndCount({
             where: where,
+
             skip: skip,
             take: limit,
             order: {
@@ -77,6 +78,7 @@ export class EventRepository implements IEventRepository {
                 categories: true,
                 organizer: true,
             },
+            withDeleted: true,
             select: {
                 organizer: {
                     id: true,
@@ -94,7 +96,7 @@ export class EventRepository implements IEventRepository {
     }
 
     async findByCategoryId(categoryId: string): Promise<boolean> {
-        return this.ormRepository.exists({
+        return await this.ormRepository.exists({
             relations: {
                 categories: true,
             },
