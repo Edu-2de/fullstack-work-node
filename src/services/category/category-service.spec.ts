@@ -85,7 +85,7 @@ describe("Category Service", () => {
         it("nao deve ser possível deletar uma categoria que esta vinculada a um evento", async () => {
             const category = await categoryService.create({ name: "Rock" });
 
-            fakeEventRepository.findByCategoryId.mockResolvedValueOce(true);
+            fakeEventRepository.findByCategoryId.mockResolvedValueOnce(true);
 
             await expect(
                 categoryService.delete(category.id),

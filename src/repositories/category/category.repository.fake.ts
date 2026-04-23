@@ -62,9 +62,7 @@ export class FakeCategoryRepository implements ICategoryRepository {
         if (!category) {
             return null;
         }
-        if (data.name) {
-            category.name = data.name;
-        }
+        Object.assign(category, data);
         return category;
     }
 
