@@ -1,6 +1,7 @@
 import {
     Column,
     CreateDateColumn,
+    DeleteDateColumn,
     Entity,
     OneToMany,
     PrimaryGeneratedColumn,
@@ -43,4 +44,7 @@ export class User {
 
     @OneToMany(() => Event, (event) => event.organizer)
     events!: Event[];
+
+    @DeleteDateColumn()
+    deleted_at!: Date;
 }

@@ -1,5 +1,6 @@
 import {
     Column,
+    DeleteDateColumn,
     Entity,
     JoinTable,
     ManyToMany,
@@ -44,4 +45,7 @@ export class Event {
     @ManyToMany(() => Category)
     @JoinTable()
     categories!: Category[];
+
+    @DeleteDateColumn()
+    deleted_at!: Date;
 }
