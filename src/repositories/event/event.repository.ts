@@ -137,6 +137,6 @@ export class EventRepository implements IEventRepository {
     }
 
     async delete(id: string): Promise<void> {
-        await this.ormRepository.delete(id);
+        await this.ormRepository.softDelete(id);
     }
 }
