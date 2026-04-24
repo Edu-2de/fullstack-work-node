@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "main": "app.ts",
     "scripts": {
-        "start": "node dist/app.js",
+        "start": "npx typeorm migration:run -d dist/data-source.js && node dist/app.js",
         "dev": "nodemon -e ts --exec ts-node src/app.ts",
         "seed:admin": "ts-node src/seeds/admin.seed.ts",
         "build": "tsc",
