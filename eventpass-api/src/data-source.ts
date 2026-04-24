@@ -18,8 +18,6 @@ export const AppDataSource = new DataSource({
     logging: false,
     logger: "advanced-console",
     entities: [User, Category, Event, Ticket],
-    migrations: isDevelopment
-        ? ["src/migrations/*.ts"]
-        : ["dist/migrations/*.js"],
+    migrations: [__dirname + "/migrations/*.{ts,js}"],
     subscribers: [],
 });
