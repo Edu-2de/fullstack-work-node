@@ -11,7 +11,7 @@ import { errorHandler } from "./middlewares/errorHandler";
 import { router } from "./routes";
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(helmet());
 
@@ -55,7 +55,7 @@ AppDataSource.initialize()
         console.log("✅ Banco de dados conectado e sincronizado!");
 
         const server = app.listen(port, () => {
-            console.log(` Servidor rodando em http://localhost:3000`);
+            console.log(` Servidor rodando na porta ${port}`);
         });
     })
     .catch((error) => {
