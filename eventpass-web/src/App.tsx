@@ -1,8 +1,9 @@
+import Button from "./components/button";
 import Text from "./components/text";
 
 function App() {
     return (
-        <>
+        <div className="flex flex-col gap-5">
             <div className="w-full flex flex-col items-center gap-2 bg-gray-100 mt-5">
                 <Text as="h2" variant="display-xl" weight="bold">
                     Display Xl
@@ -14,7 +15,10 @@ function App() {
                     Input
                 </Text>
             </div>
-        </>
+            <div className="w-full flex flex-col items-center gap-2 bg-gray-100 mt-5">
+                <Button>Teste</Button>
+            </div>
+        </div>
     );
 }
 
