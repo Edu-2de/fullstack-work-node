@@ -1,4 +1,4 @@
-import { FindOptionsWhere, ILike, Repository } from "typeorm";
+import { FindOptionsWhere, ILike, IsNull, Not, Repository } from "typeorm";
 import { AppDataSource } from "../../data-source";
 import { User } from "../../entities/user";
 import { IUserRepository } from "./IUserRepository";
@@ -73,6 +73,35 @@ export class UserRepository implements IUserRepository {
                 "role",
             ],
         });
+    }
+
+    async findAllDeleted(page: number, limit: number) {
+        const skip = (page - 1) * limit;
+        const [users, total] = await this.ormRepository.findAndCount({
+            skip: skip,
+            where: {
+                deleted_at: Not(IsNull()),
+            },
+            withDeleted: true,
+            order: {
+                created_at: "DESC",
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                created_at: true,
+                update_at: true,
+                deleted_at: true,
+            },
+        });
+        return {
+            data: users,
+            total_items: total,
+            current_page: page,
+            total_pages: Math.ceil(total / limit),
+        };
     }
 
     async update(id: string, data: Partial<User>): Promise<User | null> {

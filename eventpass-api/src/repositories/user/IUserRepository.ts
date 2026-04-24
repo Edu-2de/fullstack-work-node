@@ -6,6 +6,7 @@ export interface IUserRepository {
     findById(id: string): Promise<User | null>;
     findAll(page: number, limit: number, search?: string): any;
     findByEmailForLogin(email: string): Promise<User | null>;
+    findAllDeleted(page: number, limit: number): any;
     update(id: string, data: Partial<User>): Promise<User | null>;
     delete(id: string): Promise<void>;
 }
