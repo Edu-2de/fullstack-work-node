@@ -14,4 +14,8 @@
     --color-white: #ffffff;
     --color-error-base: #d04048;
     --color-error-light: #f77980;
+
+    --font-display: "Rammetto One", sans-serif;
+    --font-title: "Rajdhani", sans-serif;
+    --font-body: "Nunito Sans", sans-serif;
 }
