@@ -1,6 +1,6 @@
 [build]
 builder = "nixpacks"
-watchPatterns = ["./eventpass-api**"]
+watchPatterns = ["/eventpass-api**"]
 
 [deploy]
 startCommand = "cd eventpass-api && npm install && npm run build && npm run start"
