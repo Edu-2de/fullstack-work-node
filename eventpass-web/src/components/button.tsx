@@ -1,10 +1,11 @@
 import React from "react";
 import { tv, type VariantProps } from "tailwind-variants";
+import Spin from "../assets/icons/circle-notch.svg?react";
 import Icon from "./icon";
 import Text from "./text";
 
 const buttonVariants = tv({
-    base: "flex items-center cursor-pointer justify-center transition-all rounded group gap-2 disabled:opacity-50 disabled:cursor-not-allowed",
+    base: "flex items-center cursor-pointer justify-center transition-all rounded group gap-2 disabled:opacity-50 disabled:cursor-not-allowed px-5 py-3",
 
     variants: {
         variant: {
@@ -14,9 +15,10 @@ const buttonVariants = tv({
             ghost: "bg-transparent hover:bg-gray-300 text-white",
         },
         size: {
-            sm: "h-8 px-3",
-            md: "h-10 px-4",
-            lg: "h-12 px-6",
+            sm: "w-25 h-12 ",
+            md: "w-39.75 h-12",
+            lg: "w-82 h-12",
+            full: "w-full h-12",
         },
     },
     defaultVariants: {
@@ -30,7 +32,6 @@ interface ButtonProps
         React.ComponentProps<"button">,
         VariantProps<typeof buttonVariants> {
     isLoading?: boolean;
-    icon?: React.FC<React.ComponentProps<"svg">>;
 }
 
 export default function Button({
@@ -39,24 +40,21 @@ export default function Button({
     variant,
     size,
     isLoading,
-    icon: IconComponent,
     ...props
 }: ButtonProps) {
     return (
         <button
             className={buttonVariants({ variant, size, className })}
             {...props}
+            disabled={isLoading}
         >
             {isLoading ? (
-                <Icon svg={IconComponent!} animate />
+                <Icon svg={Spin} animate className="w-5 h-5 fill-gray-700" />
             ) : (
-                IconComponent && (
-                    <Icon svg={IconComponent} className="w-5 h-5 fill-white" />
-                )
+                <Text as="p" variant="input-text" color="button">
+                    {children}
+                </Text>
             )}
-            <Text as="p" variant="input-text" color="button">
-                {children}
-            </Text>
         </button>
     );
 }
