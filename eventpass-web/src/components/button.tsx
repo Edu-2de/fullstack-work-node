@@ -1,5 +1,6 @@
 import React from "react";
 import { tv, type VariantProps } from "tailwind-variants";
+import Icon from "./icon";
 import Text from "./text";
 
 const buttonVariants = tv({
@@ -27,13 +28,18 @@ const buttonVariants = tv({
 interface ButtonProps
     extends
         React.ComponentProps<"button">,
-        VariantProps<typeof buttonVariants> {}
+        VariantProps<typeof buttonVariants> {
+    isLoading?: boolean;
+    icon?: React.FC<React.ComponentProps<"svg">>;
+}
 
 export default function Button({
     children,
     className,
     variant,
     size,
+    isLoading,
+    icon: IconComponent,
     ...props
 }: ButtonProps) {
     return (
@@ -41,6 +47,13 @@ export default function Button({
             className={buttonVariants({ variant, size, className })}
             {...props}
         >
+            {isLoading ? (
+                <Icon svg={IconComponent!} animate />
+            ) : (
+                IconComponent && (
+                    <Icon svg={IconComponent} className="w-5 h-5 fill-white" />
+                )
+            )}
             <Text as="p" variant="input-text" color="button">
                 {children}
             </Text>

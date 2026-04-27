@@ -17,7 +17,7 @@ interface IconProps
     svg: React.FC<React.ComponentProps<"svg">>;
 }
 
-export default function Icon({
+export default function IconComponent({
     svg: SvgComponent,
     animate,
     className,
