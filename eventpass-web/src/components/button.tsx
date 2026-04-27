@@ -15,6 +15,7 @@ const buttonVariants = tv({
             ghost: "bg-transparent hover:bg-gray-300 text-white",
         },
         size: {
+            xs: "w-8 h-8",
             sm: "w-25 h-12 ",
             md: "w-39.75 h-12",
             lg: "w-82 h-12",
