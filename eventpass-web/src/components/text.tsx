@@ -28,6 +28,7 @@ const textVariants = tv({
             ghost: "text-gray-500",
             selected: "text-purple-light",
             button: "text-white",
+            inherit: "text-inherit",
         },
     },
     defaultVariants: {

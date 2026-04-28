@@ -1,6 +1,7 @@
 import StarIcon from "./assets/icons/Star-Regular.svg?react";
 import Button from "./components/button";
 import IconButton from "./components/icon-button";
+import Link from "./components/link";
 import Text from "./components/text";
 
 function App() {
@@ -25,6 +26,11 @@ function App() {
             </div>
             <div className="w-full flex flex-col items-center gap-2 bg-gray-100 mt-5">
                 <IconButton icon={StarIcon} />
+            </div>
+            <div className="w-full flex flex-col items-center gap-2 bg-gray-100 mt-5">
+                <Link to={"/"} icon={StarIcon}>
+                    Teste
+                </Link>
             </div>
         </div>
     );
