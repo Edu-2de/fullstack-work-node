@@ -6,6 +6,7 @@ import InputText from "./components/input-text";
 import Link from "./components/link";
 import Text from "./components/text";
 import InputTextArea from "./components/input-text-area";
+import MenuItem from "./components/menu-item";
 
 function App() {
     const [pesquisa, setPesquisa] = React.useState("");
@@ -26,7 +27,7 @@ function App() {
                 <Button icon={StarIcon} size="sm">
                     Teste
                 </Button>
-                <Button isLoading size="md">
+                <Button isLoading size="sm">
                     Teste
                 </Button>
             </div>
@@ -49,6 +50,11 @@ function App() {
             </div>
             <div className="w-80 flex flex-col items-center gap-2 bg-gray-100 mt-5">
                 <InputTextArea placeholder="Pesquisar" />
+            </div>
+            <div className="w-80 flex flex-col items-center gap-2 bg-gray-100 mt-5">
+                <MenuItem to="/" icon={StarIcon}>
+                    Teste
+                </MenuItem>
             </div>
         </div>
     );
