@@ -9,9 +9,9 @@ import Text from "./text";
 const inputTextVariants = tv({
     slots: {
         base: "flex flex-col gap-2 w-66 h-12",
-        inputContainer: `group flex items-center gap-3 px-4 py-3 rounded-md border-2 bg-gray-200 
+        inputContainer: `group flex items-center gap-3 px-4 py-3 rounded-md border-2
         transition-colors focus-within:border-purple-light`,
-        inputElement: `flex-1 min-w-0 bg-transparent text-white placeholder:text-gray-500 
+        inputElement: `flex-1 min-w-0 text-white placeholder:text-gray-500 
         outline-none font-body text-base`,
         iconLeft: "w-5 h-5 shrink-0",
         iconRight: `w-5 h-5 shrink-0 fill-gray-500 transition-opacity hover:opacity-70 cursor-pointer`,
