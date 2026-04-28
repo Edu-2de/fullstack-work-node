@@ -1,18 +1,18 @@
 import React from "react";
-import StarIcon from "./assets/icons/Star-Regular.svg?react";
+import FilmIcon from "./assets/icons/FilmSlate-Regular.svg?react";
 import Button from "./components/button";
 import IconButton from "./components/icon-button";
 import InputText from "./components/input-text";
-import Link from "./components/link";
-import Text from "./components/text";
 import InputTextArea from "./components/input-text-area";
+import Link from "./components/link";
 import MenuItem from "./components/menu-item";
+import Text from "./components/text";
 
 function App() {
     const [pesquisa, setPesquisa] = React.useState("");
     return (
-        <div className="flex items-center ju-c flex-col gap-5">
-            <div className="w-full flex flex-col items-center gap-2 bg-gray-100 mt-5">
+        <div className="flex items-center ju-c flex-col gap-5 mb-3">
+            <div className="w-full flex flex-col items-center gap-2  mt-5">
                 <Text as="h2" variant="display-xl" weight="bold">
                     Display Xl
                 </Text>
@@ -23,23 +23,31 @@ function App() {
                     Input
                 </Text>
             </div>
-            <div className="w-full flex flex-col items-center gap-2 bg-gray-100 mt-5">
-                <Button icon={StarIcon} size="sm">
-                    Teste
+            <div className="w-80 flex flex-col items-center gap-2  mt-5">
+                <MenuItem to="/a" icon={FilmIcon}>
+                    Item
+                </MenuItem>
+                <MenuItem to="/" icon={FilmIcon}>
+                    Item
+                </MenuItem>
+            </div>
+            <div className="w-full flex flex-col items-center gap-2  mt-5">
+                <Button icon={FilmIcon} size="md">
+                    Item
                 </Button>
-                <Button isLoading size="sm">
-                    Teste
+                <Button icon={FilmIcon} isLoading size="md">
+                    Item
                 </Button>
             </div>
-            <div className="w-full flex flex-col items-center gap-2 bg-gray-100 mt-5">
-                <IconButton icon={StarIcon} />
+            <div className="w-full flex flex-col items-center gap-2  mt-5">
+                <IconButton icon={FilmIcon} />
             </div>
-            <div className="w-full flex flex-col items-center gap-2 bg-gray-100 mt-5">
-                <Link to={"/"} icon={StarIcon}>
-                    Teste
+            <div className="w-full flex flex-col items-center gap-2  mt-5">
+                <Link to={"/"} icon={FilmIcon}>
+                    Item
                 </Link>
             </div>
-            <div className="w-80 flex flex-col items-center gap-2 bg-gray-100 mt-5">
+            <div className="w-80 flex flex-col items-center gap-4  mt-5">
                 <InputText
                     placeholder="Pesquisar eventos..."
                     value={pesquisa}
@@ -47,14 +55,17 @@ function App() {
                     onClear={() => setPesquisa("")}
                     error={pesquisa === "erro" ? "Termo inválido" : undefined}
                 />
+                <InputText
+                    placeholder="Pesquisar eventos..."
+                    value={pesquisa}
+                    onChange={(e) => setPesquisa(e.target.value)}
+                    onClear={() => setPesquisa("")}
+                    error={"error"}
+                />
             </div>
-            <div className="w-80 flex flex-col items-center gap-2 bg-gray-100 mt-5">
+            <div className="w-80 flex flex-col items-center gap-4  mt-5">
                 <InputTextArea placeholder="Pesquisar" />
-            </div>
-            <div className="w-80 flex flex-col items-center gap-2 bg-gray-100 mt-5">
-                <MenuItem to="/" icon={StarIcon}>
-                    Teste
-                </MenuItem>
+                <InputTextArea placeholder="Pesquisar" error={"error"} />
             </div>
         </div>
     );

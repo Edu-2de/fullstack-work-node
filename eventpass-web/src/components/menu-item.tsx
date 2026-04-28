@@ -21,7 +21,7 @@ const menuItemVariants = tv({
         },
     },
     defaultVariants: {
-        size: "md",
+        size: "sm",
         active: false,
     },
 });

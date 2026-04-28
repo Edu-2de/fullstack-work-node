@@ -17,7 +17,7 @@ const inputTextAreaVariants = tv({
         isError: {
             true: {
                 inputContainer:
-                    "border-error-light focus-within:border-error-light",
+                    "border-gray-300 focus-within:border-error-light",
             },
             false: {
                 inputContainer:
