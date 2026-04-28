@@ -7,12 +7,9 @@ import Text from "./text";
 const inputTextAreaVariants = tv({
     slots: {
         base: "flex flex-col gap-2 w-full",
-
-        inputContainer:
-            "flex px-4 py-3 rounded-md border bg-gray-200 transition-colors",
+        inputContainer: "flex px-4 py-3 rounded-md border-2 transition-colors ",
         inputElement:
-            "w-full h-full min-h-30 bg-transparent text-white placeholder:text-gray-500 outline-none font-body text-base resize-none",
-
+            "w-full h-full min-h-30 text-white placeholder:text-gray-500 outline-none font-body text-base resize-none",
         errorContainer: "flex gap-2 items-center",
         errorText: "text-error-light",
     },

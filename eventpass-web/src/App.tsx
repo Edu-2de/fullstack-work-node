@@ -5,11 +5,12 @@ import IconButton from "./components/icon-button";
 import InputText from "./components/input-text";
 import Link from "./components/link";
 import Text from "./components/text";
+import InputTextArea from "./components/input-text-area";
 
 function App() {
     const [pesquisa, setPesquisa] = React.useState("");
     return (
-        <div className="flex flex-col gap-5">
+        <div className="flex items-center ju-c flex-col gap-5">
             <div className="w-full flex flex-col items-center gap-2 bg-gray-100 mt-5">
                 <Text as="h2" variant="display-xl" weight="bold">
                     Display Xl
@@ -22,8 +23,10 @@ function App() {
                 </Text>
             </div>
             <div className="w-full flex flex-col items-center gap-2 bg-gray-100 mt-5">
-                <Button size="sm">Teste</Button>
-                <Button isLoading size="lg">
+                <Button icon={StarIcon} size="sm">
+                    Teste
+                </Button>
+                <Button isLoading size="md">
                     Teste
                 </Button>
             </div>
@@ -35,7 +38,7 @@ function App() {
                     Teste
                 </Link>
             </div>
-            <div className="w-full flex flex-col items-center gap-2 bg-gray-100 mt-5">
+            <div className="w-80 flex flex-col items-center gap-2 bg-gray-100 mt-5">
                 <InputText
                     placeholder="Pesquisar eventos..."
                     value={pesquisa}
@@ -43,6 +46,9 @@ function App() {
                     onClear={() => setPesquisa("")}
                     error={pesquisa === "erro" ? "Termo inválido" : undefined}
                 />
+            </div>
+            <div className="w-80 flex flex-col items-center gap-2 bg-gray-100 mt-5">
+                <InputTextArea placeholder="Pesquisar" />
             </div>
         </div>
     );
