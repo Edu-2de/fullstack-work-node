@@ -6,10 +6,12 @@ import InputText from "./components/input-text";
 import InputTextArea from "./components/input-text-area";
 import Link from "./components/link";
 import MenuItem from "./components/menu-item";
+import Rating from "./components/rating";
 import Text from "./components/text";
 
 function App() {
     const [pesquisa, setPesquisa] = React.useState("");
+    const [notaEvento, setNotaEvento] = React.useState(0);
     return (
         <div className="flex items-center ju-c flex-col gap-5 mb-3">
             <div className="w-full flex flex-col items-center gap-2  mt-5">
@@ -66,6 +68,9 @@ function App() {
             <div className="w-80 flex flex-col items-center gap-4  mt-5">
                 <InputTextArea placeholder="Pesquisar" />
                 <InputTextArea placeholder="Pesquisar" error={"error"} />
+            </div>
+            <div className="w-80 flex flex-col items-center gap-4  mt-5">
+                <Rating value={notaEvento} onChange={setNotaEvento} />
             </div>
         </div>
     );
