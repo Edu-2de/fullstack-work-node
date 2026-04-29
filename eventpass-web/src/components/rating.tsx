@@ -7,7 +7,6 @@ import Icon from "./icon";
 const ratingVariants = tv({
     slots: {
         base: "flex gap-1 items-center",
-        // Adicionei focus-visible para acessibilidade (navegação por teclado)
         starButton:
             "cursor-pointer transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-light rounded-sm",
         starIcon: "w-6 h-6 transition-colors",
