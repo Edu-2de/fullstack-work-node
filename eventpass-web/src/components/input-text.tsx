@@ -63,12 +63,14 @@ interface InputTextProps
         VariantProps<typeof inputTextVariants> {
     error?: React.ReactNode;
     onClear?: () => void;
+    icon?: React.FC<React.ComponentProps<"svg">>;
 }
 
 export default function InputText({
     className,
     error,
     value,
+    icon,
     onClear,
     ref,
     ...props
@@ -101,7 +103,12 @@ export default function InputText({
     return (
         <div className={base({ className })}>
             <div className={inputContainer()}>
-                <Icon svg={SearchIcon} className={iconLeft()} />
+                {!icon ? (
+                    <Icon svg={SearchIcon} className={iconLeft()} />
+                ) : (
+                    <Icon svg={icon} className={iconLeft()} />
+                )}
+
                 <input
                     ref={inputRef}
                     type="text"

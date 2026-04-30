@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { tv, type VariantProps } from "tailwind-variants";
 import StarFillIcon from "../assets/icons/Star-Fill.svg?react";
 import Icon from "./icon";
+import Skeleton from "./skeleton";
 import Text from "./text";
 
 const eventCardVariants = tv({
@@ -44,11 +45,13 @@ interface EventCardProps
         React.ComponentProps<"div">,
         VariantProps<typeof eventCardVariants> {
     event: Event;
+    isLoading?: boolean;
 }
 
 export default function EventCard({
     className,
     event,
+    isLoading,
     ...props
 }: EventCardProps) {
     const [isHover, setIsHover] = useState(false);
@@ -58,7 +61,7 @@ export default function EventCard({
             isHover,
         });
 
-    return (
+    return !isLoading ? (
         <div
             className={base({ className })}
             onMouseEnter={() => setIsHover(true)}
@@ -101,5 +104,7 @@ export default function EventCard({
                 </div>
             </div>
         </div>
+    ) : (
+        <Skeleton className={`w-70 h-100 rounded-2xl ${className || ""}`} />
     );
 }

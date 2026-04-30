@@ -11,7 +11,7 @@ export default function MainContent({
     ...props
 }: MainContentProps) {
     return (
-        <main className={cx("mt-20 pb-20", className)} {...props}>
+        <main className={cx(className)} {...props}>
             {children}
         </main>
     );
