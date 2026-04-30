@@ -30,7 +30,7 @@ interface MenuItemProps
     extends
         React.ComponentProps<"li">,
         Omit<VariantProps<typeof menuItemVariants>, "active"> {
-    icon: React.FC<React.ComponentProps<"svg">>;
+    icon?: React.FC<React.ComponentProps<"svg">>;
     to: string;
 }
 
@@ -43,14 +43,15 @@ export default function MenuItem({
     ...props
 }: MenuItemProps) {
     return (
-        <li {...props}>
+        <li {...props} className="list-none">
             <NavLink
                 to={to}
                 className={({ isActive }) =>
                     menuItemVariants({ size, active: isActive, className })
                 }
             >
-                <Icon svg={icon} className="w-5 h-5 fill-current" />
+                {icon && <Icon svg={icon} className="w-5 h-5 fill-current" />}
+
                 <Text variant="text-md" color="inherit">
                     {children}
                 </Text>

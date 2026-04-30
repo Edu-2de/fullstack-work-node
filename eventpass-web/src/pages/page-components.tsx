@@ -51,7 +51,7 @@ function PageComponents() {
                 <Button icon={FilmIcon} size="md">
                     Item
                 </Button>
-                <Button icon={FilmIcon} size="md">
+                <Button icon={FilmIcon} isLoading size="md">
                     Item
                 </Button>
             </div>
@@ -90,7 +90,7 @@ function PageComponents() {
                 <StarButton isFavorite={favorito} onChange={setFavorito} />
             </div>
             <div className="w-80 flex flex-col items-center gap-4  mt-5">
-                <EventCard event={eventTest} />
+                <EventCard isLoading event={eventTest} />
             </div>
         </div>
     );
