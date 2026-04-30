@@ -1,14 +1,21 @@
-import { Route, Routes } from "react-router-dom"; // Arrume o import aqui
+import { Route, Routes } from "react-router-dom";
+import PrivateRoute from "./components/private-route";
 import LayoutMain from "./pages/layout-main";
 import PageComponents from "./pages/page-components";
 import PageHome from "./pages/page-home";
+import PageLogin from "./pages/page-login";
+import PageRegister from "./pages/page-register";
 
 export default function App() {
     return (
         <Routes>
-            <Route element={<LayoutMain />}>
-                <Route index element={<PageHome />} />
-                <Route path="/componentes" element={<PageComponents />} />
+            <Route path="/login" element={<PageLogin />} />
+            <Route path="/registrar" element={<PageRegister />} />
+            <Route path="/componentes" element={<PageComponents />} />
+            <Route element={<PrivateRoute />}>
+                <Route element={<LayoutMain />}>
+                    <Route path="/" element={<PageHome />} />
+                </Route>
             </Route>
         </Routes>
     );

@@ -27,7 +27,7 @@ function PageComponents() {
     };
 
     return (
-        <div className="flex items-center ju-c flex-col gap-5 mb-3">
+        <div className="flex items-center justify-center flex-col gap-5 mb-3">
             <div className="w-full flex flex-col items-center gap-2  mt-5">
                 <Text as="h2" variant="display-xl" weight="bold">
                     Display Xl
@@ -89,7 +89,8 @@ function PageComponents() {
             <div className="w-80 flex flex-col items-center gap-4  mt-5">
                 <StarButton isFavorite={favorito} onChange={setFavorito} />
             </div>
-            <div className="w-80 flex flex-col items-center gap-4  mt-5">
+            <div className="w-200 flex justify-center items-center gap-4  mt-5">
+                <EventCard event={eventTest} />
                 <EventCard isLoading event={eventTest} />
             </div>
         </div>
