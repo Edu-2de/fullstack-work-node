@@ -11,7 +11,7 @@ export default function PageLogin() {
                     <img
                         src={Image}
                         alt="Background"
-                        className="absolute inset-0 w-full h-full object-cover z-0"
+                        className="absolute inset-0 w-full h-full object-cover z-0 opacity-60"
                     />
                     <div className="absolute inset-0 bg-linear-to-t from-gray-100 via-gray-100/20 to-transparent z-10"></div>
 
