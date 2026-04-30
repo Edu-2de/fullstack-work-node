@@ -1,20 +1,20 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { isAxiosError } from "axios";
 import { useForm, type Path } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-
-import { useAuth } from "../hooks/useAuth";
-import { type LoginFormData } from "../models/auth.types";
-import { loginSchema } from "../schema";
-
-import EmailIcon from "../../../assets/icons/Envelope-Regular.svg?react";
-import PasswordIcon from "../../../assets/icons/Password-Regular.svg?react";
-import Button from "../../../components/button";
 import InputText from "../../../components/input-text";
 import Text from "../../../components/text";
+import { useRegister } from "../hooks/useRegister";
+import type { RegisterFormData } from "../models/auth.types";
+import { registerSchema } from "../schema";
 
-export default function LoginForm() {
-    const { login } = useAuth();
+import { isAxiosError } from "axios";
+import EmailIcon from "../../../assets/icons/Envelope-Regular.svg?react";
+import PasswordIcon from "../../../assets/icons/Password-Regular.svg?react";
+import UserIcon from "../../../assets/icons/User-Regular.svg?react";
+import Button from "../../../components/button";
+
+export default function RegisterForm() {
+    const { registerUser } = useRegister();
     const navigate = useNavigate();
 
     const {
@@ -24,19 +24,20 @@ export default function LoginForm() {
         setValue,
         watch,
         formState: { errors, isSubmitting },
-    } = useForm<LoginFormData>({
-        resolver: zodResolver(loginSchema),
+    } = useForm<RegisterFormData>({
+        resolver: zodResolver(registerSchema),
         mode: "onChange",
     });
 
     // eslint-disable-next-line react-hooks/incompatible-library
+    const nameValue = watch("name");
     const emailValue = watch("email");
-    const passwordValue = watch("password");
+    const passwordValue = watch("password_encrypted");
 
-    async function onSubmit(data: LoginFormData) {
+    async function onSubmit(data: RegisterFormData) {
         try {
-            await login(data);
-            navigate("/");
+            await registerUser(data);
+            navigate("/login");
         } catch (error) {
             if (isAxiosError(error) && error.response) {
                 const backendErrors = error.response.data.errors;
@@ -44,7 +45,7 @@ export default function LoginForm() {
 
                 if (backendErrors && Array.isArray(backendErrors)) {
                     backendErrors.forEach((err) => {
-                        setError(err.field as Path<LoginFormData>, {
+                        setError(err.field as Path<RegisterFormData>, {
                             message: err.message,
                         });
                     });
@@ -58,10 +59,21 @@ export default function LoginForm() {
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
             <Text as="h1" variant="display-xl" className="text-white">
-                Acesse sua conta
+                Crie sua conta
             </Text>
 
             <div className="flex flex-col gap-4">
+                <InputText
+                    icon={UserIcon}
+                    placeholder="Nome"
+                    type="text"
+                    error={errors.name?.message}
+                    value={nameValue || ""}
+                    onClear={() =>
+                        setValue("name", "", { shouldValidate: true })
+                    }
+                    {...register("name")}
+                />
                 <InputText
                     icon={EmailIcon}
                     placeholder="E-mail"
@@ -77,12 +89,14 @@ export default function LoginForm() {
                     icon={PasswordIcon}
                     placeholder="Senha"
                     type="password"
-                    error={errors.password?.message}
+                    error={errors.password_encrypted?.message}
                     value={passwordValue || ""}
                     onClear={() =>
-                        setValue("password", "", { shouldValidate: true })
+                        setValue("password_encrypted", "", {
+                            shouldValidate: true,
+                        })
                     }
-                    {...register("password")}
+                    {...register("password_encrypted")}
                 />
             </div>
 
@@ -92,7 +106,7 @@ export default function LoginForm() {
                 className="mt-2 h-12"
                 type="submit"
             >
-                Entrar
+                Criar
             </Button>
         </form>
     );

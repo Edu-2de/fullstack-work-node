@@ -29,8 +29,14 @@ export class UserService {
         const userWithEmail = await this.userRepository.findByEmail(email);
         if (userWithEmail && userWithEmail.id !== currentUserId) {
             throw new AppError(
-                ErrorMessages.ALREADY_EXISTS("Email"),
+                "Erro de conflito de dados",
                 HttpStatus.CONFLICT,
+                [
+                    {
+                        field: "email",
+                        message: ErrorMessages.ALREADY_EXISTS("Email"),
+                    },
+                ],
             );
         }
     }

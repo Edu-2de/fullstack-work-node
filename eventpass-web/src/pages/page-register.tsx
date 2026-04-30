@@ -1,11 +1,7 @@
-import EmailIcon from "../assets/icons/Envelope-Regular.svg?react";
-import PasswordIcon from "../assets/icons/Password-Regular.svg?react";
-import UserIcon from "../assets/icons/User-Regular.svg?react";
 import Image from "../assets/images/Image.png";
-import Button from "../components/button";
-import InputText from "../components/input-text";
 import MenuItem from "../components/menu-item";
 import Text from "../components/text";
+import RegisterForm from "../features/auth/components/RegisterForm";
 
 export default function PageRegister() {
     return (
@@ -30,13 +26,13 @@ export default function PageRegister() {
                             weight="bold"
                             className="text-white/80 lowercase tracking-wider"
                         >
-                            ab filmes
+                            eventos
                         </Text>
                         <Text
                             variant="display-md"
                             className="text-white leading-tight max-w-95"
                         >
-                            O guia definitivo para os amantes do cinema
+                            Ache o evento que estava procurando
                         </Text>
                     </div>
                 </div>
@@ -59,37 +55,7 @@ export default function PageRegister() {
                         </ul>
                     </div>
 
-                    <div className="flex flex-col gap-8">
-                        <Text
-                            as="h1"
-                            variant="display-xl"
-                            className="text-white"
-                        >
-                            Crie sua conta
-                        </Text>
-
-                        <div className="flex flex-col gap-4">
-                            <InputText
-                                icon={UserIcon}
-                                placeholder="Nome"
-                                type="text"
-                            />
-                            <InputText
-                                icon={EmailIcon}
-                                placeholder="E-mail"
-                                type="email"
-                            />
-                            <InputText
-                                icon={PasswordIcon}
-                                placeholder="Senha"
-                                type="password"
-                            />
-                        </div>
-
-                        <Button size="full" className="mt-2 h-12">
-                            Criar
-                        </Button>
-                    </div>
+                    <RegisterForm />
                 </div>
             </div>
         </div>

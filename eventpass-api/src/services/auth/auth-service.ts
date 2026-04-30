@@ -9,14 +9,18 @@ export class AuthService {
     async login(email: string, password: string) {
         const user = await this.userRepository.findByEmailForLogin(email);
         if (!user) {
-            throw new AppError("Email errado", HttpStatus.UNAUTHORIZED);
+            throw new AppError("Erro de credenciais", HttpStatus.UNAUTHORIZED, [
+                { field: "email", message: "Este e-mail não está cadastrado" },
+            ]);
         }
         const correctPassword = await bcrypt.compare(
             password,
             user.password_encrypted,
         );
         if (!correctPassword) {
-            throw new AppError("Senha Errada", HttpStatus.UNAUTHORIZED);
+            throw new AppError("Erro de credenciais", HttpStatus.UNAUTHORIZED, [
+                { field: "password", message: "A senha está incorreta" },
+            ]);
         }
 
         const token = jwt.sign(

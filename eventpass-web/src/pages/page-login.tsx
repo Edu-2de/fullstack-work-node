@@ -26,13 +26,13 @@ export default function PageLogin() {
                             weight="bold"
                             className="text-white/80 lowercase tracking-wider"
                         >
-                            ab filmes
+                            eventos
                         </Text>
                         <Text
                             variant="display-md"
                             className="text-white leading-tight max-w-95"
                         >
-                            O guia definitivo para os amantes do cinema
+                            Ache o evento que estava procurando
                         </Text>
                     </div>
                 </div>
