@@ -1,10 +1,7 @@
-import EmailIcon from "../assets/icons/Envelope-Regular.svg?react";
-import PasswordIcon from "../assets/icons/Password-Regular.svg?react";
 import Image from "../assets/images/Image.png";
-import Button from "../components/button";
-import InputText from "../components/input-text";
 import MenuItem from "../components/menu-item";
 import Text from "../components/text";
+import LoginForm from "../features/auth/components/LoginForm";
 
 export default function PageLogin() {
     return (
@@ -51,39 +48,13 @@ export default function PageLogin() {
                             <MenuItem
                                 className="w-full"
                                 size="sm"
-                                to="/registrar"
+                                to="/register"
                             >
                                 Cadastro
                             </MenuItem>
                         </ul>
                     </div>
-
-                    <div className="flex flex-col gap-8">
-                        <Text
-                            as="h1"
-                            variant="display-xl"
-                            className="text-white"
-                        >
-                            Acesse sua conta
-                        </Text>
-
-                        <div className="flex flex-col gap-4">
-                            <InputText
-                                icon={EmailIcon}
-                                placeholder="E-mail"
-                                type="email"
-                            />
-                            <InputText
-                                icon={PasswordIcon}
-                                placeholder="Senha"
-                                type="password"
-                            />
-                        </div>
-
-                        <Button size="full" className="mt-2 h-12">
-                            Entrar
-                        </Button>
-                    </div>
+                    <LoginForm />
                 </div>
             </div>
         </div>

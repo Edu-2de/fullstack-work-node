@@ -10,8 +10,8 @@ export default function App() {
     return (
         <Routes>
             <Route path="/login" element={<PageLogin />} />
-            <Route path="/registrar" element={<PageRegister />} />
-            <Route path="/componentes" element={<PageComponents />} />
+            <Route path="/register" element={<PageRegister />} />
+            <Route path="/components" element={<PageComponents />} />
             <Route element={<PrivateRoute />}>
                 <Route element={<LayoutMain />}>
                     <Route path="/" element={<PageHome />} />

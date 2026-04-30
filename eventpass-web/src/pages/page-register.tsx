@@ -52,7 +52,7 @@ export default function PageRegister() {
                             <MenuItem
                                 className="w-full"
                                 size="sm"
-                                to="/registrar"
+                                to="/register"
                             >
                                 Cadastro
                             </MenuItem>
