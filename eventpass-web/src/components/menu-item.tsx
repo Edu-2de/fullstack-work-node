@@ -5,7 +5,7 @@ import Icon from "./icon";
 import Text from "./text";
 
 const menuItemVariants = tv({
-    base: `bg-transparent hover:bg-gray-200 text-gray-500 rounded 
+    base: `bg-transparent hover:bg-gray-300 text-gray-500 rounded 
     flex gap-2 items-center justify-center`,
     variants: {
         size: {

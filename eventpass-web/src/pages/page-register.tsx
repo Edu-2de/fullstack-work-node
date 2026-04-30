@@ -1,4 +1,4 @@
-import Image from "../assets/images/Image.png";
+import Image from "../assets/images/event.jpg";
 import MenuItem from "../components/menu-item";
 import Text from "../components/text";
 import RegisterForm from "../features/auth/components/RegisterForm";
