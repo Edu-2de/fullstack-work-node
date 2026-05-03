@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { tv, type VariantProps } from "tailwind-variants";
 import StarFillIcon from "../assets/icons/Star-Fill.svg?react";
+import NoImage from "../assets/images/no-photo.jpg";
+import type { Event } from "../features/events/models/event.types";
 import Icon from "./icon";
 import Skeleton from "./skeleton";
 import Text from "./text";
@@ -14,7 +16,6 @@ const eventCardVariants = tv({
         content:
             "relative z-10 h-full w-full p-5 flex flex-col justify-between",
         badge: "self-end flex items-center gap-2 bg-gray-100/60 backdrop-blur-md py-1.5 px-4 rounded-full border border-white/10",
-
         infoWrapper: "flex flex-col gap-1 transition-all duration-300",
     },
     variants: {
@@ -30,15 +31,6 @@ const eventCardVariants = tv({
         },
     },
 });
-
-export type Event = {
-    title: string;
-    rating: number;
-    category: string;
-    year: number;
-    description: string;
-    image: string;
-};
 
 interface EventCardProps
     extends
@@ -68,15 +60,22 @@ export default function EventCard({
             onMouseLeave={() => setIsHover(false)}
             {...props}
         >
-            <img src={event.image} alt={event.title} className={image()} />
+            {event.banner_url ? (
+                <img
+                    src={event.banner_url}
+                    alt={event.title}
+                    className={image()}
+                />
+            ) : (
+                <img src={NoImage} alt="NoImage" className={image()} />
+            )}
 
             <div className={overlay()} />
 
             <div className={content()}>
                 <div className={badge()}>
                     <Text className="text-white text-sm font-bold">
-                        {event.rating.toString().replace(".", ",")}{" "}
-                        <span className="text-white/60">/ 5</span>
+                        4<span className="text-white/60">/ 5</span>
                     </Text>
                     <Icon
                         svg={StarFillIcon}
@@ -96,9 +95,18 @@ export default function EventCard({
                         </Text>
                     ) : (
                         <div className="flex items-center gap-2 text-white/60 text-sm">
-                            <Text>{event.category}</Text>
+                            <Text>
+                                {event.categories
+                                    .slice(0, 2)
+                                    .map((c) => c.name)
+                                    .join(", ")}
+                            </Text>
+
                             <span className="w-1 h-1 bg-white/40 rounded-full" />
-                            <Text>{event.year}</Text>
+
+                            <Text>
+                                {new Date(event.start_date).getFullYear()}
+                            </Text>
                         </div>
                     )}
                 </div>
