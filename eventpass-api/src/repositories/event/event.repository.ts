@@ -72,7 +72,7 @@ export class EventRepository implements IEventRepository {
             skip: skip,
             take: limit,
             order: {
-                start_date: "DESC",
+                start_date: "ASC",
             },
             relations: {
                 categories: true,
