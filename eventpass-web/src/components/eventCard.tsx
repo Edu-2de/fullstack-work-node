@@ -96,10 +96,11 @@ export default function EventCard({
                     ) : (
                         <div className="flex items-center gap-2 text-white/60 text-sm">
                             <Text>
-                                {event.categories
-                                    .slice(0, 2)
-                                    .map((c) => c.name)
-                                    .join(", ")}
+                                {event.categories.length > 0 &&
+                                    event.categories
+                                        .slice(0, 2)
+                                        .map((c) => c.name)
+                                        .join(", ")}
                             </Text>
 
                             <span className="w-1 h-1 bg-white/40 rounded-full" />
