@@ -12,6 +12,7 @@ import { router } from "./routes";
 
 const app = express();
 const port = process.env.PORT || 3000;
+app.use("/files", express.static(path.resolve(__dirname, "..", "uploads")));
 
 app.use(helmet());
 
@@ -31,7 +32,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 app.use(express.json());
-app.use("/files", express.static(path.resolve(__dirname, "..", "uploads")));
+
 app.use((req, res, next) => {
     logger.info(`Recebendo: ${req.method} ${req.url}`);
     next();

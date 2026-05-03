@@ -20,7 +20,7 @@ export default function Header() {
     }
 
     return (
-        <header className="w-full flex items-center justify-between px-8 py-4 bg-gray-100 border-b border-purple-base/30">
+        <header className="w-full flex items-center justify-between px-32 py-4 bg-gray-100 border-b border-purple-base/30">
             <div className="flex items-center gap-2">
                 <Icon className="w-12 h-12" svg={Logo}></Icon>
             </div>
@@ -36,18 +36,13 @@ export default function Header() {
                 </ul>
             </nav>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
                 <Text variant="text-sm" className="text-gray-500">
                     Olá,{" "}
                     <span className="text-white font-bold">
                         {user?.name || "Visitante"}
                     </span>
                 </Text>
-                <div className="w-8 h-8 rounded-full bg-purple-light flex items-center justify-center overflow-hidden">
-                    <Text variant="text-xs" className="text-white font-bold">
-                        {user?.name?.charAt(0).toUpperCase()}
-                    </Text>
-                </div>
 
                 <IconButton
                     icon={SignOutIcon}

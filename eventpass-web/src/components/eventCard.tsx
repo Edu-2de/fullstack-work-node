@@ -53,6 +53,8 @@ export default function EventCard({
             isHover,
         });
 
+    const apiUrl = import.meta.env.VITE_API_URL;
+
     return !isLoading ? (
         <div
             className={base({ className })}
@@ -62,7 +64,7 @@ export default function EventCard({
         >
             {event.banner_url ? (
                 <img
-                    src={event.banner_url}
+                    src={`${apiUrl}/files/${event.banner_url}`}
                     alt={event.title}
                     className={image()}
                 />

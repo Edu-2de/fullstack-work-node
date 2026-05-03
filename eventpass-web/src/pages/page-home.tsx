@@ -5,7 +5,7 @@ import EventGrid from "../features/events/components/EventGrid";
 import { useEvents } from "../features/events/hooks/useEvents";
 
 export default function PageHome() {
-    const { events, isLoading } = useEvents();
+    const { events, isLoading, hasMore, loadMore } = useEvents();
 
     return (
         <div className="flex flex-col gap-8 w-full">
@@ -25,7 +25,12 @@ export default function PageHome() {
                 </div>
             </div>
 
-            <EventGrid events={events} isLoading={isLoading} />
+            <EventGrid
+                events={events}
+                isLoading={isLoading}
+                hasMore={hasMore}
+                loadMore={loadMore}
+            />
         </div>
     );
 }
