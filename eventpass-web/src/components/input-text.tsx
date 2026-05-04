@@ -9,11 +9,11 @@ import Text from "./text";
 const inputTextVariants = tv({
     slots: {
         base: "flex flex-col gap-2 w-full",
-        inputContainer: `group flex items-center gap-3 px-4 py-3 rounded-md border-2
+        inputContainer: `group flex items-center gap-3 px-4 py-3 rounded-md border-2 
         transition-colors focus-within:border-purple-light`,
         inputElement: `flex-1 min-w-0 text-white placeholder:text-gray-500 
-         outline-none font-body text-base bg-transparent`,
-        iconLeft: "w-5 h-5 shrink-0",
+          outline-none font-body text-base bg-transparent [&::-webkit-calendar-picker-indicator]:hidden`,
+        iconLeft: "w-5 h-5 shrink-0 transition-colors",
         iconRight: `w-5 h-5 shrink-0 fill-gray-500 transition-opacity hover:opacity-70 cursor-pointer`,
         errorContainer: "flex gap-2 items-center mt-1",
         errorText: "text-error-light",
@@ -23,21 +23,19 @@ const inputTextVariants = tv({
             true: {
                 inputContainer:
                     "border-error-light focus-within:border-error-light",
-                // Aqui é o pulo do gato: forçamos o vermelho mesmo com o focus-within!
                 iconLeft:
                     "fill-error-light group-focus-within:fill-error-light",
             },
             false: {
                 inputContainer: "border-gray-300",
+                iconLeft: "fill-gray-500 group-focus-within:fill-purple-light",
             },
         },
-        // Deixamos o hasValue vazio aqui, pois as regras dele dependem do isError
         hasValue: {
             true: {},
             false: {},
         },
     },
-    // Aqui nós criamos o cruzamento perfeito dos estados
     compoundVariants: [
         {
             isError: false,
@@ -45,13 +43,6 @@ const inputTextVariants = tv({
             class: {
                 iconLeft:
                     "fill-purple-light group-focus-within:fill-purple-light",
-            },
-        },
-        {
-            isError: false,
-            hasValue: false,
-            class: {
-                iconLeft: "fill-gray-500 group-focus-within:fill-purple-light",
             },
         },
     ],
@@ -63,15 +54,28 @@ const inputTextVariants = tv({
 
 export interface InputTextProps
     extends
-        React.ComponentProps<"input">,
+        Omit<React.ComponentProps<"input">, "onClick">,
         VariantProps<typeof inputTextVariants> {
     error?: React.ReactNode;
     onClear?: () => void;
     icon?: React.FC<React.ComponentProps<"svg">>;
+    onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
 }
 
 export const InputText = forwardRef<HTMLInputElement, InputTextProps>(
-    ({ className, error, value, icon, onClear, ...props }, ref) => {
+    (
+        {
+            className,
+            error,
+            value,
+            icon,
+            onClear,
+            type = "text",
+            onClick,
+            ...props
+        },
+        ref,
+    ) => {
         const hasValue = value !== undefined && value !== "";
 
         const {
@@ -87,19 +91,40 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(
             hasValue: hasValue,
         });
 
+        const dateStyle =
+            type === "datetime-local" || type === "date"
+                ? { colorScheme: "dark" }
+                : {};
+
+        const handleInputClick = (e: React.MouseEvent<HTMLInputElement>) => {
+            if (type === "datetime-local" || type === "date") {
+                try {
+                    e.currentTarget.showPicker();
+                } catch (err) {
+                    console.log(err);
+                }
+            }
+            onClick?.(e);
+        };
+
         return (
             <div className={base({ className })}>
                 <div className={inputContainer()}>
-                    {!icon ? (
-                        <Icon svg={SearchIcon} className={iconLeft()} />
-                    ) : (
+                    {icon ? (
                         <Icon svg={icon} className={iconLeft()} />
-                    )}
+                    ) : type === "text" &&
+                      !props.placeholder?.includes("Local") &&
+                      !props.placeholder?.includes("Título") ? (
+                        <Icon svg={SearchIcon} className={iconLeft()} />
+                    ) : null}
+
                     <input
                         ref={ref}
-                        type={props.type || "text"}
+                        type={type}
                         value={value}
+                        style={dateStyle}
                         className={inputElement()}
+                        onClick={handleInputClick}
                         {...props}
                     />
 

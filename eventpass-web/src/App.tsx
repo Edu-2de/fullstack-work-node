@@ -6,6 +6,7 @@ import PageComponents from "./pages/page-components";
 import PageHome from "./pages/page-home";
 import PageLogin from "./pages/page-login";
 import PageRegister from "./pages/page-register";
+import PageCreateEvent from "./pages/page-create-event";
 
 export default function App() {
     return (
@@ -18,7 +19,10 @@ export default function App() {
                     <Route path="/" element={<PageHome />} />
                     <Route path="/my-events" />
                     <Route element={<OrganizerRoute />}>
-                        <Route path="/create-event" />
+                        <Route
+                            path="/create-event"
+                            element={<PageCreateEvent />}
+                        />
                     </Route>
                 </Route>
             </Route>
