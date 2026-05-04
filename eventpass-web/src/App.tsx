@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+import OrganizerRoute from "./components/organizer-route";
 import PrivateRoute from "./components/private-route";
 import LayoutMain from "./pages/layout-main";
 import PageComponents from "./pages/page-components";
@@ -15,6 +16,9 @@ export default function App() {
             <Route element={<PrivateRoute />}>
                 <Route element={<LayoutMain />}>
                     <Route path="/" element={<PageHome />} />
+                    <Route element={<OrganizerRoute />}>
+                        <Route path="/create-event" />
+                    </Route>
                 </Route>
             </Route>
         </Routes>

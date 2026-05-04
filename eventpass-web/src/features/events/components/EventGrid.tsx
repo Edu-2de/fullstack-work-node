@@ -62,7 +62,7 @@ export default function EventGrid({
         return (
             <div className="w-full flex flex-col items-center justify-center gap-6 py-12">
                 <Icon className="w-11 h-11 fill-gray-400" svg={FilmIcon} />
-                <Text>Nenhum filme registrado.</Text>
+                <Text>Nenhum evento registrado.</Text>
             </div>
         );
     }
