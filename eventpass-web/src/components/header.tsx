@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import FilmIcon from "../assets/icons/FilmSlate-Regular.svg?react";
+import PulsIcon from "../assets/icons/Plus-Regular.svg?react";
 import PopCornIcon from "../assets/icons/Popcorn-Regular.svg?react";
 import SignOutIcon from "../assets/icons/SignOut-Regular.svg?react";
 import Logo from "../assets/images/Logo.svg?react";
@@ -15,6 +16,8 @@ export default function Header() {
     const navigate = useNavigate();
 
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+    const canCreateEvent = user?.role === "admin" || user?.role === "organizer";
 
     function handleLogout() {
         logout();
@@ -36,9 +39,14 @@ export default function Header() {
                         <MenuItem to="/" icon={PopCornIcon}>
                             Explorar
                         </MenuItem>
-                        <MenuItem to="/meus-filmes" icon={FilmIcon}>
-                            Meus filmes
+                        <MenuItem to="/my-events" icon={FilmIcon}>
+                            Meus Eventos
                         </MenuItem>
+                        {canCreateEvent && (
+                            <MenuItem to="/create-event" icon={PulsIcon}>
+                                Novo Evento
+                            </MenuItem>
+                        )}
                     </ul>
                 </nav>
 
@@ -100,14 +108,19 @@ export default function Header() {
                         Explorar
                     </MenuItem>
                     <MenuItem
-                        to="/meus-filmes"
+                        to="/my-events"
                         icon={FilmIcon}
                         onClick={() => {
                             setIsMenuOpen(false);
                         }}
                     >
-                        Meus filmes
+                        Meus Eventos
                     </MenuItem>
+                    {canCreateEvent && (
+                        <MenuItem to="/create-event" icon={PulsIcon}>
+                            Novo Evento
+                        </MenuItem>
+                    )}
                 </nav>
 
                 <div className="mt-auto border-t border-white/10 pt-4 flex items-center justify-between gap-4">

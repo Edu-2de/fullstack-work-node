@@ -16,6 +16,7 @@ export default function App() {
             <Route element={<PrivateRoute />}>
                 <Route element={<LayoutMain />}>
                     <Route path="/" element={<PageHome />} />
+                    <Route path="/my-events" />
                     <Route element={<OrganizerRoute />}>
                         <Route path="/create-event" />
                     </Route>
