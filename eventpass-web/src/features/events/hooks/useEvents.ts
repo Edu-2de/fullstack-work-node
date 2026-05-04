@@ -2,14 +2,13 @@ import { useEffect, useState } from "react";
 import { api } from "../../../helpers/api";
 import type { Event, PaginatedEventResponse } from "../models/event.types";
 
-export function useEvents() {
+export function useEvents(searchItem: string = "") {
     const [events, setEvents] = useState<Event[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
 
-    async function fetchEvents(currentPage: number) {
+    async function fetchEvents(currentPage: number, currentSearch: string) {
         try {
             setIsLoading(true);
 
@@ -17,6 +16,7 @@ export function useEvents() {
                 params: {
                     page: currentPage,
                     limit: 8,
+                    search: currentSearch !== "" ? currentSearch : undefined,
                 },
             });
 
@@ -38,12 +38,15 @@ export function useEvents() {
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        fetchEvents(page);
-    }, [page]);
+        setPage(1);
+        fetchEvents(1, searchItem);
+    }, [searchItem]);
 
     function loadMore() {
         if (hasMore && !isLoading) {
-            setPage((prevPage) => prevPage + 1);
+            const nextPage = page + 1;
+            setPage(nextPage);
+            fetchEvents(nextPage, searchItem);
         }
     }
 

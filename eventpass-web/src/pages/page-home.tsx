@@ -1,11 +1,17 @@
+import React from "react";
 import SearchIcon from "../assets/icons/MagnifyingGlass-Regular.svg?react";
 import InputText from "../components/input-text";
 import Text from "../components/text";
 import EventGrid from "../features/events/components/EventGrid";
 import { useEvents } from "../features/events/hooks/useEvents";
+import { useDebounce } from "../hooks/useDebounce";
 
 export default function PageHome() {
-    const { events, isLoading, hasMore, loadMore } = useEvents();
+    const [searchItem, setSearchItem] = React.useState("");
+    const debouncedSearchItem = useDebounce(searchItem, 500);
+
+    const { events, isLoading, hasMore, loadMore } =
+        useEvents(debouncedSearchItem);
 
     return (
         <div className="flex flex-col gap-8 w-full">
@@ -20,7 +26,10 @@ export default function PageHome() {
                 <div className="w-full sm:w-80">
                     <InputText
                         icon={SearchIcon}
-                        placeholder="Pesquisar filme"
+                        placeholder="Pesquisar evento"
+                        value={searchItem}
+                        onChange={(e) => setSearchItem(e.target.value)}
+                        onClear={() => setSearchItem("")}
                     />
                 </div>
             </div>
