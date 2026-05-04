@@ -9,7 +9,7 @@ export default function PageHome() {
 
     return (
         <div className="flex flex-col gap-8 w-full">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
                 <Text
                     as="h1"
                     variant="title-hg"
@@ -17,7 +17,7 @@ export default function PageHome() {
                 >
                     Explorar
                 </Text>
-                <div className="w-80">
+                <div className="w-full sm:w-80">
                     <InputText
                         icon={SearchIcon}
                         placeholder="Pesquisar filme"
