@@ -16,8 +16,8 @@ export function useCreateEvent() {
         formData.append("price", String(data.price));
 
         if (data.categories && data.categories.length > 0) {
-            data.categories.forEach((categoryId) => {
-                formData.append("categories[]", categoryId);
+            data.categories.forEach((categoryName) => {
+                formData.append("categories", categoryName);
             });
         }
 
