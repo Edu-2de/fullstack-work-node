@@ -17,7 +17,7 @@ export default function Header() {
 
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
-    const canCreateEvent = user?.role === "admin" || user?.role === "organizer";
+    const canCreateEvent = user?.role === "organizer";
 
     function handleLogout() {
         logout();
