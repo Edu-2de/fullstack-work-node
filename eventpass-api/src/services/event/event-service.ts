@@ -91,6 +91,18 @@ export class EventService {
         );
     }
 
+    async findAllByOrganizerId(
+        organizerId: string,
+        page: number,
+        limit: number,
+    ) {
+        return await this.eventRepository.findAllByOrganizerId(
+            organizerId,
+            page,
+            limit,
+        );
+    }
+
     async update(
         id: string,
         loggedUserId: string,

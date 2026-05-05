@@ -137,6 +137,20 @@ export class EventController {
         }
     }
 
+    async findAllByOrganizerId(req: Request, res: Response) {
+        const user = req.user.id;
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+
+        const events = await this.eventService.findAllByOrganizerId(
+            user,
+            page,
+            limit,
+        );
+
+        res.status(200).json(events);
+    }
+
     async cancel(req: Request, res: Response) {
         const eventId = req.params.id as string;
         const organizerId = req.user.id;

@@ -28,11 +28,6 @@ export class UserRepository implements IUserRepository {
     async findById(id: string): Promise<User | null> {
         return this.ormRepository.findOne({
             where: { id },
-            relations: {
-                events: {
-                    categories: true,
-                },
-            },
         });
     }
 

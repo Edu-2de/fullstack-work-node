@@ -119,6 +119,34 @@ export class EventRepository implements IEventRepository {
         });
     }
 
+    async findAllByOrganizerId(
+        organizerId: string,
+        page: number,
+        limit: number,
+    ) {
+        const skip = (page - 1) * limit;
+
+        const [events, total] = await this.ormRepository.findAndCount({
+            where: {
+                organizer: {
+                    id: organizerId,
+                },
+            },
+            skip: skip,
+            take: limit,
+            order: {
+                start_date: "DESC",
+            },
+        });
+
+        return {
+            data: events,
+            total_items: total,
+            current_page: page,
+            total_pages: Math.ceil(total / limit),
+        };
+    }
+
     async update(
         id: string,
         categories: Category[],

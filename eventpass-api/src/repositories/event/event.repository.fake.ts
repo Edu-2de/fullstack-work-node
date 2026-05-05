@@ -83,6 +83,25 @@ export class FakeEventRepository implements IEventRepository {
         return this.events.some((e) => e.organizer.id === organizerId);
     }
 
+    async findAllByOrganizerId(
+        organizerId: string,
+        page: number,
+        limit: number,
+    ) {
+        let filteredEvents = this.events.filter(
+            (e) => e.organizer.id === organizerId,
+        );
+        const skip = (page - 1) * limit;
+        const paginatedEvents = filteredEvents.slice(skip, skip + limit);
+
+        return {
+            data: paginatedEvents,
+            total_items: filteredEvents.length,
+            current_page: page,
+            total_pages: Math.ceil(filteredEvents.length / limit),
+        };
+    }
+
     async update(
         id: string,
         categories: Category[],

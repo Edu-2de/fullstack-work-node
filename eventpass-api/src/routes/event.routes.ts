@@ -25,6 +25,14 @@ eventRoutes.post(
 //GET all events
 eventRoutes.get("/", async (req, res) => eventController.findAll(req, res));
 
+//GET events by organizer id
+eventRoutes.get(
+    "/organizer",
+    ensureAuthenticated,
+    ensureRole([UserRole.ORGANIZER]),
+    (req, res) => eventController.findAllByOrganizerId(req, res),
+);
+
 //GET event by id
 eventRoutes.get("/:id", validateData(idParamSchema, "params"), (req, res) =>
     eventController.findById(req, res),
