@@ -9,7 +9,12 @@ export const createEventSchema = z.object({
         .string()
         .min(5, "A descrição deve ter no minimo 5 caracteres")
         .max(255),
-    start_date: z.string().min(1, "A data de início é obrigatória"),
+    start_date: z
+        .string()
+        .min(1, "A data de início é obrigatória")
+        .refine((dateString) => {
+            return new Date(dateString) > new Date();
+        }, "A data do evento não pode estar no passado"),
     location: z.string().min(1, "O local é obrigatório").max(255),
     total_capacity: z
         .number("Insira uma capacidade válida")

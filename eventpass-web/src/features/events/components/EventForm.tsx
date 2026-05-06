@@ -55,7 +55,7 @@ export default function EventForm({ event }: EventFormProps) {
     const navigate = useNavigate();
     const { categories, isLoading: categoriesLoading } = useCategories();
     const { createEvent } = useCreateEvent();
-    const { updateEvent } = useUpdateEvent(event!.id);
+    const { updateEvent } = useUpdateEvent(event ? event.id : "");
 
     const fileInputRef = React.useRef<HTMLInputElement>(null);
     const [bannerFile, setBannerFile] = React.useState<File | null>(null);

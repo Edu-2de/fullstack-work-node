@@ -61,6 +61,12 @@ export class EventService {
         categories: string[],
         data: Partial<Event>,
     ) {
+        if (data.start_date && new Date(data.start_date) < new Date()) {
+            throw new AppError(
+                "Não é possível criar um evento no passado.",
+                HttpStatus.BAD_REQUEST,
+            );
+        }
         const foundCategories =
             await this.validateCategoriesOrThrow(categories);
         data.available_capacity = data.total_capacity;
@@ -112,6 +118,13 @@ export class EventService {
     ) {
         const eventExists = await this.findEventOrThrow(id);
         this.ensureOwnerShip(eventExists, loggedUserId, userRole);
+
+        if (data.start_date && new Date(data.start_date) < new Date()) {
+            throw new AppError(
+                "Não é possível remarcar o evento para uma data no passado.",
+                HttpStatus.BAD_REQUEST,
+            );
+        }
 
         const foundCategories = categories
             ? await this.validateCategoriesOrThrow(categories)

@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
 import FilmIcon from "../../../assets/icons/FilmSlate-Regular.svg?react";
 import EventCard from "../../../components/eventCard";
 import Icon from "../../../components/icon";
 import Text from "../../../components/text";
 import type { Event } from "../models/event.types";
-import { Link } from "react-router-dom";
 
 interface EventOrganizerGridProps {
     events: Event[];
@@ -71,8 +71,8 @@ export default function EventOrganizerGrid({
         <div className="flex flex-col gap-6 w-full">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-items-center">
                 {events.map((e) => (
-                    <Link to={`/event/${e.id}`}>
-                        <EventCard key={e.id} event={e} />
+                    <Link key={e.id} to={`/event/${e.id}`}>
+                        <EventCard event={e} />
                     </Link>
                 ))}
                 {isLoading &&
