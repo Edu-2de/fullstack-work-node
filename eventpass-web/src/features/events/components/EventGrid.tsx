@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { Link } from "react-router";
 import FilmIcon from "../../../assets/icons/FilmSlate-Regular.svg?react";
 import EventCard from "../../../components/eventCard";
 import Icon from "../../../components/icon";
@@ -71,7 +72,9 @@ export default function EventGrid({
         <div className="flex flex-col gap-6 w-full">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-items-center">
                 {events.map((e) => (
-                    <EventCard key={e.id} event={e} />
+                    <Link to={`/event/${e.id}`}>
+                        <EventCard key={e.id} event={e} />
+                    </Link>
                 ))}
                 {isLoading &&
                     events.length > 0 &&
