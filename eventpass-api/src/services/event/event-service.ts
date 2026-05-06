@@ -127,9 +127,9 @@ export class EventService {
         const eventExists = await this.findEventOrThrow(id);
         this.ensureOwnerShip(eventExists, loggedUserId, userRole);
 
-        const normalizedCategories = categories.map((name) =>
-            normalizeString(name),
-        );
+        const normalizedCategories = categories
+            ? categories.map((name) => normalizeString(name))
+            : undefined;
 
         if (data.start_date && new Date(data.start_date) < new Date()) {
             throw new AppError(
@@ -138,7 +138,7 @@ export class EventService {
             );
         }
 
-        const foundCategories = categories
+        const foundCategories = normalizedCategories
             ? await this.validateCategoriesOrThrow(normalizedCategories)
             : eventExists.categories;
 
