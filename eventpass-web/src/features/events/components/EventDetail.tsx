@@ -19,7 +19,7 @@ export default function EventDetail({
     onBuy,
     onEdit,
 }: EventDetailProps) {
-    const apiUrl = import.meta.env.VITE_API_URL;
+    const apiUrl = import.meta.env.VITE_API_URL.replace(/\/$/, "");
     const bannerUrl = event.banner_url
         ? `${apiUrl}/files/${event.banner_url}`
         : "";

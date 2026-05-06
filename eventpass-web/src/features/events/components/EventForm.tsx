@@ -61,7 +61,7 @@ export default function EventForm({ event }: EventFormProps) {
     const [bannerFile, setBannerFile] = React.useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
 
-    const apiUrl = import.meta.env.VITE_API_URL;
+    const apiUrl = import.meta.env.VITE_API_URL.replace(/\/$/, "");
 
     function handleFileSelected(event: React.ChangeEvent<HTMLInputElement>) {
         const file = event.target.files?.[0];

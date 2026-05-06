@@ -1,6 +1,7 @@
 import { ErrorMessages } from "../../constants/messages";
 import { Category } from "../../entities/category";
 import { AppError, HttpStatus } from "../../errors/AppError";
+import { normalizeString } from "../../helpers/string.helper";
 import { ICategoryRepository } from "../../repositories/category/ICategoryRepository";
 import { IEventRepository } from "../../repositories/event/IEventRepository";
 
@@ -35,6 +36,9 @@ export class CategoryService {
     }
 
     async create(data: Partial<Category>) {
+        if (data.name) {
+            data.name = normalizeString(data.name);
+        }
         await this.ensureCategoryIsUnique(data.name);
         const newCategory = await this.categoryRepository.create(data);
         return newCategory;
@@ -46,6 +50,9 @@ export class CategoryService {
 
     async update(id: string, data: Partial<Category>) {
         await this.findCategoryOrThrow(id);
+        if (data.name) {
+            data.name = normalizeString(data.name);
+        }
         await this.ensureCategoryIsUnique(data.name, id);
 
         const updatedCategory = await this.categoryRepository.update(id, data);

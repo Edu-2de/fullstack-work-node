@@ -4,6 +4,7 @@ import { ErrorMessages } from "../../constants/messages";
 import { Event, EventStatus } from "../../entities/event";
 import { UserRole } from "../../entities/user";
 import { AppError, HttpStatus } from "../../errors/AppError";
+import { normalizeString } from "../../helpers/string.helper";
 import { ICategoryRepository } from "../../repositories/category/ICategoryRepository";
 import { IEventRepository } from "../../repositories/event/IEventRepository";
 import { ITicketRepository } from "../../repositories/ticket/ITicketRepository";
@@ -61,14 +62,19 @@ export class EventService {
         categories: string[],
         data: Partial<Event>,
     ) {
+        const normalizedCategories = categories.map((name) =>
+            normalizeString(name),
+        );
+
+        const foundCategories =
+            await this.validateCategoriesOrThrow(normalizedCategories);
+
         if (data.start_date && new Date(data.start_date) < new Date()) {
             throw new AppError(
                 "Não é possível criar um evento no passado.",
                 HttpStatus.BAD_REQUEST,
             );
         }
-        const foundCategories =
-            await this.validateCategoriesOrThrow(categories);
         data.available_capacity = data.total_capacity;
         return await this.eventRepository.create(
             organizer_id,
@@ -121,6 +127,10 @@ export class EventService {
         const eventExists = await this.findEventOrThrow(id);
         this.ensureOwnerShip(eventExists, loggedUserId, userRole);
 
+        const normalizedCategories = categories.map((name) =>
+            normalizeString(name),
+        );
+
         if (data.start_date && new Date(data.start_date) < new Date()) {
             throw new AppError(
                 "Não é possível remarcar o evento para uma data no passado.",
@@ -129,7 +139,7 @@ export class EventService {
         }
 
         const foundCategories = categories
-            ? await this.validateCategoriesOrThrow(categories)
+            ? await this.validateCategoriesOrThrow(normalizedCategories)
             : eventExists.categories;
 
         const updatedEvent = await this.eventRepository.update(

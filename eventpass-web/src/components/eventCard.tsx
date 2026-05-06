@@ -37,7 +37,7 @@ export default function EventCard({
     const { base, image, overlay, content, badge, infoWrapper } =
         eventCardVariants();
 
-    const apiUrl = import.meta.env.VITE_API_URL;
+    const apiUrl = import.meta.env.VITE_API_URL.replace(/\/$/, "");
 
     const eventDate = event?.start_date ? new Date(event.start_date) : null;
     let day = "--";
