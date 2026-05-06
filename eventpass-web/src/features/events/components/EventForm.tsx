@@ -17,8 +17,13 @@ import Text from "../../../components/text";
 
 import { useCategories } from "../../categories/hooks/useCategories";
 import { useCreateEvent } from "../hooks/useCreateEvent";
-import { createEventSchema, type CreateEventFormData } from "../schema";
+import {
+    createEventSchema,
+    type CreateEventFormData,
+    type UpdateEventFormData,
+} from "../schema";
 
+import { useUpdateEvent } from "../hooks/useUpdateEvent";
 import type { Event } from "../models/event.types";
 
 const EventVariants = tv({
@@ -50,6 +55,7 @@ export default function EventForm({ event }: EventFormProps) {
     const navigate = useNavigate();
     const { categories, isLoading: categoriesLoading } = useCategories();
     const { createEvent } = useCreateEvent();
+    const { updateEvent } = useUpdateEvent(event!.id);
 
     const fileInputRef = React.useRef<HTMLInputElement>(null);
     const [bannerFile, setBannerFile] = React.useState<File | null>(null);
@@ -134,8 +140,20 @@ export default function EventForm({ event }: EventFormProps) {
         }
     };
 
+    const onEdit: SubmitHandler<UpdateEventFormData> = async (data) => {
+        try {
+            await updateEvent(data, bannerFile);
+            navigate("/");
+        } catch (error) {
+            console.error("Erro ao Editar evento", error);
+        }
+    };
+
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className={wrapper()}>
+        <form
+            onSubmit={handleSubmit(event ? onEdit : onSubmit)}
+            className={wrapper()}
+        >
             <div
                 className={`${uploadBox()} overflow-hidden`}
                 onClick={() => fileInputRef.current?.click()}
