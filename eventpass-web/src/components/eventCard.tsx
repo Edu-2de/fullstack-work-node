@@ -83,14 +83,12 @@ export default function EventCard({
 
     return (
         <>
-            {/* O Skeleton continua brilhando enquanto a imagem faz download */}
             {isImageLoading && (
                 <Skeleton
                     className={`w-72 h-104 rounded-2xl ${className || ""}`}
                 />
             )}
 
-            {/* O Cartão real fica "hidden" (invisível e sem ocupar espaço) até a imagem gritar "Carreguei!" */}
             <div
                 className={`${base({ className })} ${isImageLoading ? "hidden" : "block"}`}
                 onMouseEnter={() => setIsHover(true)}
@@ -105,7 +103,7 @@ export default function EventCard({
                     }
                     alt={event.title}
                     className={image()}
-                    onLoad={() => setIsImageLoading(false)} // O PULO DO GATO: A imagem avisa que chegou!
+                    onLoad={() => setIsImageLoading(false)}
                 />
 
                 <div className={overlay()} />
