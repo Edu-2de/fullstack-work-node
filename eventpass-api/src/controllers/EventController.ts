@@ -141,11 +141,13 @@ export class EventController {
         const user = req.user.id;
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;
+        const search = req.query.search as string;
 
         const events = await this.eventService.findAllByOrganizerId(
             user,
             page,
             limit,
+            search,
         );
 
         res.status(200).json(events);

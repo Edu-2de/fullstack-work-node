@@ -49,26 +49,16 @@ export default function EventDetail({
 
     return (
         <div className="relative w-full min-h-[calc(100vh-120px)] mt-4">
-            {bannerUrl && (
-                <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10 rounded-3xl">
-                    <img
-                        src={bannerUrl}
-                        alt=""
-                        className="w-full h-full object-cover opacity-10 blur-3xl scale-110"
-                    />
-                </div>
-            )}
-
             <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 z-10 relative">
                 <div className="w-full lg:w-112.5 shrink-0">
                     {bannerUrl ? (
                         <img
                             src={bannerUrl}
                             alt={event.title}
-                            className="w-full h-auto object-cover rounded-3xl shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/5"
+                            className="w-full h-125 lg:h-162.5 object-cover rounded-3xl shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/5"
                         />
                     ) : (
-                        <div className="w-full h-162.5 bg-gray-300 rounded-3xl flex items-center justify-center border border-white/5">
+                        <div className="w-full h-125 lg:h-162.5 bg-gray-300 rounded-3xl flex items-center justify-center border border-white/5">
                             <Text className="text-gray-500">Sem imagem</Text>
                         </div>
                     )}

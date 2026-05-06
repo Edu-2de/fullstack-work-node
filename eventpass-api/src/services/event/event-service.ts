@@ -101,11 +101,13 @@ export class EventService {
         organizerId: string,
         page: number,
         limit: number,
+        search?: string,
     ) {
         return await this.eventRepository.findAllByOrganizerId(
             organizerId,
             page,
             limit,
+            search,
         );
     }
 

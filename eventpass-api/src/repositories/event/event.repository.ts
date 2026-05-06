@@ -123,15 +123,20 @@ export class EventRepository implements IEventRepository {
         organizerId: string,
         page: number,
         limit: number,
+        search?: string,
     ) {
         const skip = (page - 1) * limit;
 
+        const where: FindOptionsWhere<Event> = {};
+
+        where.organizer = { id: organizerId };
+
+        if (search) {
+            where.title = ILike(`%${search}%`);
+        }
+
         const [events, total] = await this.ormRepository.findAndCount({
-            where: {
-                organizer: {
-                    id: organizerId,
-                },
-            },
+            where: where,
             skip: skip,
             take: limit,
             order: {

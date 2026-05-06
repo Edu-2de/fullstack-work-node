@@ -17,7 +17,12 @@ export interface IEventRepository {
     ): any;
     findByCategoryId(categoryId: string): Promise<boolean>;
     findByOrganizerId(organizerId: string): Promise<boolean>;
-    findAllByOrganizerId(organizerId: string, page: number, limit: number): any;
+    findAllByOrganizerId(
+        organizerId: string,
+        page: number,
+        limit: number,
+        search?: string,
+    ): any;
     update(
         id: string,
         categories: Category[],

@@ -21,7 +21,8 @@ export function useOrganizerEvents(searchItem: string = "") {
                     params: {
                         page: currentPage,
                         limit: 8,
-                        search: currentSearch !== "" ? currentPage : undefined,
+                        search:
+                            currentSearch !== "" ? currentSearch : undefined,
                     },
                 },
             );

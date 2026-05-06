@@ -7,26 +7,14 @@ import Text from "./text";
 
 const eventCardVariants = tv({
     slots: {
-        base: "relative w-72 h-104 overflow-hidden rounded-2xl cursor-pointer transition-all duration-500",
-        image: "absolute inset-0 w-full h-full object-cover transition-transform duration-700",
+        base: "group relative w-72 h-104 overflow-hidden rounded-2xl cursor-pointer transition-all duration-500",
+        image: "absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110",
         overlay:
-            "absolute inset-0 bg-linear-to-t from-gray-100 via-gray-100/80 to-transparent pointer-events-none transition-opacity duration-300",
+            "absolute inset-0 bg-linear-to-t from-gray-100 via-gray-100/80 to-transparent pointer-events-none transition-opacity duration-500 opacity-70 group-hover:opacity-100",
         content:
             "relative z-10 h-full w-full p-4 flex flex-col justify-between",
         badge: "self-end flex items-center gap-1 bg-gray-100/60 backdrop-blur-md py-1.5 px-4 rounded-full border border-white/10",
-        infoWrapper: "flex flex-col gap-1 transition-all duration-300",
-    },
-    variants: {
-        isHover: {
-            true: {
-                image: "scale-110",
-                overlay: "opacity-100",
-            },
-            false: {
-                image: "scale-100",
-                overlay: "opacity-70",
-            },
-        },
+        infoWrapper: "flex flex-col gap-1",
     },
 });
 
@@ -44,14 +32,10 @@ export default function EventCard({
     isLoading,
     ...props
 }: EventCardProps) {
-    const [isHover, setIsHover] = useState(false);
-
     const [isImageLoading, setIsImageLoading] = useState(true);
 
     const { base, image, overlay, content, badge, infoWrapper } =
-        eventCardVariants({
-            isHover,
-        });
+        eventCardVariants();
 
     const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -91,8 +75,6 @@ export default function EventCard({
 
             <div
                 className={`${base({ className })} ${isImageLoading ? "hidden" : "block"}`}
-                onMouseEnter={() => setIsHover(true)}
-                onMouseLeave={() => setIsHover(false)}
                 {...props}
             >
                 <img
@@ -123,14 +105,9 @@ export default function EventCard({
                         <Text className="text-white text-xl font-bold leading-tight">
                             {event.title}
                         </Text>
-                        {isHover ? (
-                            <Text className="text-white/80 text-sm leading-relaxed animate-fade-in">
-                                {event.description.length > 100
-                                    ? `${event.description.substring(0, 100)}...`
-                                    : event.description}
-                            </Text>
-                        ) : (
-                            <div className="flex items-center gap-2 text-white/60 text-sm">
+
+                        <div className="relative h-16 mt-1">
+                            <div className="absolute inset-0 flex items-start gap-2 text-white/60 text-sm transition-opacity duration-500 opacity-100 group-hover:opacity-0">
                                 <Text>
                                     {event.categories?.length > 0
                                         ? event.categories
@@ -140,7 +117,13 @@ export default function EventCard({
                                         : "Sem categoria"}
                                 </Text>
                             </div>
-                        )}
+
+                            <Text className="absolute inset-0 text-white/80 text-sm leading-relaxed transition-opacity duration-500 opacity-0 group-hover:opacity-100">
+                                {event.description.length > 80
+                                    ? `${event.description.substring(0, 80)}...`
+                                    : event.description}
+                            </Text>
+                        </div>
                     </div>
                 </div>
             </div>
