@@ -5,6 +5,7 @@ import type { Event } from "../models/event.types";
 interface EventDetailProps {
     event: Event;
     isCustomer: boolean;
+    isOwner?: boolean;
     onBack: () => void;
     onBuy?: () => void;
 }
@@ -12,6 +13,7 @@ interface EventDetailProps {
 export default function EventDetail({
     event,
     isCustomer,
+    isOwner,
     onBack,
     onBuy,
 }: EventDetailProps) {
@@ -225,6 +227,16 @@ export default function EventDetail({
                                     : formattedPrice}
                             </span>
                         </div>
+
+                        {isOwner && (
+                            <Button
+                                onClick={onBuy}
+                                size="lg"
+                                className="w-full sm:w-auto h-14 px-12 text-lg"
+                            >
+                                Editar Evento
+                            </Button>
+                        )}
 
                         {isCustomer && (
                             <div className="w-full sm:w-auto">

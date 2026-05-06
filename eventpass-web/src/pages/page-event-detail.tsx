@@ -13,6 +13,8 @@ export default function PageEventDetail() {
     const { event, isLoading } = useEvent(id || "");
 
     const isCustomer = user?.role === "customer";
+    const isOwnerEvent =
+        user?.role === "organizer" && event?.organizer?.id === user?.id;
 
     function handleBuyTicket() {
         console.log("Comprando ingresso para o evento:", id);
@@ -36,6 +38,7 @@ export default function PageEventDetail() {
         <EventDetail
             event={event}
             isCustomer={isCustomer}
+            isOwner={isOwnerEvent}
             onBack={() => navigate(-1)}
             onBuy={handleBuyTicket}
         />
