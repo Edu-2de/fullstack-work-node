@@ -8,6 +8,7 @@ interface EventDetailProps {
     isOwner?: boolean;
     onBack: () => void;
     onBuy?: () => void;
+    onEdit?: () => void;
 }
 
 export default function EventDetail({
@@ -16,6 +17,7 @@ export default function EventDetail({
     isOwner,
     onBack,
     onBuy,
+    onEdit,
 }: EventDetailProps) {
     const apiUrl = import.meta.env.VITE_API_URL;
     const bannerUrl = event.banner_url
@@ -230,7 +232,7 @@ export default function EventDetail({
 
                         {isOwner && (
                             <Button
-                                onClick={onBuy}
+                                onClick={onEdit}
                                 size="lg"
                                 className="w-full sm:w-auto h-14 px-12 text-lg"
                             >

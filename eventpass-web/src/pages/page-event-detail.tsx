@@ -20,6 +20,10 @@ export default function PageEventDetail() {
         console.log("Comprando ingresso para o evento:", id);
     }
 
+    function handleEdit() {
+        navigate(`/event/edit/${id}`);
+    }
+
     if (isLoading) {
         return <EventDetailSkeleton />;
     }
@@ -41,6 +45,7 @@ export default function PageEventDetail() {
             isOwner={isOwnerEvent}
             onBack={() => navigate(-1)}
             onBuy={handleBuyTicket}
+            onEdit={handleEdit}
         />
     );
 }

@@ -9,6 +9,7 @@ import PageHome from "./pages/page-home";
 import PageLogin from "./pages/page-login";
 import PageMyEvents from "./pages/page-my-events";
 import PageRegister from "./pages/page-register";
+import PageEditEvent from "./pages/page-edit-event";
 
 export default function App() {
     return (
@@ -25,6 +26,10 @@ export default function App() {
                         <Route
                             path="/create-event"
                             element={<PageCreateEvent />}
+                        />
+                        <Route
+                            path="/event/edit/:id"
+                            element={<PageEditEvent />}
                         />
                     </Route>
                 </Route>

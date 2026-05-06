@@ -19,7 +19,9 @@ import { useCategories } from "../../categories/hooks/useCategories";
 import { useCreateEvent } from "../hooks/useCreateEvent";
 import { createEventSchema, type CreateEventFormData } from "../schema";
 
-const createEventVariants = tv({
+import type { Event } from "../models/event.types";
+
+const EventVariants = tv({
     slots: {
         wrapper: "flex flex-col md:flex-row gap-16 w-full max-w-7xl mx-auto",
         uploadBox:
@@ -40,7 +42,11 @@ const createEventVariants = tv({
     },
 });
 
-export default function CreateEventForm() {
+interface EventFormProps extends React.ComponentProps<"div"> {
+    event?: Event;
+}
+
+export default function EventForm({ event }: EventFormProps) {
     const navigate = useNavigate();
     const { categories, isLoading: categoriesLoading } = useCategories();
     const { createEvent } = useCreateEvent();
@@ -48,6 +54,8 @@ export default function CreateEventForm() {
     const fileInputRef = React.useRef<HTMLInputElement>(null);
     const [bannerFile, setBannerFile] = React.useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+
+    const apiUrl = import.meta.env.VITE_API_URL;
 
     function handleFileSelected(event: React.ChangeEvent<HTMLInputElement>) {
         const file = event.target.files?.[0];
@@ -69,9 +77,19 @@ export default function CreateEventForm() {
     } = useForm<CreateEventFormData>({
         resolver: zodResolver(createEventSchema),
         mode: "onChange",
-        defaultValues: {
-            categories: [],
-        },
+        defaultValues: event
+            ? {
+                  title: event.title,
+                  description: event.description,
+                  start_date: event.start_date.slice(0, 16),
+                  location: event.location,
+                  total_capacity: event.total_capacity,
+                  price: Number(event.price),
+                  categories: event.categories.map((c) => c.name),
+              }
+            : {
+                  categories: [],
+              },
     });
 
     const {
@@ -88,7 +106,7 @@ export default function CreateEventForm() {
         categoryPill,
         categoryPillActive,
         categoryPillInactive,
-    } = createEventVariants();
+    } = EventVariants();
 
     // eslint-disable-next-line react-hooks/incompatible-library
     const selectedCategories = watch("categories") || [];
@@ -130,13 +148,23 @@ export default function CreateEventForm() {
                     onChange={handleFileSelected}
                 />
 
-                {previewUrl ? (
+                {event && event.banner_url && !previewUrl && (
+                    <img
+                        src={`${apiUrl}/files/${event.banner_url}`}
+                        alt="Preview do evento"
+                        className="w-full h-full object-cover"
+                    />
+                )}
+
+                {previewUrl && (
                     <img
                         src={previewUrl}
                         alt="Preview do evento"
                         className="w-full h-full object-cover"
                     />
-                ) : (
+                )}
+
+                {!previewUrl && !event?.banner_url && (
                     <>
                         <svg
                             width="32"
