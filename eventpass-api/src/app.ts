@@ -14,7 +14,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 app.use("/files", express.static(path.resolve(__dirname, "..", "uploads")));
 
-app.use(helmet());
+app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 
 app.use(
     cors({
