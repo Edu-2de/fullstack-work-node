@@ -52,7 +52,7 @@ export class EventService {
         if (event.organizer.id !== loggedUserId) {
             throw new AppError(
                 ErrorMessages.UNAUTHORIZED(),
-                HttpStatus.FORBIDDEN,
+                HttpStatus.UNAUTHORIZED,
             );
         }
     }
