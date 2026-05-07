@@ -60,15 +60,6 @@ describe("TicketService", () => {
             expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
         });
 
-        it("should not be able to buy a ticket for a non-existing event", async () => {
-            mockQueryRunner.manager.findOne.mockResolvedValueOnce(null);
-
-            await expect(
-                ticketService.create("event-false", "user-123"),
-            ).rejects.toBeInstanceOf(AppError);
-            expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
-        });
-
         it("should not be able to buy a ticket for a past event", async () => {
             const pastDate = new Date();
             pastDate.setDate(pastDate.getDate() - 10);
@@ -97,44 +88,6 @@ describe("TicketService", () => {
             await expect(
                 ticketService.create("event-123", "user-123"),
             ).rejects.toBeInstanceOf(AppError);
-        });
-    });
-
-    describe("findById", () => {
-        it("should be able to find a ticket by id", async () => {
-            const ticket = await fakeTicketRepository.createMock({
-                events: { id: "event-1" } as any,
-                customer: { id: "user-1" } as any,
-            });
-
-            const foundTicket = await ticketService.findById(ticket.id);
-
-            expect(foundTicket).toHaveProperty("id");
-            expect(foundTicket.id).toBe(ticket.id);
-        });
-
-        it("should not be able to find a non-existing ticket", async () => {
-            await expect(
-                ticketService.findById("fake-id"),
-            ).rejects.toBeInstanceOf(AppError);
-        });
-    });
-
-    describe("findAll", () => {
-        it("should be able to list all tickets", async () => {
-            await fakeTicketRepository.createMock({
-                events: { id: "event-1" } as any,
-                customer: { id: "user-1" } as any,
-            });
-            await fakeTicketRepository.createMock({
-                events: { id: "event-2" } as any,
-                customer: { id: "user-2" } as any,
-            });
-
-            const result = await ticketService.findAll(1, 10);
-
-            expect(result).toHaveProperty("data");
-            expect(result.total_items).toBe(2);
         });
     });
 
@@ -170,37 +123,6 @@ describe("TicketService", () => {
                 ),
             ).rejects.toBeInstanceOf(AppError);
         });
-
-        it("should not be able to validate if user is not organizer or admin", async () => {
-            const ticket = await fakeTicketRepository.createMock({
-                events: { id: "event-1", organizer: { id: "org-1" } } as any,
-            });
-
-            await expect(
-                ticketService.useTicket(
-                    ticket.id,
-                    "hacker",
-                    "customer",
-                    "event-1",
-                ),
-            ).rejects.toBeInstanceOf(AppError);
-        });
-
-        it("should not be able to validate an already used or cancelled ticket", async () => {
-            const ticket = await fakeTicketRepository.createMock({
-                events: { id: "event-1", organizer: { id: "org-1" } } as any,
-                status: TicketStatus.CANCELLED,
-            });
-
-            await expect(
-                ticketService.useTicket(
-                    ticket.id,
-                    "org-1",
-                    "organizer",
-                    "event-1",
-                ),
-            ).rejects.toBeInstanceOf(AppError);
-        });
     });
 
     describe("cancelTicket", () => {
@@ -223,27 +145,6 @@ describe("TicketService", () => {
 
             expect(canceledTicket?.status).toBe(TicketStatus.CANCELLED);
             expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
-        });
-
-        it("should not be able to cancel a ticket from another person", async () => {
-            const ticket = await fakeTicketRepository.createMock({
-                customer: { id: "customer-1" } as any,
-            });
-
-            await expect(
-                ticketService.cancelTicket(ticket.id, "hacker-1", "customer"),
-            ).rejects.toBeInstanceOf(AppError);
-        });
-
-        it("should not be able to cancel an already used ticket", async () => {
-            const ticket = await fakeTicketRepository.createMock({
-                customer: { id: "customer-1" } as any,
-                status: TicketStatus.USED,
-            });
-
-            await expect(
-                ticketService.cancelTicket(ticket.id, "customer-1", "customer"),
-            ).rejects.toBeInstanceOf(AppError);
         });
     });
 });

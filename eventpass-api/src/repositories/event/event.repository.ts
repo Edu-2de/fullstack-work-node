@@ -50,7 +50,9 @@ export class EventRepository implements IEventRepository {
         categoryId?: string,
         startDate?: Date,
     ) {
-        const skip = (page - 1) * limit;
+        const safePage = Math.max(1, Number(page));
+        const safeLimit = Math.max(1, Number(limit));
+        const skip = (safePage - 1) * safeLimit;
 
         const where: FindOptionsWhere<Event> = {};
 
@@ -70,7 +72,7 @@ export class EventRepository implements IEventRepository {
             where: where,
 
             skip: skip,
-            take: limit,
+            take: safeLimit,
             order: {
                 start_date: "ASC",
             },
@@ -90,8 +92,8 @@ export class EventRepository implements IEventRepository {
         return {
             data: events,
             total_items: total,
-            current_page: page,
-            total_pages: Math.ceil(total / limit),
+            current_page: safePage,
+            total_pages: Math.ceil(total / safeLimit),
         };
     }
 
@@ -125,7 +127,9 @@ export class EventRepository implements IEventRepository {
         limit: number,
         search?: string,
     ) {
-        const skip = (page - 1) * limit;
+        const safePage = Math.max(1, Number(page));
+        const safeLimit = Math.max(1, Number(limit));
+        const skip = (safePage - 1) * safeLimit;
 
         const where: FindOptionsWhere<Event> = {};
 
@@ -138,7 +142,7 @@ export class EventRepository implements IEventRepository {
         const [events, total] = await this.ormRepository.findAndCount({
             where: where,
             skip: skip,
-            take: limit,
+            take: safeLimit,
             order: {
                 start_date: "DESC",
             },
@@ -147,8 +151,8 @@ export class EventRepository implements IEventRepository {
         return {
             data: events,
             total_items: total,
-            current_page: page,
-            total_pages: Math.ceil(total / limit),
+            current_page: safePage,
+            total_pages: Math.ceil(total / safeLimit),
         };
     }
 

@@ -32,7 +32,9 @@ export class UserRepository implements IUserRepository {
     }
 
     async findAll(page: number, limit: number, search?: string) {
-        const skip = (page - 1) * limit;
+        const safePage = Math.max(1, Number(page));
+        const safeLimit = Math.max(1, Number(limit));
+        const skip = (safePage - 1) * safeLimit;
 
         const where: FindOptionsWhere<User> = {};
 
@@ -43,7 +45,7 @@ export class UserRepository implements IUserRepository {
         const [users, total] = await this.ormRepository.findAndCount({
             where: where,
             skip: skip,
-            take: limit,
+            take: safeLimit,
             order: {
                 created_at: "DESC",
             },
@@ -52,8 +54,8 @@ export class UserRepository implements IUserRepository {
         return {
             data: users,
             total_items: total,
-            current_page: page,
-            total_pages: Math.ceil(total / limit),
+            current_page: safePage,
+            total_pages: Math.ceil(total / safeLimit),
         };
     }
 
@@ -71,12 +73,16 @@ export class UserRepository implements IUserRepository {
     }
 
     async findAllDeleted(page: number, limit: number) {
-        const skip = (page - 1) * limit;
+        const safePage = Math.max(1, Number(page));
+        const safeLimit = Math.max(1, Number(limit));
+        const skip = (safePage - 1) * safeLimit;
+
         const [users, total] = await this.ormRepository.findAndCount({
-            skip: skip,
             where: {
                 deleted_at: Not(IsNull()),
             },
+            skip: skip,
+            take: safeLimit,
             withDeleted: true,
             order: {
                 created_at: "DESC",
@@ -94,8 +100,8 @@ export class UserRepository implements IUserRepository {
         return {
             data: users,
             total_items: total,
-            current_page: page,
-            total_pages: Math.ceil(total / limit),
+            current_page: safePage,
+            total_pages: Math.ceil(total / safeLimit),
         };
     }
 

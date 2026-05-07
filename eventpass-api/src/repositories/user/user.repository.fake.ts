@@ -20,17 +20,17 @@ export class FakeUserRepository implements IUserRepository {
     }
 
     async findByEmail(email: string): Promise<User | null> {
-        const user = this.users.find((u) => u.email === email);
+        const user = this.users.find((u) => u.email === email && !u.deleted_at);
         return user || null;
     }
 
     async findById(id: string): Promise<User | null> {
-        const user = this.users.find((u) => u.id === id);
+        const user = this.users.find((u) => u.id === id && !u.deleted_at);
         return user || null;
     }
 
     async findAll(page: number, limit: number, search?: string) {
-        let filteredUsers = this.users;
+        let filteredUsers = this.users.filter((u) => !u.deleted_at);
 
         if (search) {
             filteredUsers = filteredUsers.filter((c) =>
@@ -38,51 +38,56 @@ export class FakeUserRepository implements IUserRepository {
             );
         }
 
-        const skip = (page - 1) * limit;
+        const safePage = Math.max(1, Number(page));
+        const safeLimit = Math.max(1, Number(limit));
+        const skip = (safePage - 1) * safeLimit;
 
-        const paginatedUsers = filteredUsers.slice(skip, skip + limit);
+        const paginatedUsers = filteredUsers.slice(skip, skip + safeLimit);
 
         return {
             data: paginatedUsers,
             total_items: filteredUsers.length,
-            current_page: page,
-            total_pages: Math.ceil(filteredUsers.length / limit),
+            current_page: safePage,
+            total_pages: Math.ceil(filteredUsers.length / safeLimit),
         };
     }
 
     async findByEmailForLogin(email: string): Promise<User | null> {
-        const user = this.users.find((u) => u.email === email);
+        const user = this.users.find((u) => u.email === email && !u.deleted_at);
         return user || null;
     }
 
     async update(id: string, data: Partial<User>): Promise<User | null> {
-        const user = this.users.find((u) => u.id === id);
-        if (!user) {
-            return null;
-        }
+        const user = this.users.find((u) => u.id === id && !u.deleted_at);
+        if (!user) return null;
+
         Object.assign(user, data);
         return user;
     }
 
     async findAllDeleted(page: number, limit: number) {
-        let filteredUsers = this.users;
-        filteredUsers = filteredUsers.filter((u) => u.deleted_at !== null);
-        const skip = (page - 1) * limit;
+        let filteredUsers = this.users.filter(
+            (u) => u.deleted_at !== undefined && u.deleted_at !== null,
+        );
 
-        const paginatedUsers = filteredUsers.slice(skip, skip + limit);
+        const safePage = Math.max(1, Number(page));
+        const safeLimit = Math.max(1, Number(limit));
+        const skip = (safePage - 1) * safeLimit;
+
+        const paginatedUsers = filteredUsers.slice(skip, skip + safeLimit);
 
         return {
             data: paginatedUsers,
             total_items: filteredUsers.length,
-            current_page: page,
-            total_pages: Math.ceil(filteredUsers.length / limit),
+            current_page: safePage,
+            total_pages: Math.ceil(filteredUsers.length / safeLimit),
         };
     }
 
     async delete(id: string): Promise<void> {
-        const index = this.users.findIndex((u) => u.id === id);
-        if (index !== -1) {
-            this.users.splice(index, 1);
+        const user = this.users.find((u) => u.id === id);
+        if (user) {
+            (user as any).deleted_at = new Date();
         }
     }
 }

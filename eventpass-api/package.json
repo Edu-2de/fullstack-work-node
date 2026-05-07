@@ -5,6 +5,8 @@
     "scripts": {
         "start": "npx typeorm migration:run -d dist/data-source.js && node dist/seeds/admin.seed.js && node dist/app.js",
         "dev": "nodemon -e ts --exec ts-node src/app.ts",
+        "test": "jest",
+        "test:watch": "jest --watchAll",
         "seed:admin": "ts-node src/seeds/admin.seed.ts",
         "build": "tsc",
         "typeorm": "ts-node ./node_modules/typeorm/cli.js",

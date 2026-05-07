@@ -8,6 +8,10 @@ describe("AuthService", () => {
     let fakeUserRepository: FakeUserRepository;
     let authService: AuthService;
 
+    beforeAll(() => {
+        process.env.JWT_SECRET = "secret_para_testes";
+    });
+
     beforeEach(() => {
         fakeUserRepository = new FakeUserRepository();
         authService = new AuthService(fakeUserRepository as any);

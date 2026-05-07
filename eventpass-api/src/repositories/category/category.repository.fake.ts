@@ -30,18 +30,20 @@ export class FakeCategoryRepository implements ICategoryRepository {
             );
         }
 
-        const skip = (page - 1) * limit;
+        const safePage = Math.max(1, Number(page));
+        const safeLimit = Math.max(1, Number(limit));
+        const skip = (safePage - 1) * safeLimit;
 
         const paginatedCategories = filteredCategories.slice(
             skip,
-            skip + limit,
+            skip + safeLimit,
         );
 
         return {
             data: paginatedCategories,
             total_items: filteredCategories.length,
-            current_page: page,
-            total_pages: Math.ceil(filteredCategories.length / limit),
+            current_page: safePage,
+            total_pages: Math.ceil(filteredCategories.length / safeLimit),
         };
     }
 
@@ -59,9 +61,7 @@ export class FakeCategoryRepository implements ICategoryRepository {
         data: Partial<Category>,
     ): Promise<Category | null> {
         const category = this.categories.find((c) => c.id === id);
-        if (!category) {
-            return null;
-        }
+        if (!category) return null;
         Object.assign(category, data);
         return category;
     }

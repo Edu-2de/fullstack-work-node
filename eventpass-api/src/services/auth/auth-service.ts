@@ -23,14 +23,18 @@ export class AuthService {
             ]);
         }
 
-        const token = jwt.sign(
-            { role: user.role },
-            process.env.JWT_SECRET || "default_dev_secret",
-            {
-                subject: user.id,
-                expiresIn: "1d",
-            },
-        );
+        const secret = process.env.JWT_SECRET;
+        if (!secret) {
+            throw new AppError(
+                "JWT_SECRET não está definido nas variáveis de ambiente!",
+                HttpStatus.FORBIDDEN,
+            );
+        }
+
+        const token = jwt.sign({ role: user.role }, secret, {
+            subject: user.id,
+            expiresIn: "1d",
+        });
 
         return {
             user: {

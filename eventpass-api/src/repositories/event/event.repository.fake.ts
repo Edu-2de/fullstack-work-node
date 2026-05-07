@@ -25,7 +25,7 @@ export class FakeEventRepository implements IEventRepository {
     }
 
     async findById(id: string): Promise<Event | null> {
-        const event = this.events.find((e) => e.id === id);
+        const event = this.events.find((e) => e.id === id && !e.deleted_at);
         return event || null;
     }
 
@@ -56,49 +56,69 @@ export class FakeEventRepository implements IEventRepository {
             filteredEvents = filteredEvents.filter((e) => {
                 const eventDate = new Date(e.start_date).getTime();
                 const searchDate = new Date(startDate).getTime();
-
                 return eventDate >= searchDate;
             });
         }
 
-        const skip = (page - 1) * limit;
+        const safePage = Math.max(1, Number(page));
+        const safeLimit = Math.max(1, Number(limit));
+        const skip = (safePage - 1) * safeLimit;
 
-        const paginatedEvents = filteredEvents.slice(skip, skip + limit);
+        const paginatedEvents = filteredEvents.slice(skip, skip + safeLimit);
 
         return {
             data: paginatedEvents,
             total_items: filteredEvents.length,
-            current_page: page,
-            total_pages: Math.ceil(filteredEvents.length / limit),
+            current_page: safePage,
+            total_pages: Math.ceil(filteredEvents.length / safeLimit),
         };
     }
 
     async findByCategoryId(categoryId: string): Promise<boolean> {
-        return this.events.some((e) => {
-            e.categories.some((c) => c.id === categoryId);
-        });
+        return this.events.some(
+            (e) =>
+                !e.deleted_at && e.categories.some((c) => c.id === categoryId),
+        );
     }
 
     async findByOrganizerId(organizerId: string): Promise<boolean> {
-        return this.events.some((e) => e.organizer.id === organizerId);
+        return this.events.some(
+            (e) =>
+                !e.deleted_at &&
+                e.organizer.id === organizerId &&
+                e.status === EventStatus.PUBLISHED,
+        );
     }
 
     async findAllByOrganizerId(
         organizerId: string,
         page: number,
         limit: number,
+        search?: string,
     ) {
         let filteredEvents = this.events.filter(
-            (e) => e.organizer.id === organizerId,
+            (e) => !e.deleted_at && e.organizer.id === organizerId,
         );
-        const skip = (page - 1) * limit;
-        const paginatedEvents = filteredEvents.slice(skip, skip + limit);
+
+        if (search) {
+            filteredEvents = filteredEvents.filter((e) =>
+                e.title
+                    .toLocaleLowerCase()
+                    .includes(search.toLocaleLowerCase()),
+            );
+        }
+
+        const safePage = Math.max(1, Number(page));
+        const safeLimit = Math.max(1, Number(limit));
+        const skip = (safePage - 1) * safeLimit;
+
+        const paginatedEvents = filteredEvents.slice(skip, skip + safeLimit);
 
         return {
             data: paginatedEvents,
             total_items: filteredEvents.length,
-            current_page: page,
-            total_pages: Math.ceil(filteredEvents.length / limit),
+            current_page: safePage,
+            total_pages: Math.ceil(filteredEvents.length / safeLimit),
         };
     }
 
@@ -107,19 +127,18 @@ export class FakeEventRepository implements IEventRepository {
         categories: Category[],
         data: Partial<Event>,
     ): Promise<Event | null> {
-        const event = this.events.find((e) => e.id === id);
-        if (!event) {
-            return null;
-        }
+        const event = this.events.find((e) => e.id === id && !e.deleted_at);
+        if (!event) return null;
+
         Object.assign(event, data);
         event.categories = categories;
         return event;
     }
 
     async delete(id: string): Promise<void> {
-        const index = this.events.findIndex((e) => e.id === id);
-        if (index !== -1) {
-            this.events.splice(index, 1);
+        const event = this.events.find((e) => e.id === id);
+        if (event) {
+            (event as any).deleted_at = new Date();
         }
     }
 }

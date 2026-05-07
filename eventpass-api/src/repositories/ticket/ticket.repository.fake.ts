@@ -29,20 +29,29 @@ export class FakeTicketRepository implements ITicketRepository {
     ) {
         let filteredTickets = this.tickets;
 
+        if (search) {
+            filteredTickets = filteredTickets.filter((t) =>
+                t.customer?.name.toLowerCase().includes(search.toLowerCase()),
+            );
+        }
+
         if (eventId) {
             filteredTickets = filteredTickets.filter(
                 (t) => t.events?.id === eventId,
             );
         }
 
-        const skip = (page - 1) * limit;
-        const paginatedTickets = filteredTickets.slice(skip, skip + limit);
+        const safePage = Math.max(1, Number(page));
+        const safeLimit = Math.max(1, Number(limit));
+        const skip = (safePage - 1) * safeLimit;
+
+        const paginatedTickets = filteredTickets.slice(skip, skip + safeLimit);
 
         return {
             data: paginatedTickets,
             total_items: filteredTickets.length,
-            current_page: page,
-            total_pages: Math.ceil(filteredTickets.length / limit),
+            current_page: safePage,
+            total_pages: Math.ceil(filteredTickets.length / safeLimit),
         };
     }
 
@@ -51,14 +60,16 @@ export class FakeTicketRepository implements ITicketRepository {
             (t) => t.customer?.id === userId,
         );
 
-        const skip = (page - 1) * limit;
-        const paginatedTickets = filteredTickets.slice(skip, skip + limit);
+        const safePage = Math.max(1, Number(page));
+        const safeLimit = Math.max(1, Number(limit));
+        const skip = (safePage - 1) * safeLimit;
+        const paginatedTickets = filteredTickets.slice(skip, skip + safeLimit);
 
         return {
             data: paginatedTickets,
             total_items: filteredTickets.length,
-            current_page: page,
-            total_pages: Math.ceil(filteredTickets.length / limit),
+            current_page: safePage,
+            total_pages: Math.ceil(filteredTickets.length / safeLimit),
         };
     }
 
@@ -67,35 +78,29 @@ export class FakeTicketRepository implements ITicketRepository {
             (t) => t.events?.id === eventId,
         );
 
-        const skip = (page - 1) * limit;
-        const paginatedTickets = filteredTickets.slice(skip, skip + limit);
+        const safePage = Math.max(1, Number(page));
+        const safeLimit = Math.max(1, Number(limit));
+        const skip = (safePage - 1) * safeLimit;
+        const paginatedTickets = filteredTickets.slice(skip, skip + safeLimit);
 
         return {
             data: paginatedTickets,
             total_items: filteredTickets.length,
-            current_page: page,
-            total_pages: Math.ceil(filteredTickets.length / limit),
+            current_page: safePage,
+            total_pages: Math.ceil(filteredTickets.length / safeLimit),
         };
     }
 
     async verifyTicketsValidsByUserId(userId: string): Promise<boolean> {
-        const filteredTickets = this.tickets;
-        filteredTickets.filter((t) => t.customer?.id === userId);
-        const tickets = filteredTickets.find(
-            (t) => t.status === TicketStatus.VALID,
+        const userTickets = this.tickets.filter(
+            (t) => t.customer?.id === userId,
         );
-        if (tickets) {
-            return true;
-        } else {
-            return false;
-        }
+        return userTickets.some((t) => t.status === TicketStatus.VALID);
     }
 
     async update(id: string, data: Partial<Ticket>): Promise<Ticket | null> {
         const ticket = this.tickets.find((t) => t.id === id);
-        if (!ticket) {
-            return null;
-        }
+        if (!ticket) return null;
         Object.assign(ticket, data);
         return ticket;
     }
@@ -111,9 +116,7 @@ export class FakeTicketRepository implements ITicketRepository {
 
     async cancelTicket(id: string): Promise<Ticket | null> {
         const ticket = this.tickets.find((t) => t.id === id);
-        if (!ticket) {
-            return null;
-        }
+        if (!ticket) return null;
         ticket.status = TicketStatus.CANCELLED;
         return ticket;
     }

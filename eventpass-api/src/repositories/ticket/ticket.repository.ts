@@ -29,7 +29,9 @@ export class TicketRepository implements ITicketRepository {
         search?: string,
         eventId?: string,
     ) {
-        const skip = (page - 1) * limit;
+        const safePage = Math.max(1, Number(page));
+        const safeLimit = Math.max(1, Number(limit));
+        const skip = (safePage - 1) * safeLimit;
 
         const where: FindOptionsWhere<Ticket> = {};
 
@@ -44,7 +46,7 @@ export class TicketRepository implements ITicketRepository {
         const [tickets, total] = await this.ormRepository.findAndCount({
             where: where,
             skip: skip,
-            take: limit,
+            take: safeLimit,
             order: {
                 purchase_date: "DESC",
             },
@@ -78,17 +80,19 @@ export class TicketRepository implements ITicketRepository {
         return {
             data: tickets,
             total_items: total,
-            current_page: page,
-            total_pages: Math.ceil(total / limit),
+            current_page: safePage,
+            total_pages: Math.ceil(total / safeLimit),
         };
     }
 
     async findByUserId(userId: string, page: number, limit: number) {
-        const skip = (page - 1) * limit;
+        const safePage = Math.max(1, Number(page));
+        const safeLimit = Math.max(1, Number(limit));
+        const skip = (safePage - 1) * safeLimit;
 
         const [tickets, total] = await this.ormRepository.findAndCount({
             skip: skip,
-            take: limit,
+            take: safeLimit,
             where: {
                 customer: {
                     id: userId,
@@ -114,17 +118,19 @@ export class TicketRepository implements ITicketRepository {
         return {
             data: tickets,
             total_items: total,
-            current_page: page,
-            total_pages: Math.ceil(total / limit),
+            current_page: safePage,
+            total_pages: Math.ceil(total / safeLimit),
         };
     }
 
     async findByEventId(eventId: string, page: number, limit: number) {
-        const skip = (page - 1) * limit;
+        const safePage = Math.max(1, Number(page));
+        const safeLimit = Math.max(1, Number(limit));
+        const skip = (safePage - 1) * safeLimit;
 
         const [tickets, total] = await this.ormRepository.findAndCount({
             skip: skip,
-            take: limit,
+            take: safeLimit,
             where: {
                 events: {
                     id: eventId,
@@ -147,8 +153,8 @@ export class TicketRepository implements ITicketRepository {
         return {
             data: tickets,
             total_items: total,
-            current_page: page,
-            total_pages: Math.ceil(total / limit),
+            current_page: safePage,
+            total_pages: Math.ceil(total / safeLimit),
         };
     }
 

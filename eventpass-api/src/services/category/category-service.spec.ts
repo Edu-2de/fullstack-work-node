@@ -19,12 +19,12 @@ describe("Category Service", () => {
     });
 
     describe("create", () => {
-        it("deve ser possível criar uma nova categoria", async () => {
+        it("deve ser possível criar uma nova categoria e ela deve ser normalizada", async () => {
             const categoryData = { name: "Tecnologia" };
             const category = await categoryService.create(categoryData);
 
             expect(category).toHaveProperty("id");
-            expect(category.name).toBe("Tecnologia");
+            expect(category.name).toBe("tecnologia");
         });
 
         it("nao deve ser possível criar uma categoria com nome duplicado", async () => {
@@ -39,7 +39,7 @@ describe("Category Service", () => {
 
     describe("findAll", () => {
         it("deve listar categorias com paginação e filtro", async () => {
-            await categoryService.create({ name: "Musica" });
+            await categoryService.create({ name: "Música" });
             await categoryService.create({ name: "Tecnologia" });
             await categoryService.create({ name: "Teatro" });
 
@@ -49,8 +49,8 @@ describe("Category Service", () => {
             expect(result.current_page).toBe(1);
             expect(result.data).toEqual(
                 expect.arrayContaining([
-                    expect.objectContaining({ name: "Tecnologia" }),
-                    expect.objectContaining({ name: "Teatro" }),
+                    expect.objectContaining({ name: "tecnologia" }),
+                    expect.objectContaining({ name: "teatro" }),
                 ]),
             );
         });
@@ -64,8 +64,9 @@ describe("Category Service", () => {
                 name: "Esportes Radicais",
             });
 
-            expect(updateCategory?.name).toBe("Esportes Radicais");
+            expect(updateCategory?.name).toBe("esportes radicais");
         });
+
         it("nao deve ser possível atualizar se o ID nao existir", async () => {
             await expect(
                 categoryService.update("id-falso", { name: "Teste" }),
@@ -82,6 +83,7 @@ describe("Category Service", () => {
             const result = await fakeCategoryRepository.findById(category.id);
             expect(result).toBeNull();
         });
+
         it("nao deve ser possível deletar uma categoria que esta vinculada a um evento", async () => {
             const category = await categoryService.create({ name: "Rock" });
 

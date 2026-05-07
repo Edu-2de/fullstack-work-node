@@ -21,7 +21,10 @@ export class CategoryRepository implements ICategoryRepository {
     }
 
     async findAll(page: number, limit: number, search?: string) {
-        const skip = (page - 1) * limit;
+        const safePage = Math.max(1, Number(page));
+        const safeLimit = Math.max(1, Number(limit));
+
+        const skip = (safePage - 1) * safeLimit;
 
         const where: FindOptionsWhere<Category> = {};
 
@@ -32,14 +35,14 @@ export class CategoryRepository implements ICategoryRepository {
         const [categories, total] = await this.ormRepository.findAndCount({
             where: where,
             skip: skip,
-            take: limit,
+            take: safeLimit,
         });
 
         return {
             data: categories,
             total_items: total,
-            current_page: page,
-            total_pages: Math.ceil(total / limit),
+            current_page: safePage,
+            total_pages: Math.ceil(total / safeLimit),
         };
     }
 
