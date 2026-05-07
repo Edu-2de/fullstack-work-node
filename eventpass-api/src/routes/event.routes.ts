@@ -44,6 +44,7 @@ eventRoutes.put(
     ensureAuthenticated,
     ensureRole([UserRole.ORGANIZER, UserRole.ADMIN]),
     upload.single("banner"),
+    validateData(idParamSchema, "params"),
     validateData(updateEvent),
     (req, res) => eventController.update(req, res),
 );
@@ -71,6 +72,7 @@ eventRoutes.get(
     "/:id/tickets",
     ensureAuthenticated,
     ensureRole([UserRole.ORGANIZER, UserRole.ADMIN]),
+    validateData(idParamSchema, "params"),
     (req, res) => eventController.findTickets(req, res),
 );
 

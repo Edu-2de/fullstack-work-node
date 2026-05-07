@@ -39,6 +39,7 @@ ticketRoutes.patch(
     "/:id",
     ensureAuthenticated,
     ensureRole([UserRole.ADMIN, UserRole.ORGANIZER]),
+    validateData(idParamSchema, "params"),
     validateData(useTicket, "body"),
     (req, res) => ticketController.useTicket(req, res),
 );

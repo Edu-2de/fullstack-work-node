@@ -35,7 +35,7 @@ userRoutes.get("/profile", ensureAuthenticated, (req, res) =>
 
 //GET ALL deleted users
 userRoutes.get(
-    "/teste",
+    "/deleted",
     ensureAuthenticated,
     ensureRole([UserRole.ADMIN]),
     (req, res) => userController.findAllDeleted(req, res),
@@ -71,6 +71,7 @@ userRoutes.put(
     "/:id",
     ensureAuthenticated,
     ensureRole([UserRole.ADMIN]),
+    validateData(idParamSchema, "params"),
     validateData(updateUserSchema, "body"),
     (req, res) => userController.update(req, res),
 );

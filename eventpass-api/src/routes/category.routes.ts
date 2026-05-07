@@ -29,6 +29,7 @@ categoryRoutes.put(
     "/:id",
     ensureAuthenticated,
     ensureRole([UserRole.ADMIN]),
+    validateData(idParamSchema, "params"),
     validateData(updateCategory),
     (req, res) => categoryController.update(req, res),
 );
