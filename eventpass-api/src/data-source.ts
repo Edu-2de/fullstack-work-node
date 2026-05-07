@@ -5,8 +5,6 @@ import { Event } from "./entities/event";
 import { Ticket } from "./entities/ticket";
 import { User } from "./entities/user";
 
-const isDevelopment = process.env.NODE_ENV === "development";
-
 export const AppDataSource = new DataSource({
     type: "postgres",
     host: process.env.DB_HOST,
