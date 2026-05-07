@@ -1,0 +1,862 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: EventPass API
+meta:
+  id: wrk_29d6a124c12c4716a0b1c2cda4432827
+  created: 1778171952320
+  modified: 1778177863969
+  description: ""
+collection:
+  - name: 1. Auth
+    meta:
+      id: fld_99bd4fb27f464df6a182e5b16f12a7db
+      created: 1778171952337
+      modified: 1778177741476
+      sortKey: -1778171952337
+      description: ""
+    children:
+      - url: "{{ _.base_url }}/login"
+        name: Login (Gera Tokens)
+        meta:
+          id: req_882c83d33403493c8cab995ddd4d08de
+          created: 1778171952338
+          modified: 1778177963588
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952338
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+                "email": "fabio@gmail.com",
+                "password": "senha@123"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: 2. Users
+    meta:
+      id: fld_539016a299144b259cf6f1caa1bb6c70
+      created: 1778171952339
+      modified: 1778177734854
+      sortKey: -1778171952339
+      description: ""
+    children:
+      - url: "{{ _.base_url }}/users/register"
+        name: "[Public] Register Customer"
+        meta:
+          id: req_b6260888ef5241ba8afb0647d1e50632
+          created: 1778171952340
+          modified: 1778179092051
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952340
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+                "name": "Eduardo Cliente",
+                "email": "eduardo@cliente.com",
+                "password_encrypted": "senha123",
+            		"role": "organizer"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/users"
+        name: "[Admin] Create User"
+        meta:
+          id: req_f3012a6adbce4524b36e28da21ce6edb
+          created: 1778171952341
+          modified: 1778171952341
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952341
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+                "name": "Organizador Pro",
+                "email": "org@eventos.com",
+                "password_encrypted": "senha123",
+                "role": "organizer"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{{ _.token_admin }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/users/profile"
+        name: "[Customer] Get Profile"
+        meta:
+          id: req_8e4e108bdc7c4eaca54bb51ae5c1bee8
+          created: 1778171952342
+          modified: 1778171952342
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952342
+        method: GET
+        authentication:
+          type: bearer
+          token: "{{ _.token_customer }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/users/profile"
+        name: "[Customer] Update Profile"
+        meta:
+          id: req_93cced6078e74d0da2ccfba62dd5ced1
+          created: 1778171952343
+          modified: 1778171952343
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952343
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+                "name": "Eduardo Atualizado"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{{ _.token_customer }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/users/profile/tickets"
+        name: "[Customer] Get Profile Tickets"
+        meta:
+          id: req_6071360e9e404a83a95511f63c7fb48d
+          created: 1778171952344
+          modified: 1778171952344
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952344
+        method: GET
+        parameters:
+          - name: page
+            value: "1"
+          - name: limit
+            value: "10"
+        authentication:
+          type: bearer
+          token: "{{ _.token_customer }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/users/profile"
+        name: "[Customer] Delete Profile"
+        meta:
+          id: req_d1e08ae0a4fe48059c1e87c0ec58d1f5
+          created: 1778171952344
+          modified: 1778171952344
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952344
+        method: DELETE
+        authentication:
+          type: bearer
+          token: "{{ _.token_customer }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/users"
+        name: "[Admin] Get All Users"
+        meta:
+          id: req_159dad72306642bcba89b7257653fc2a
+          created: 1778171952345
+          modified: 1778171952345
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952345
+        method: GET
+        parameters:
+          - name: page
+            value: "1"
+          - name: limit
+            value: "10"
+          - name: search
+            value: ""
+            disabled: true
+        authentication:
+          type: bearer
+          token: "{{ _.token_admin }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/users/deleted"
+        name: "[Admin] Get Deleted Users"
+        meta:
+          id: req_9de8cb127fb04fc08a80ff4dfb80f637
+          created: 1778171952346
+          modified: 1778178382673
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952346
+        method: GET
+        parameters:
+          - name: page
+            value: "1"
+          - name: limit
+            value: "10"
+        authentication:
+          type: bearer
+          token: "{{ _.token_admin }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/users/{{ _.user_id }}"
+        name: "[Admin] Get User by ID"
+        meta:
+          id: req_342b6b404e9d49bc9b5081e56040f6a8
+          created: 1778171952347
+          modified: 1778171952347
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952347
+        method: GET
+        authentication:
+          type: bearer
+          token: "{{ _.token_admin }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/users/{{ _.user_id }}"
+        name: "[Admin] Update User"
+        meta:
+          id: req_9d89d9d96e784dd99f43207de63d7de3
+          created: 1778171952347
+          modified: 1778171952347
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952347
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+                "name": "Nome Alterado pelo Admin",
+                "role": "organizer"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{{ _.token_admin }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/users/{{ _.user_id }}"
+        name: "[Admin] Delete User"
+        meta:
+          id: req_549338a18ae04b92a87d11234434fe74
+          created: 1778171952348
+          modified: 1778171952348
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952348
+        method: DELETE
+        authentication:
+          type: bearer
+          token: "{{ _.token_admin }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: 3. Categories
+    meta:
+      id: fld_6a7da5f84f71460da7c6021159358660
+      created: 1778171952349
+      modified: 1778177748323
+      sortKey: -1778171952349
+      description: ""
+    children:
+      - url: "{{ _.base_url }}/categories"
+        name: "[Admin] Create Category"
+        meta:
+          id: req_f616ee510a29485cb21f4cb5306995e2
+          created: 1778171952350
+          modified: 1778171952350
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952350
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+                "name": "Tecnologia"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{{ _.token_admin }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/categories/{{ _.category_id }}"
+        name: "[Admin] Update Category"
+        meta:
+          id: req_64e1b3c838da47118ae3ab54332f9f63
+          created: 1778171952351
+          modified: 1778171952351
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952351
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+                "name": "Tecnologia Atualizada"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{{ _.token_admin }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/categories"
+        name: "[Public] Get All Categories"
+        meta:
+          id: req_e5f35ea1ef104134ab9f28ab156ed6eb
+          created: 1778171952351
+          modified: 1778171952351
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952351
+        method: GET
+        parameters:
+          - name: page
+            value: "1"
+          - name: limit
+            value: "10"
+          - name: search
+            value: ""
+            disabled: true
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/categories/{{ _.category_id }}"
+        name: "[Admin] Delete Category"
+        meta:
+          id: req_15843ddceb64412cae6ee6f1674a04af
+          created: 1778171952352
+          modified: 1778171952352
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952352
+        method: DELETE
+        authentication:
+          type: bearer
+          token: "{{ _.token_admin }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: 4. Events
+    meta:
+      id: fld_9a1940be0dd44b5ba899f93d1112508f
+      created: 1778171952353
+      modified: 1778177745167
+      sortKey: -1778171952353
+      description: ""
+    children:
+      - url: "{{ _.base_url }}/events"
+        name: "[Org] Create Event (Multipart)"
+        meta:
+          id: req_905b367859fe4466925eb06767ae2b62
+          created: 1778171952354
+          modified: 1778171952354
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952354
+        method: POST
+        body:
+          mimeType: multipart/form-data
+          params:
+            - name: title
+              value: Tech Summit 2026
+            - name: description
+              value: O maior evento de tecnologia.
+            - name: start_date
+              value: 2026-12-01T09:00:00Z
+            - name: location
+              value: Centro de Eventos FIERGS
+            - name: total_capacity
+              value: "500"
+            - name: price
+              value: "150.00"
+            - name: categories
+              value: Tecnologia
+            - name: banner
+              fileName: ""
+              type: file
+        authentication:
+          type: bearer
+          token: "{{ _.token_organizer }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/events"
+        name: "[Public] Get All Events"
+        meta:
+          id: req_abbe33b634a7418bb8e1b0deb9f3e3e0
+          created: 1778171952355
+          modified: 1778171952355
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952355
+        method: GET
+        parameters:
+          - name: page
+            value: "1"
+          - name: limit
+            value: "10"
+          - name: search
+            value: ""
+            disabled: true
+          - name: categoryId
+            value: ""
+            disabled: true
+          - name: startDate
+            value: ""
+            disabled: true
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/events/organizer"
+        name: "[Org] Get Organizer Events"
+        meta:
+          id: req_e02fa0bf78c84135a785a56462131f78
+          created: 1778171952355
+          modified: 1778171952355
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952355
+        method: GET
+        parameters:
+          - name: page
+            value: "1"
+          - name: limit
+            value: "10"
+          - name: search
+            value: ""
+            disabled: true
+        authentication:
+          type: bearer
+          token: "{{ _.token_organizer }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/events/{{ _.event_id }}"
+        name: "[Public] Get Event by ID"
+        meta:
+          id: req_e7544fc03f754714bf7e6be812e03304
+          created: 1778171952356
+          modified: 1778171952356
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952356
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/events/{{ _.event_id }}"
+        name: "[Org] Update Event (Multipart)"
+        meta:
+          id: req_e722eecea19c45eea75ce7773280f447
+          created: 1778171952357
+          modified: 1778171952357
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952357
+        method: PUT
+        body:
+          mimeType: multipart/form-data
+          params:
+            - name: title
+              value: Tech Summit 2026 - Edição Especial
+            - name: price
+              value: "120.00"
+            - name: banner
+              fileName: ""
+              type: file
+        authentication:
+          type: bearer
+          token: "{{ _.token_organizer }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/events/{{ _.event_id }}/cancel"
+        name: "[Org] Cancel Event"
+        meta:
+          id: req_b7b79ce6985f4b40b9d2b40dd210cdaa
+          created: 1778171952358
+          modified: 1778171952358
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952358
+        method: PATCH
+        authentication:
+          type: bearer
+          token: "{{ _.token_organizer }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/events/{{ _.event_id }}"
+        name: "[Org] Delete Event"
+        meta:
+          id: req_50d7510023cb4948adb3952aa5716497
+          created: 1778171952359
+          modified: 1778171952359
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952359
+        method: DELETE
+        authentication:
+          type: bearer
+          token: "{{ _.token_organizer }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/events/{{ _.event_id }}/tickets"
+        name: "[Org] Get Event Tickets"
+        meta:
+          id: req_e2d1f19305594a4a8c201c61a0139049
+          created: 1778171952359
+          modified: 1778171952359
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952359
+        method: GET
+        parameters:
+          - name: page
+            value: "1"
+          - name: limit
+            value: "10"
+        authentication:
+          type: bearer
+          token: "{{ _.token_organizer }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/files/e60981f760ace35045da-nexus.jpg"
+        name: "[Public] Get Event Image"
+        meta:
+          id: req_87e64feac39b4b40bb62b76b3af80fff
+          created: 1778180058605
+          modified: 1778180133832
+          isPrivate: false
+          description: ""
+          sortKey: -1778180058605
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.5.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: 5. Tickets
+    meta:
+      id: fld_0d9d9e9ba5714289888430d505d99f8f
+      created: 1778171952360
+      modified: 1778177751545
+      sortKey: -1778171952360
+      description: ""
+    children:
+      - url: "{{ _.base_url }}/tickets/{{ _.ticket_id }}"
+        name: "[Admin] Get Ticket by ID"
+        meta:
+          id: req_19bd49dd747a4f85a15b6f52d1ce7096
+          created: 1778171952361
+          modified: 1778171952361
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952361
+        method: GET
+        authentication:
+          type: bearer
+          token: "{{ _.token_admin }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tickets/{{ _.event_id }}"
+        name: "[Customer] Buy Ticket"
+        meta:
+          id: req_92dde4e882994800ac6f0f19a6d6e3d1
+          created: 1778171952361
+          modified: 1778178669878
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952361
+        method: POST
+        authentication:
+          type: bearer
+          token: "{{ _.token_customer }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tickets"
+        name: "[Admin] Get All Tickets"
+        meta:
+          id: req_36ebda2eb1e645d19e1b4fc9e3c52f4e
+          created: 1778171952362
+          modified: 1778171952362
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952362
+        method: GET
+        parameters:
+          - name: page
+            value: "1"
+          - name: limit
+            value: "10"
+          - name: search
+            value: ""
+            disabled: true
+          - name: eventId
+            value: ""
+            disabled: true
+        authentication:
+          type: bearer
+          token: "{{ _.token_admin }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tickets/{{ _.ticket_id }}"
+        name: "[Org] Use Ticket"
+        meta:
+          id: req_a5b45767398240e98f0dbfced0037bad
+          created: 1778171952363
+          modified: 1778171952363
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952363
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: |-
+            {
+                "eventId": "{{ _.event_id }}"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{{ _.token_organizer }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/tickets/{{ _.ticket_id }}/cancel"
+        name: "[Customer] Cancel Ticket"
+        meta:
+          id: req_2cb4a82507764d399356cc558458c32d
+          created: 1778171952364
+          modified: 1778171952364
+          isPrivate: false
+          description: ""
+          sortKey: -1778171952364
+        method: PATCH
+        authentication:
+          type: bearer
+          token: "{{ _.token_customer }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_692de5d239112c6ae3554ee90de78aa3887a7235
+    created: 1778171952367
+    modified: 1778171952367
+environments:
+  name: Base Environment
+  meta:
+    id: env_786a88df745843cf907ac04926358fc7
+    created: 1778171952336
+    modified: 1778178693775
+    isPrivate: false
+  data:
+    base_url: https://fullstack-work-node-production.up.railway.app
+    token_admin: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzgxNzc4OTksImV4cCI6MTc3ODI2NDI5OSwic3ViIjoiNDdlNjYzMzctODMyNy00ZDcxLTllZmUtMTFiM2RiMGI2MTYxIn0.r4_Js94UE_e-14uozEHvYDiIEBTo2e-XQCwXqkVZhpM
+    token_organizer: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoib3JnYW5pemVyIiwiaWF0IjoxNzc4MTc3OTc3LCJleHAiOjE3NzgyNjQzNzcsInN1YiI6IjhkZjZiOWVjLTQ2NzMtNDlhNi1hZTRiLTkwNzRhMWQ2NGUxNCJ9.-uxRgCPI6wxA4CuFzWTvw42c9lTEn8QQGupdUQxo67A
+    token_customer: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3NzgxNzc5NDYsImV4cCI6MTc3ODI2NDM0Niwic3ViIjoiMDIxM2VhMzAtZWYzYi00Y2VjLThhNzgtMjc1OTg1MGY5MTYwIn0.cr-m1LZDEIy4XJ4Qn6AZuJ9-XxAhRZgO37anDvsVIiA
+    user_id: 9e8e0c75-e734-4f2a-b7fa-6b4b68fe9e9d
+    event_id: d24bbd48-2f9e-47a0-8cf4-b11ee492f1b2
+    category_id: COLE_UUID_DA_CATEGORIA
+    ticket_id: COLE_UUID_DO_TICKET
