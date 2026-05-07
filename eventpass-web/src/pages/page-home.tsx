@@ -13,6 +13,12 @@ export default function PageHome() {
     const { events, isLoading, hasMore, loadMore } =
         useEvents(debouncedSearchItem);
 
+    const eventosAtivos = events.filter(
+        (event) =>
+            event.status !== "cancelled" &&
+            new Date(event.start_date).getTime() >= new Date().getTime(),
+    );
+
     return (
         <div className="flex flex-col gap-8 w-full">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
@@ -35,7 +41,7 @@ export default function PageHome() {
             </div>
 
             <EventGrid
-                events={events}
+                events={eventosAtivos}
                 isLoading={isLoading}
                 hasMore={hasMore}
                 loadMore={loadMore}

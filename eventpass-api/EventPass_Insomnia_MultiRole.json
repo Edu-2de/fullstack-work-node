@@ -1,0 +1,691 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-05-07T14:43:00.000Z",
+  "__export_source": "insomnia.desktop.app:v8.6.1",
+  "resources": [
+    {
+      "_id": "wrk_fc6f3b3d78f8418cb585b71a087f14f6",
+      "_type": "workspace",
+      "name": "EventPass API - Multi Role",
+      "description": "Cobertura de 100% dos 29 endpoints com múltiplos tokens por perfil de usuário."
+    },
+    {
+      "_id": "env_71ee422be89e4420acf520d1337d0850",
+      "parentId": "wrk_fc6f3b3d78f8418cb585b71a087f14f6",
+      "_type": "environment",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:3000",
+        "token_admin": "COLE_O_TOKEN_ADMIN_AQUI",
+        "token_organizer": "COLE_O_TOKEN_ORGANIZER_AQUI",
+        "token_customer": "COLE_O_TOKEN_CUSTOMER_AQUI",
+        "user_id": "COLE_UUID_DO_USER",
+        "event_id": "COLE_UUID_DO_EVENTO",
+        "category_id": "COLE_UUID_DA_CATEGORIA",
+        "ticket_id": "COLE_UUID_DO_TICKET"
+      }
+    },
+    {
+      "_id": "fld_4de7100f36464157bea23595930d32d7",
+      "parentId": "wrk_fc6f3b3d78f8418cb585b71a087f14f6",
+      "_type": "request_group",
+      "name": "🔑 1. Auth"
+    },
+    {
+      "_id": "req_8f07fe36f48c4aba80580ca12f58e2ca",
+      "parentId": "fld_4de7100f36464157bea23595930d32d7",
+      "_type": "request",
+      "name": "Login (Gera Tokens)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/login",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n    \"email\": \"admin@eventpass.com\",\n    \"password\": \"password123\"\n}"
+      }
+    },
+    {
+      "_id": "fld_8250f4078a41428a96519ce70ac535bd",
+      "parentId": "wrk_fc6f3b3d78f8418cb585b71a087f14f6",
+      "_type": "request_group",
+      "name": "👥 2. Users"
+    },
+    {
+      "_id": "req_01199aee30e44016bb6c7f984201252b",
+      "parentId": "fld_8250f4078a41428a96519ce70ac535bd",
+      "_type": "request",
+      "name": "[Public] Register Customer",
+      "method": "POST",
+      "url": "{{ _.base_url }}/users/register",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n    \"name\": \"Eduardo Cliente\",\n    \"email\": \"eduardo@cliente.com\",\n    \"password_encrypted\": \"senha123\"\n}"
+      }
+    },
+    {
+      "_id": "req_eb010225b95f426c95b4b5e00107a2dd",
+      "parentId": "fld_8250f4078a41428a96519ce70ac535bd",
+      "_type": "request",
+      "name": "[Admin] Create User",
+      "method": "POST",
+      "url": "{{ _.base_url }}/users",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_admin }}"
+      },
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n    \"name\": \"Organizador Pro\",\n    \"email\": \"org@eventos.com\",\n    \"password_encrypted\": \"senha123\",\n    \"role\": \"organizer\"\n}"
+      }
+    },
+    {
+      "_id": "req_70d4c613b68041649a472db9e58c1d7e",
+      "parentId": "fld_8250f4078a41428a96519ce70ac535bd",
+      "_type": "request",
+      "name": "[Customer] Get Profile",
+      "method": "GET",
+      "url": "{{ _.base_url }}/users/profile",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_customer }}"
+      },
+      "parameters": []
+    },
+    {
+      "_id": "req_251c1c7d3d3b45bd8ca50c56209fb9d1",
+      "parentId": "fld_8250f4078a41428a96519ce70ac535bd",
+      "_type": "request",
+      "name": "[Customer] Update Profile",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/users/profile",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_customer }}"
+      },
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n    \"name\": \"Eduardo Atualizado\"\n}"
+      }
+    },
+    {
+      "_id": "req_053f48083ad64411899554cddd342e58",
+      "parentId": "fld_8250f4078a41428a96519ce70ac535bd",
+      "_type": "request",
+      "name": "[Customer] Get Profile Tickets",
+      "method": "GET",
+      "url": "{{ _.base_url }}/users/profile/tickets",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_customer }}"
+      },
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1"
+        },
+        {
+          "name": "limit",
+          "value": "10"
+        }
+      ]
+    },
+    {
+      "_id": "req_a1fff4b9a51746ea979ebcb32f1e4934",
+      "parentId": "fld_8250f4078a41428a96519ce70ac535bd",
+      "_type": "request",
+      "name": "[Customer] Delete Profile",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/users/profile",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_customer }}"
+      },
+      "parameters": []
+    },
+    {
+      "_id": "req_97eb26215f044d6585788a982af46e16",
+      "parentId": "fld_8250f4078a41428a96519ce70ac535bd",
+      "_type": "request",
+      "name": "[Admin] Get All Users",
+      "method": "GET",
+      "url": "{{ _.base_url }}/users",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_admin }}"
+      },
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1"
+        },
+        {
+          "name": "limit",
+          "value": "10"
+        },
+        {
+          "name": "search",
+          "value": "",
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "_id": "req_850aa727f0b2403ea80582019de448d9",
+      "parentId": "fld_8250f4078a41428a96519ce70ac535bd",
+      "_type": "request",
+      "name": "[Admin] Get Deleted Users",
+      "method": "GET",
+      "url": "{{ _.base_url }}/users/deleted",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_admin }}"
+      },
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1"
+        },
+        {
+          "name": "limit",
+          "value": "10"
+        }
+      ]
+    },
+    {
+      "_id": "req_58d5f3cf20094dcfbfaf5444afa460e7",
+      "parentId": "fld_8250f4078a41428a96519ce70ac535bd",
+      "_type": "request",
+      "name": "[Admin] Get User by ID",
+      "method": "GET",
+      "url": "{{ _.base_url }}/users/{{ _.user_id }}",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_admin }}"
+      },
+      "parameters": []
+    },
+    {
+      "_id": "req_0a860a3f5889499eafd81efe210c89e9",
+      "parentId": "fld_8250f4078a41428a96519ce70ac535bd",
+      "_type": "request",
+      "name": "[Admin] Update User",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/users/{{ _.user_id }}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_admin }}"
+      },
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n    \"name\": \"Nome Alterado pelo Admin\",\n    \"role\": \"organizer\"\n}"
+      }
+    },
+    {
+      "_id": "req_c8cde15500a3452cb8c68760a394c0ae",
+      "parentId": "fld_8250f4078a41428a96519ce70ac535bd",
+      "_type": "request",
+      "name": "[Admin] Delete User",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/users/{{ _.user_id }}",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_admin }}"
+      },
+      "parameters": []
+    },
+    {
+      "_id": "fld_744afa38424c4bd3aab7ec3f4dad2035",
+      "parentId": "wrk_fc6f3b3d78f8418cb585b71a087f14f6",
+      "_type": "request_group",
+      "name": "🏷️ 3. Categories"
+    },
+    {
+      "_id": "req_c12963f1fb2544dbb523714fcc234c7e",
+      "parentId": "fld_744afa38424c4bd3aab7ec3f4dad2035",
+      "_type": "request",
+      "name": "[Admin] Create Category",
+      "method": "POST",
+      "url": "{{ _.base_url }}/categories",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_admin }}"
+      },
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n    \"name\": \"Tecnologia\"\n}"
+      }
+    },
+    {
+      "_id": "req_20bfab935b6d457cb765b5d7746c6baf",
+      "parentId": "fld_744afa38424c4bd3aab7ec3f4dad2035",
+      "_type": "request",
+      "name": "[Public] Get All Categories",
+      "method": "GET",
+      "url": "{{ _.base_url }}/categories",
+      "headers": [],
+      "authentication": {},
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1"
+        },
+        {
+          "name": "limit",
+          "value": "10"
+        },
+        {
+          "name": "search",
+          "value": "",
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "_id": "req_e11ec573c98b4dc2b0058b64b700f951",
+      "parentId": "fld_744afa38424c4bd3aab7ec3f4dad2035",
+      "_type": "request",
+      "name": "[Admin] Update Category",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/categories/{{ _.category_id }}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_admin }}"
+      },
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n    \"name\": \"Tecnologia Atualizada\"\n}"
+      }
+    },
+    {
+      "_id": "req_99865e890cb145849303f6ab8a647a82",
+      "parentId": "fld_744afa38424c4bd3aab7ec3f4dad2035",
+      "_type": "request",
+      "name": "[Admin] Delete Category",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/categories/{{ _.category_id }}",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_admin }}"
+      },
+      "parameters": []
+    },
+    {
+      "_id": "fld_763d7ff1b11d4b3b8b19bbf9165c355e",
+      "parentId": "wrk_fc6f3b3d78f8418cb585b71a087f14f6",
+      "_type": "request_group",
+      "name": "📅 4. Events"
+    },
+    {
+      "_id": "req_8211c2d04d9845eea796f010de8ebb7c",
+      "parentId": "fld_763d7ff1b11d4b3b8b19bbf9165c355e",
+      "_type": "request",
+      "name": "[Org] Create Event (Multipart)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/events",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_organizer }}"
+      },
+      "parameters": [],
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "name": "title",
+            "value": "Tech Summit 2026"
+          },
+          {
+            "name": "description",
+            "value": "O maior evento de tecnologia."
+          },
+          {
+            "name": "start_date",
+            "value": "2026-12-01T09:00:00Z"
+          },
+          {
+            "name": "location",
+            "value": "Centro de Eventos FIERGS"
+          },
+          {
+            "name": "total_capacity",
+            "value": "500"
+          },
+          {
+            "name": "price",
+            "value": "150.00"
+          },
+          {
+            "name": "categories",
+            "value": "Tecnologia"
+          },
+          {
+            "name": "banner",
+            "type": "file",
+            "fileName": ""
+          }
+        ]
+      }
+    },
+    {
+      "_id": "req_d33677e277e840dc8b4655e2cdaf49b2",
+      "parentId": "fld_763d7ff1b11d4b3b8b19bbf9165c355e",
+      "_type": "request",
+      "name": "[Public] Get All Events",
+      "method": "GET",
+      "url": "{{ _.base_url }}/events",
+      "headers": [],
+      "authentication": {},
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1"
+        },
+        {
+          "name": "limit",
+          "value": "10"
+        },
+        {
+          "name": "search",
+          "value": "",
+          "disabled": true
+        },
+        {
+          "name": "categoryId",
+          "value": "",
+          "disabled": true
+        },
+        {
+          "name": "startDate",
+          "value": "",
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "_id": "req_af4352bbd35d40e9b77d3464c519e627",
+      "parentId": "fld_763d7ff1b11d4b3b8b19bbf9165c355e",
+      "_type": "request",
+      "name": "[Org] Get Organizer Events",
+      "method": "GET",
+      "url": "{{ _.base_url }}/events/organizer",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_organizer }}"
+      },
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1"
+        },
+        {
+          "name": "limit",
+          "value": "10"
+        },
+        {
+          "name": "search",
+          "value": "",
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "_id": "req_fb76d2fc6a3e432f810e3d14df186324",
+      "parentId": "fld_763d7ff1b11d4b3b8b19bbf9165c355e",
+      "_type": "request",
+      "name": "[Public] Get Event by ID",
+      "method": "GET",
+      "url": "{{ _.base_url }}/events/{{ _.event_id }}",
+      "headers": [],
+      "authentication": {},
+      "parameters": []
+    },
+    {
+      "_id": "req_53adc99872cf48739341c673ea93b32f",
+      "parentId": "fld_763d7ff1b11d4b3b8b19bbf9165c355e",
+      "_type": "request",
+      "name": "[Org] Update Event (Multipart)",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/events/{{ _.event_id }}",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_organizer }}"
+      },
+      "parameters": [],
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "name": "title",
+            "value": "Tech Summit 2026 - Edição Especial"
+          },
+          {
+            "name": "price",
+            "value": "120.00"
+          },
+          {
+            "name": "banner",
+            "type": "file",
+            "fileName": ""
+          }
+        ]
+      }
+    },
+    {
+      "_id": "req_453107786b094cde8df578512d0e3711",
+      "parentId": "fld_763d7ff1b11d4b3b8b19bbf9165c355e",
+      "_type": "request",
+      "name": "[Org] Cancel Event",
+      "method": "PATCH",
+      "url": "{{ _.base_url }}/events/{{ _.event_id }}/cancel",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_organizer }}"
+      },
+      "parameters": []
+    },
+    {
+      "_id": "req_517444618a67414eba0cff734071d1a2",
+      "parentId": "fld_763d7ff1b11d4b3b8b19bbf9165c355e",
+      "_type": "request",
+      "name": "[Org] Delete Event",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/events/{{ _.event_id }}",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_organizer }}"
+      },
+      "parameters": []
+    },
+    {
+      "_id": "req_718677a25d4e46bca7c941bfe24a32f0",
+      "parentId": "fld_763d7ff1b11d4b3b8b19bbf9165c355e",
+      "_type": "request",
+      "name": "[Org] Get Event Tickets",
+      "method": "GET",
+      "url": "{{ _.base_url }}/events/{{ _.event_id }}/tickets",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_organizer }}"
+      },
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1"
+        },
+        {
+          "name": "limit",
+          "value": "10"
+        }
+      ]
+    },
+    {
+      "_id": "fld_883231d138194818aedebf5f206dea4b",
+      "parentId": "wrk_fc6f3b3d78f8418cb585b71a087f14f6",
+      "_type": "request_group",
+      "name": "🎟️ 5. Tickets"
+    },
+    {
+      "_id": "req_de4216a980a84d95b7721f021cd3f0c3",
+      "parentId": "fld_883231d138194818aedebf5f206dea4b",
+      "_type": "request",
+      "name": "[Customer] Buy Ticket",
+      "method": "POST",
+      "url": "{{ _.base_url }}/tickets/{{ _.event_id }}",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_customer }}"
+      },
+      "parameters": []
+    },
+    {
+      "_id": "req_a81fefa908874597a829003ed81a9fe3",
+      "parentId": "fld_883231d138194818aedebf5f206dea4b",
+      "_type": "request",
+      "name": "[Admin] Get Ticket by ID",
+      "method": "GET",
+      "url": "{{ _.base_url }}/tickets/{{ _.ticket_id }}",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_admin }}"
+      },
+      "parameters": []
+    },
+    {
+      "_id": "req_1e8941f125824b028e78b241d2b7e6d7",
+      "parentId": "fld_883231d138194818aedebf5f206dea4b",
+      "_type": "request",
+      "name": "[Admin] Get All Tickets",
+      "method": "GET",
+      "url": "{{ _.base_url }}/tickets",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_admin }}"
+      },
+      "parameters": [
+        {
+          "name": "page",
+          "value": "1"
+        },
+        {
+          "name": "limit",
+          "value": "10"
+        },
+        {
+          "name": "search",
+          "value": "",
+          "disabled": true
+        },
+        {
+          "name": "eventId",
+          "value": "",
+          "disabled": true
+        }
+      ]
+    },
+    {
+      "_id": "req_0e16e0f0d173484f9142c8eed0435f0b",
+      "parentId": "fld_883231d138194818aedebf5f206dea4b",
+      "_type": "request",
+      "name": "[Org] Use Ticket",
+      "method": "PATCH",
+      "url": "{{ _.base_url }}/tickets/{{ _.ticket_id }}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_organizer }}"
+      },
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n    \"eventId\": \"{{ _.event_id }}\"\n}"
+      }
+    },
+    {
+      "_id": "req_552fb2fbc7844da1b7bf78128d42d7b5",
+      "parentId": "fld_883231d138194818aedebf5f206dea4b",
+      "_type": "request",
+      "name": "[Customer] Cancel Ticket",
+      "method": "PATCH",
+      "url": "{{ _.base_url }}/tickets/{{ _.ticket_id }}/cancel",
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token_customer }}"
+      },
+      "parameters": []
+    }
+  ]
+}

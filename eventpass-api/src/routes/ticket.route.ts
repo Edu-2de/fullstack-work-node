@@ -13,6 +13,7 @@ const ticketRoutes = Router();
 ticketRoutes.post(
     "/:id",
     ensureAuthenticated,
+    ensureRole([UserRole.CUSTOMER]),
     validateData(idParamSchema, "params"),
     (req, res) => ticketController.create(req, res),
 );

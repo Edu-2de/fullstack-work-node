@@ -45,6 +45,7 @@ export default function EventDetail({
     }).format(Number(event.price));
 
     const isPastEvent = eventDateObj.getTime() < new Date().getTime();
+    const isCancelled = event.status === "cancelled"; // NOVA LINHA
     const isSoldOut = event.available_capacity <= 0;
 
     return (
@@ -55,7 +56,11 @@ export default function EventDetail({
                         <img
                             src={bannerUrl}
                             alt={event.title}
-                            className="w-full h-125 lg:h-162.5 object-cover rounded-3xl shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/5"
+                            className={`w-full h-125 lg:h-162.5 object-cover ... ${
+                                isPastEvent || isCancelled
+                                    ? "grayscale contrast-75 opacity-80"
+                                    : ""
+                            }`}
                         />
                     ) : (
                         <div className="w-full h-125 lg:h-162.5 bg-gray-300 rounded-3xl flex items-center justify-center border border-white/5">
@@ -220,26 +225,36 @@ export default function EventDetail({
                             </span>
                         </div>
 
-                        {isOwner && (
-                            <Button
-                                onClick={onEdit}
-                                size="lg"
-                                className="w-full sm:w-auto h-14 px-12 text-lg"
-                            >
-                                Editar Evento
-                            </Button>
-                        )}
+                        {isOwner &&
+                            (isCancelled || isPastEvent ? (
+                                <Button
+                                    disabled
+                                    variant="outline"
+                                    size="lg"
+                                    className="w-full sm:w-auto cursor-not-allowed border-error-base text-error-light"
+                                >
+                                    Evento Cancelado
+                                </Button>
+                            ) : (
+                                <Button
+                                    onClick={onEdit}
+                                    size="lg"
+                                    className="w-full sm:w-auto h-14 px-12 text-lg"
+                                >
+                                    Editar Evento
+                                </Button>
+                            ))}
 
                         {isCustomer && (
                             <div className="w-full sm:w-auto">
-                                {isPastEvent ? (
+                                {isCancelled || isPastEvent ? (
                                     <Button
                                         disabled
                                         variant="outline"
                                         size="lg"
-                                        className="w-full sm:w-auto cursor-not-allowed border-gray-500 text-gray-500"
+                                        className="w-full sm:w-auto cursor-not-allowed border-error-base text-error-light"
                                     >
-                                        Evento Encerrado
+                                        Evento Cancelado
                                     </Button>
                                 ) : isSoldOut ? (
                                     <Button
