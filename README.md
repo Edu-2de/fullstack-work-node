@@ -61,6 +61,44 @@ Here is a brief overview of the core routes available in the API:
 
 <br>
 
+<br>
+
+### **Regras de Negócio (Business Rules)**
+
+O sistema foi arquitetado com uma camada robusta de serviços (Service Layer) para garantir a integridade dos dados, a segurança das transações e o fluxo correto das operações. As principais regras do domínio são:
+
+**Tickets**
+
+- **Controle de Concorrência**: O banco de dados utiliza bloqueio pessimista (`pessimistic_write`) na tabela de eventos durante o checkout para evitar que dois usuários comprem o último ingresso simultaneamente (Double-Booking).
+- **Prevenção de Venda no Passado**: O sistema bloqueia a compra de ingressos para eventos cuja data de início seja menor que a data atual.
+- **Controle de Lotação**: É impossível emitir um ingresso se a capacidade disponível (`available_capacity`) do evento for menor ou igual a zero.
+- **Restrição de Validação**: Apenas o organizador dono do evento (ou um Administrador) tem permissão para validar e dar baixa em um ingresso. O ingresso só pode ser validado no evento exato para o qual foi emitido.
+- **Estorno de Capacidade**: Quando um cliente (ou Administrador) cancela um ingresso válido, a capacidade disponível do evento correspondente é imediatamente acrescida em 1.
+- **Cancelamento Restrito**: Apenas o cliente proprietário do ingresso ou um Administrador podem solicitar o cancelamento de uma compra. Somente ingressos com status válido podem ser cancelados ou validados.
+
+**Eventos**
+
+- **Datas Válidas**: A criação ou remarcação de eventos para datas no passado é expressamente proibida pela API.
+- **Proteção de Autoria**: Apenas o Organizador que criou o evento (ou um Administrador) possui privilégios para editá-lo, cancelá-lo ou excluí-lo.
+- **Gestão de Capacidade**: Na criação, a capacidade disponível herda o valor da capacidade total. Em atualizações, o sistema garante que a capacidade disponível não seja negativa nem exceda a capacidade total do evento.
+- **Integridade Financeira**: A exclusão permanente de um evento é bloqueada se houver qualquer ingresso já emitido para ele. Nesses cenários, a alternativa exigida é a mudança de status para "Cancelado".
+- **Cascata de Cancelamento**: Ao cancelar um evento inteiro, o sistema propaga a ação e cancela automaticamente todos os ingressos atrelados a ele.
+
+**Usuários e Autenticação**
+
+- **Unicidade de Identidade**: O endereço de e-mail deve ser único; o sistema rejeita cadastros ou atualizações com e-mails já em uso, retornando erro de conflito.
+- **Prevenção de Abandono (Organizador)**: Um Organizador é impedido de excluir sua própria conta se possuir eventos ativos no sistema. Ele é obrigado a cancelar os eventos antes de prosseguir com a exclusão.
+- **Prevenção de Perda (Cliente)**: Um Cliente não pode excluir sua conta se possuir tickets ativos e não utilizados, protegendo-o de perder o acesso às suas compras.
+- **Preservação de Histórico**: Exclusões de contas utilizam o conceito de "Soft Delete", permitindo consultas de histórico a usuários inativados.
+
+**Categories**
+
+- **Normalização Dinâmica**: Nomes de categorias são sanitizados no back-end (transformados em minúsculas, sem acentos e sem espaços extras) antes de validações para evitar duplicações semânticas (ex: "Música" e "musica").
+- **Unicidade**: É impossível cadastrar duas categorias com o mesmo nome normalizado.
+- **Segurança de Relacionamento**: Uma categoria não pode ser excluída do sistema se já estiver vinculada a um ou mais eventos cadastrados.
+
+<br>
+
 ### **Prerequisites**
 
 Before you begin, ensure you have the following installed:

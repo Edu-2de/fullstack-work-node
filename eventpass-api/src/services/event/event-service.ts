@@ -138,6 +138,18 @@ export class EventService {
             );
         }
 
+        if (data.total_capacity) {
+            const soldTickets =
+                eventExists.total_capacity - eventExists.available_capacity;
+            if (data.total_capacity < soldTickets) {
+                throw new AppError(
+                    `Não é possível reduzir a capacidade para ${data.total_capacity}. Você já vendeu ${soldTickets} ingressos.`,
+                    HttpStatus.BAD_REQUEST,
+                );
+            }
+            data.available_capacity = data.total_capacity - soldTickets;
+        }
+
         const foundCategories = normalizedCategories
             ? await this.validateCategoriesOrThrow(normalizedCategories)
             : eventExists.categories;
@@ -217,8 +229,6 @@ export class EventService {
                 fs.unlinkSync(filePath);
             }
         }
-
-        this.ticketRepository.cancelAllTicketsByEventId(eventExists.id);
 
         await this.eventRepository.delete(id);
     }
