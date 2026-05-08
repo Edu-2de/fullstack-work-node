@@ -4,12 +4,12 @@ import PrivateRoute from "./components/private-route";
 import LayoutMain from "./pages/layout-main";
 import PageComponents from "./pages/page-components";
 import PageCreateEvent from "./pages/page-create-event";
+import PageEditEvent from "./pages/page-edit-event";
 import PageEventDetail from "./pages/page-event-detail";
 import PageHome from "./pages/page-home";
 import PageLogin from "./pages/page-login";
 import PageMyEvents from "./pages/page-my-events";
 import PageRegister from "./pages/page-register";
-import PageEditEvent from "./pages/page-edit-event";
 
 export default function App() {
     return (
