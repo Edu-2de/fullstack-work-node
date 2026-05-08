@@ -3,22 +3,91 @@ import Text from "../../../components/text";
 import type { Event } from "../models/event.types";
 
 interface EventDetailProps {
-    event: Event;
+    event?: Event;
+    isLoading?: boolean;
     isCustomer: boolean;
     isOwner?: boolean;
     onBack: () => void;
     onBuy?: () => void;
     onEdit?: () => void;
+    onDelete?: () => void;
 }
 
 export default function EventDetail({
     event,
+    isLoading,
     isCustomer,
     isOwner,
     onBack,
     onBuy,
     onEdit,
+    onDelete,
 }: EventDetailProps) {
+    if (isLoading || !event) {
+        return (
+            <div className="relative w-full min-h-[calc(100vh-120px)] mt-4">
+                <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 z-10 relative animate-pulse">
+                    <div className="w-full lg:w-112.5 shrink-0">
+                        <div className="w-full h-125 lg:h-162.5 bg-white/10 rounded-3xl border border-white/5" />
+                    </div>
+
+                    <div className="flex-1 flex flex-col pt-2 lg:pt-4">
+                        <div className="w-24 h-6 bg-white/10 rounded mb-6" />
+
+                        <div className="w-4/5 h-12 bg-white/10 rounded-lg mb-4" />
+
+                        <div className="flex flex-wrap gap-2 mb-10">
+                            <div className="w-24 h-8 bg-white/10 rounded-full" />
+                            <div className="w-32 h-8 bg-white/10 rounded-full" />
+                            <div className="w-20 h-8 bg-white/10 rounded-full" />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-8 gap-x-12 mb-12">
+                            <div className="flex flex-col gap-2">
+                                <div className="w-16 h-4 bg-white/10 rounded" />
+                                <div className="w-40 h-6 bg-white/10 rounded" />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <div className="w-20 h-4 bg-white/10 rounded" />
+                                <div className="w-24 h-6 bg-white/10 rounded" />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <div className="w-24 h-4 bg-white/10 rounded" />
+                                <div className="w-48 h-6 bg-white/10 rounded" />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <div className="w-28 h-4 bg-white/10 rounded" />
+                                <div className="w-32 h-6 bg-white/10 rounded" />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <div className="w-32 h-4 bg-white/10 rounded" />
+                                <div className="w-36 h-6 bg-white/10 rounded" />
+                            </div>
+                        </div>
+
+                        <div className="mb-12">
+                            <div className="w-48 h-8 bg-white/10 rounded-lg mb-6" />
+                            <div className="flex flex-col gap-3">
+                                <div className="w-full h-4 bg-white/10 rounded" />
+                                <div className="w-11/12 h-4 bg-white/10 rounded" />
+                                <div className="w-full h-4 bg-white/10 rounded" />
+                                <div className="w-4/5 h-4 bg-white/10 rounded" />
+                            </div>
+                        </div>
+
+                        <div className="mt-auto pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+                            <div className="flex flex-col gap-2">
+                                <div className="w-32 h-4 bg-white/10 rounded" />
+                                <div className="w-40 h-10 bg-white/10 rounded-lg" />
+                            </div>
+                            <div className="w-full sm:w-auto h-14 bg-white/10 rounded-lg" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     const apiUrl = import.meta.env.VITE_API_URL.replace(/\/$/, "");
     const bannerUrl = event.banner_url
         ? `${apiUrl}/files/${event.banner_url}`
@@ -45,7 +114,7 @@ export default function EventDetail({
     }).format(Number(event.price));
 
     const isPastEvent = eventDateObj.getTime() < new Date().getTime();
-    const isCancelled = event.status === "cancelled"; // NOVA LINHA
+    const isCancelled = event.status === "cancelled";
     const isSoldOut = event.available_capacity <= 0;
 
     return (
@@ -56,7 +125,7 @@ export default function EventDetail({
                         <img
                             src={bannerUrl}
                             alt={event.title}
-                            className={`w-full h-125 lg:h-162.5 object-cover ... ${
+                            className={`w-full h-125 lg:h-162.5 object-cover rounded-3xl border border-white/5 ${
                                 isPastEvent || isCancelled
                                     ? "grayscale contrast-75 opacity-80"
                                     : ""
@@ -210,8 +279,8 @@ export default function EventDetail({
                         </Text>
                     </div>
 
-                    <div className="mt-auto pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-                        <div>
+                    <div className="mt-auto pt-8 border-t border-white/10 flex justify-between w-full  sm:items-center gap-12">
+                        <div className=" flex flex-col">
                             <Text
                                 variant="text-sm"
                                 className="text-gray-500 uppercase tracking-widest font-bold block mb-1"
@@ -225,25 +294,30 @@ export default function EventDetail({
                             </span>
                         </div>
 
-                        {isOwner &&
-                            (isCancelled || isPastEvent ? (
-                                <Button
-                                    disabled
-                                    variant="outline"
-                                    size="lg"
-                                    className="w-full sm:w-auto cursor-not-allowed border-error-base text-error-light"
-                                >
-                                    Evento Cancelado
-                                </Button>
-                            ) : (
-                                <Button
-                                    onClick={onEdit}
-                                    size="lg"
-                                    className="w-full sm:w-auto h-14 px-12 text-lg"
-                                >
-                                    Editar Evento
-                                </Button>
-                            ))}
+                        {isOwner && !isPastEvent && (
+                            <div className="flex flex-col justify-center sm:flex-row items-center gap-4 w-full">
+                                {isCancelled ? (
+                                    <Button
+                                        onClick={onDelete}
+                                        variant="outline"
+                                        size="lg"
+                                        className="w-full sm:w-auto h-14 px-12 text-lg border-error-base text-error-light hover:bg-error-base/10 transition-all"
+                                    >
+                                        Deletar Evento
+                                    </Button>
+                                ) : (
+                                    <>
+                                        <Button
+                                            onClick={onEdit}
+                                            size="lg"
+                                            className="w-full sm:w-auto h-14 px-12 text-lg"
+                                        >
+                                            Editar Evento
+                                        </Button>
+                                    </>
+                                )}
+                            </div>
+                        )}
 
                         {isCustomer && (
                             <div className="w-full sm:w-auto">
