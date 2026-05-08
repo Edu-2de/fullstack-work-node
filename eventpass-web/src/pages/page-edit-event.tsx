@@ -1,43 +1,110 @@
-import { useParams } from "react-router-dom";
-import Spin from "../assets/icons/circle-notch.svg?react";
-import Icon from "../components/icon";
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import MainContent from "../components/main-content";
 import Text from "../components/text";
+import { useCategories } from "../features/categories/hooks/useCategories";
+import EventDetailSkeleton from "../features/events/components/EventDetailSkeleton";
 import EventForm from "../features/events/components/EventForm";
+import { useCancelEvent } from "../features/events/hooks/useCancelEvent";
 import { useEvent } from "../features/events/hooks/useEvent";
+import { useUpdateEvent } from "../features/events/hooks/useUpdateEvent";
+import type { CreateEventFormData } from "../features/events/schema";
 
 export default function PageEditEvent() {
-    const { id } = useParams();
+    const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
 
-    const { event, isLoading } = useEvent(id || "");
+    const { event, isLoading: eventLoading } = useEvent(id || "");
+    const { categories, isLoading: categoriesLoading } = useCategories();
 
-    if (isLoading) {
+    const { updateEvent } = useUpdateEvent(id || "");
+    const cancelEvent = useCancelEvent(id || "");
+
+    // Estados locais para controlar o carregamento e erros dos botões
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [actionError, setActionError] = useState<string | null>(null);
+
+    const handleUpdate = async (
+        data: CreateEventFormData,
+        bannerFile: File | null,
+    ) => {
+        try {
+            setIsProcessing(true);
+            setActionError(null);
+            await updateEvent(data, bannerFile);
+
+            alert("Evento atualizado com sucesso!");
+            navigate(`/event/${id}`);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (err: any) {
+            console.error(err);
+            setActionError(
+                err.response?.data?.message || "Erro ao atualizar evento",
+            );
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
+    const handleCancel = async () => {
+        if (
+            !window.confirm(
+                "Deseja realmente cancelar este evento? Esta ação é irreversível.",
+            )
+        ) {
+            return;
+        }
+
+        try {
+            setIsProcessing(true);
+            setActionError(null);
+            await cancelEvent();
+
+            alert("Evento cancelado com sucesso!");
+            navigate("/my-events");
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (err: any) {
+            console.error(err);
+            setActionError(
+                err.response?.data?.message || "Erro ao cancelar evento",
+            );
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
+    if (eventLoading || categoriesLoading) {
         return (
-            <div className="w-full flex flex-col items-center justify-center h-64 gap-4">
-                <Icon
-                    svg={Spin}
-                    animate
-                    className="w-10 h-10 fill-purple-base"
-                />
-                <Text variant="text-md" className="text-gray-500">
-                    Carregando dados do evento...
-                </Text>
-            </div>
+            <MainContent>
+                <EventDetailSkeleton />
+            </MainContent>
         );
     }
 
     if (!event) {
         return (
-            <div className="w-full flex items-center justify-center h-64">
-                <Text variant="display-md" className="text-error-base">
-                    Evento não encontrado para edição.
-                </Text>
-            </div>
+            <MainContent>
+                <div className="flex flex-col items-center justify-center py-20">
+                    <Text className="text-error-light">
+                        Erro ao carregar evento.
+                    </Text>
+                </div>
+            </MainContent>
         );
     }
 
     return (
-        <div className="w-full flex flex-col gap-8">
-            <EventForm event={event} />
-        </div>
+        <MainContent>
+            <div className="flex flex-col gap-8">
+                <EventForm
+                    event={event}
+                    categories={categories}
+                    onSubmit={handleUpdate}
+                    onCancelEvent={handleCancel}
+                    isLoading={isProcessing}
+                    error={actionError}
+                />
+            </div>
+        </MainContent>
     );
 }
