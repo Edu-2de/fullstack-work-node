@@ -193,6 +193,14 @@ export class EventService {
         const eventExists = await this.findEventOrThrow(id);
         this.ensureOwnerShip(eventExists, organizerId, userRole);
 
+        const isFinishied = new Date(eventExists.start_date) < new Date();
+        if (!isFinishied) {
+            throw new AppError(
+                "O evento já ocorreu, nao é possível cancelar-lo",
+                HttpStatus.CONFLICT,
+            );
+        }
+
         if (eventExists.status !== EventStatus.CANCELLED) {
             await this.eventRepository.update(
                 eventExists.id,
@@ -207,6 +215,14 @@ export class EventService {
     async delete(id: string, organizerId: string, userRole: string) {
         const eventExists = await this.findEventOrThrow(id);
         this.ensureOwnerShip(eventExists, organizerId, userRole);
+
+        const isFinishied = new Date(eventExists.start_date) < new Date();
+        if (!isFinishied) {
+            throw new AppError(
+                "O evento já ocorreu, nao é possível deletar-lo",
+                HttpStatus.CONFLICT,
+            );
+        }
 
         const tickets = await this.ticketRepository.findByEventId(id, 1, 1);
         if (tickets.total_items > 0) {

@@ -147,7 +147,7 @@ export class EventRepository implements IEventRepository {
             skip: skip,
             take: safeLimit,
             order: {
-                start_date: "DESC",
+                start_date: "ASC",
             },
         });
 
