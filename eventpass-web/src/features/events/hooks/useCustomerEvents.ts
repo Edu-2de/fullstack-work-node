@@ -2,16 +2,16 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { api } from "../../../helpers/api";
 import type { PaginatedEventResponse } from "../models/event.types";
 
-export function useOrganizerEvents(
+export function useCustomerEvents(
     searchItem: string = "",
     isEnabled: boolean = true,
 ) {
     const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
         useInfiniteQuery({
-            queryKey: ["eventsOrganizer", "infinite", searchItem],
+            queryKey: ["eventsCustomer", "infinite", searchItem],
             queryFn: async ({ pageParam = 1 }) => {
                 const response = await api.get<PaginatedEventResponse>(
-                    "/events/organizer",
+                    "/users/profile/tickets",
                     {
                         params: {
                             page: pageParam,
@@ -34,13 +34,17 @@ export function useOrganizerEvents(
             },
         });
 
-    const events = data?.pages.flatMap((page) => page.data) ?? [];
+    const eventsCustomer =
+        data?.pages.flatMap((page) =>
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            page.data.map((ticket: any) => ticket.events),
+        ) ?? [];
 
     return {
-        events,
-        isLoading,
-        hasMore: hasNextPage,
-        loadMore: fetchNextPage,
-        isFetchingNextPage,
+        eventsCustomer,
+        isLoadingCustomer: isLoading,
+        hasMoreCustomer: hasNextPage,
+        loadMoreCustomer: fetchNextPage,
+        isFetchingNextPageCustomer: isFetchingNextPage,
     };
 }
