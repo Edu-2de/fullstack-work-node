@@ -3,27 +3,30 @@ import Text from "../../../components/text";
 import type { Event } from "../models/event.types";
 
 interface EventDetailProps {
-    event?: Event;
-    isLoading?: boolean;
+    event: Event;
     isCustomer: boolean;
     isOwner?: boolean;
     onBack: () => void;
     onBuy?: () => void;
     onEdit?: () => void;
     onDelete?: () => void;
+
+    isBuyLoading?: boolean;
+    isDeleteLoading?: boolean;
 }
 
 export default function EventDetail({
     event,
-    isLoading,
     isCustomer,
     isOwner,
     onBack,
     onBuy,
     onEdit,
     onDelete,
+    isBuyLoading,
+    isDeleteLoading,
 }: EventDetailProps) {
-    if (isLoading || !event) {
+    if (!event) {
         return (
             <div className="relative w-full min-h-[calc(100vh-120px)] mt-4">
                 <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 z-10 relative animate-pulse">
@@ -299,6 +302,7 @@ export default function EventDetail({
                                 {isCancelled ? (
                                     <Button
                                         onClick={onDelete}
+                                        isLoading={isDeleteLoading}
                                         variant="outline"
                                         size="lg"
                                         className="w-full sm:w-auto h-14 px-12 text-lg border-error-base text-error-light hover:bg-error-base/10 transition-all"
@@ -342,6 +346,7 @@ export default function EventDetail({
                                 ) : (
                                     <Button
                                         onClick={onBuy}
+                                        isLoading={isBuyLoading}
                                         size="lg"
                                         className="w-full sm:w-auto h-14 px-12 text-lg"
                                     >

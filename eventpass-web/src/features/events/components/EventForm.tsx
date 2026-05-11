@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { isAxiosError } from "axios"; // Importação do Axios adicionada
 import React from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -53,8 +54,11 @@ interface EventFormProps {
         bannerFile: File | null,
     ) => Promise<void>;
     onCancelEvent?: () => Promise<void>;
-    isLoading?: boolean;
-    error?: string | null;
+
+    isSubmitLoading?: boolean;
+    isCancelLoading?: boolean;
+    submitError?: Error | null;
+    cancelError?: Error | null;
 }
 
 export default function EventForm({
@@ -62,8 +66,10 @@ export default function EventForm({
     categories,
     onSubmit,
     onCancelEvent,
-    isLoading,
-    error,
+    isSubmitLoading,
+    isCancelLoading,
+    submitError,
+    cancelError,
 }: EventFormProps) {
     const navigate = useNavigate();
     const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -90,6 +96,7 @@ export default function EventForm({
         handleSubmit,
         setValue,
         watch,
+        setError,
         formState: { errors, isSubmitting },
     } = useForm<CreateEventFormData>({
         resolver: zodResolver(createEventSchema),
@@ -149,11 +156,48 @@ export default function EventForm({
         }
     };
 
+    // 3. O coração do Error Bubbling e injeção!
     const handleFormSubmit: SubmitHandler<CreateEventFormData> = async (
         data,
     ) => {
-        await onSubmit(data, bannerFile);
+        try {
+            await onSubmit(data, bannerFile);
+        } catch (err) {
+            if (isAxiosError(err) && err.response?.data?.errors) {
+                const backendErrors = err.response.data.errors;
+
+                backendErrors.forEach(
+                    (backendError: { field: string; message: string }) => {
+                        setError(
+                            backendError.field as keyof CreateEventFormData,
+                            {
+                                type: "server",
+                                message: backendError.message,
+                            },
+                        );
+                    },
+                );
+                return;
+            }
+        }
     };
+
+    let submitErrorMessage = submitError?.message;
+    let cancelErrorMessage = cancelError?.message;
+
+    if (isAxiosError(submitError)) {
+        if (!submitError.response?.data?.errors) {
+            submitErrorMessage =
+                submitError.response?.data?.message || submitError.message;
+        } else {
+            submitErrorMessage = undefined;
+        }
+    }
+
+    if (isAxiosError(cancelError)) {
+        cancelErrorMessage =
+            cancelError.response?.data?.message || cancelError.message;
+    }
 
     return (
         <form onSubmit={handleSubmit(handleFormSubmit)} className={wrapper()}>
@@ -300,12 +344,12 @@ export default function EventForm({
                     )}
                 </div>
 
-                {error && (
+                {submitErrorMessage && (
                     <Text
                         variant="text-sm"
                         className="text-error-light mt-4 text-center bg-error-base/10 p-4 rounded-xl border border-error-base/20"
                     >
-                        {error}
+                        {submitErrorMessage}
                     </Text>
                 )}
 
@@ -322,21 +366,34 @@ export default function EventForm({
                         event &&
                         event.status !== "cancelled" &&
                         onCancelEvent && (
-                            <Button
-                                type="button"
-                                variant="outline"
-                                className="border-error-base text-error-light hover:bg-error-base/10 px-8"
-                                onClick={onCancelEvent}
-                                disabled={isSubmitting || isLoading}
-                            >
-                                Cancelar Evento
-                            </Button>
+                            <div className="flex flex-col items-center">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="border-error-base text-error-light hover:bg-error-base/10 px-8"
+                                    onClick={onCancelEvent}
+                                    isLoading={isCancelLoading}
+                                    disabled={isSubmitting || isSubmitLoading}
+                                >
+                                    Cancelar Evento
+                                </Button>
+
+                                {cancelErrorMessage && (
+                                    <Text
+                                        variant="text-sm"
+                                        className="text-error-base mt-2 font-bold"
+                                    >
+                                        {cancelErrorMessage}
+                                    </Text>
+                                )}
+                            </div>
                         )}
 
                     <Button
-                        isLoading={isSubmitting || isLoading}
-                        className="w-40"
                         type="submit"
+                        className="w-40"
+                        isLoading={isSubmitting || isSubmitLoading}
+                        disabled={isCancelLoading}
                     >
                         Salvar
                     </Button>

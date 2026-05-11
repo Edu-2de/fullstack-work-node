@@ -1,38 +1,30 @@
-import { useEffect, useRef } from "react";
-import { Link } from "react-router";
+import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
 import FilmIcon from "../../../assets/icons/FilmSlate-Regular.svg?react";
 import EventCard from "../../../components/eventCard";
 import Icon from "../../../components/icon";
 import Text from "../../../components/text";
 import type { Event } from "../models/event.types";
 
-interface EventGridProps {
+interface EventOrganizerGridProps {
     events: Event[];
     isLoading: boolean;
-    isFetchingNextPage: boolean;
     hasMore: boolean;
     loadMore: () => void;
-    emptyMessage?: string;
 }
 
-export default function EventGrid({
+export default function EventOrganizerGrid({
     events,
     isLoading,
-    isFetchingNextPage,
     hasMore,
     loadMore,
-    emptyMessage,
-}: EventGridProps) {
-    const observerTarget = useRef<HTMLDivElement>(null);
+}: EventOrganizerGridProps) {
+    const observerTarget = React.useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
-                if (
-                    entries[0].isIntersecting &&
-                    hasMore &&
-                    !isFetchingNextPage
-                ) {
+                if (entries[0].isIntersecting && hasMore && !isLoading) {
                     loadMore();
                 }
             },
@@ -49,11 +41,11 @@ export default function EventGrid({
                 observer.unobserve(observerTarget.current);
             }
         };
-    }, [hasMore, isFetchingNextPage, loadMore]);
+    }, [hasMore, isLoading, loadMore]);
 
-    if (isLoading) {
+    if (isLoading && events.length === 0) {
         return (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {Array.from({ length: 8 }).map((_, index) => (
                     <EventCard
                         key={`events-loading-${index}`}
@@ -66,12 +58,11 @@ export default function EventGrid({
         );
     }
 
-    if (events.length === 0) {
+    if (!isLoading && events.length === 0) {
         return (
             <div className="w-full flex flex-col items-center justify-center gap-6 py-12">
                 <Icon className="w-11 h-11 fill-gray-400" svg={FilmIcon} />
-                {/* Usa a mensagem enviada OU a padrão caso não enviem nada */}
-                <Text>{emptyMessage || "Nenhum evento encontrado."}</Text>
+                <Text>Nenhum evento registrado.</Text>
             </div>
         );
     }
@@ -84,8 +75,8 @@ export default function EventGrid({
                         <EventCard event={e} />
                     </Link>
                 ))}
-
-                {isFetchingNextPage &&
+                {isLoading &&
+                    events.length > 0 &&
                     Array.from({ length: 4 }).map((_, index) => (
                         <EventCard
                             key={`events-loading-more-${index}`}
