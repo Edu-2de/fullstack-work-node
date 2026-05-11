@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MainContent from "../components/main-content";
 import Text from "../components/text";
@@ -10,32 +9,15 @@ import type { CreateEventFormData } from "../features/events/schema";
 export default function PageCreateEvent() {
     const navigate = useNavigate();
     const { categories, isLoading: categoriesLoading } = useCategories();
-    const { createEvent } = useCreateEvent();
-
-    const [isProcessing, setIsProcessing] = useState(false);
-    const [actionError, setActionError] = useState<string | null>(null);
+    const { createEvent, isCreating, createError } = useCreateEvent();
 
     const handleSubmit = async (
         data: CreateEventFormData,
         bannerFile: File | null,
     ) => {
-        try {
-            setIsProcessing(true);
-            setActionError(null);
-
-            await createEvent(data, bannerFile);
-
-            alert("Evento criado com sucesso!");
-            navigate("/");
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (err: any) {
-            console.error(err);
-            setActionError(
-                err.response?.data?.message || "Erro ao criar evento",
-            );
-        } finally {
-            setIsProcessing(false);
-        }
+        await createEvent({ data, bannerFile });
+        alert("Evento criado com sucesso!");
+        navigate("/");
     };
 
     if (categoriesLoading) {
@@ -56,8 +38,8 @@ export default function PageCreateEvent() {
                 <EventForm
                     categories={categories}
                     onSubmit={handleSubmit}
-                    isLoading={isProcessing}
-                    error={actionError}
+                    isSubmitLoading={isCreating}
+                    submitError={createError}
                 />
             </div>
         </MainContent>

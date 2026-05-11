@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Text from "../components/text";
 import { useAuth } from "../features/auth/hooks/useAuth";
@@ -6,24 +5,30 @@ import EventDetail from "../features/events/components/EventDetail";
 import EventDetailSkeleton from "../features/events/components/EventDetailSkeleton";
 import { useDeleteEvent } from "../features/events/hooks/useDeleteEvent";
 import { useEvent } from "../features/events/hooks/useEvent";
+import { useCreateTicket } from "../features/tickets/hooks/useCreateTicket";
 
 export default function PageEventDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
     const { user } = useAuth();
 
-    const [isProcessing, setIsProcessing] = React.useState(false);
+    const { event, isLoading: isFetchingEvent } = useEvent(id || "");
 
-    const { event, isLoading } = useEvent(id || "");
-
-    const deleteEvent = useDeleteEvent(id || "");
+    const { createTicket, isBuying: isBuyingTicket } = useCreateTicket();
+    const { deleteEvent, isDeleting: isDeletingEvent } = useDeleteEvent();
 
     const isCustomer = user?.role === "customer";
     const isOwnerEvent =
         user?.role === "organizer" && event?.organizer?.id === user?.id;
 
-    function handleBuyTicket() {
-        console.log("Comprando ingresso para o evento:", id);
+    async function handleBuyTicket() {
+        try {
+            await createTicket(id || "");
+            alert("Ticket comprado com sucesso!");
+            navigate("/my-events");
+        } catch (err: unknown) {
+            console.error("Erro ao comprar", err);
+        }
     }
 
     function handleEdit() {
@@ -40,21 +45,17 @@ export default function PageEventDetail() {
         }
 
         try {
-            setIsProcessing(true);
-            await deleteEvent();
-
+            await deleteEvent(id || "");
             alert("Evento deletado com sucesso!");
             navigate("/my-events");
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             console.error(err);
             alert(err.response?.data?.message || "Erro ao cancelar evento");
-        } finally {
-            setIsProcessing(false);
         }
     }
 
-    if (isLoading) {
+    if (isFetchingEvent) {
         return <EventDetailSkeleton />;
     }
 
@@ -73,11 +74,12 @@ export default function PageEventDetail() {
             event={event}
             isCustomer={isCustomer}
             isOwner={isOwnerEvent}
-            isLoading={isProcessing}
             onBack={() => navigate(-1)}
             onBuy={handleBuyTicket}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            isBuyLoading={isBuyingTicket}
+            isDeleteLoading={isDeletingEvent}
         />
     );
 }

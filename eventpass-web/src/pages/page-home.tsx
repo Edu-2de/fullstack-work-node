@@ -10,7 +10,7 @@ export default function PageHome() {
     const [searchItem, setSearchItem] = React.useState("");
     const debouncedSearchItem = useDebounce(searchItem, 500);
 
-    const { events, isLoading, hasMore, loadMore } =
+    const { events, isLoading, hasMore, loadMore, isFetchingNextPage } =
         useEvents(debouncedSearchItem);
 
     const eventosAtivos = events.filter(
@@ -45,6 +45,7 @@ export default function PageHome() {
                 isLoading={isLoading}
                 hasMore={hasMore}
                 loadMore={loadMore}
+                isFetchingNextPage={isFetchingNextPage}
             />
         </div>
     );

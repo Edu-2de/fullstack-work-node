@@ -3,20 +3,27 @@ import SearchIcon from "../assets/icons/MagnifyingGlass-Regular.svg?react";
 import InputText from "../components/input-text";
 import Text from "../components/text";
 import { useAuth } from "../features/auth/hooks/useAuth";
-import EventOrganizerGrid from "../features/events/components/EventOrganizerGrid";
-
+import EventGrid from "../features/events/components/EventGrid";
+import { useCustomerEvents } from "../features/events/hooks/useCustomerEvents";
 import { useOrganizerEvents } from "../features/events/hooks/useOrganizerEvents";
 import { useDebounce } from "../hooks/useDebounce";
 
 export default function PageMyEvents() {
     const { user } = useAuth();
+    const isOrganizer = user?.role === "organizer";
     const [searchItem, setSearchItem] = React.useState("");
     const debouncedSearchItem = useDebounce(searchItem, 500);
 
-    const { events, isLoading, hasMore, loadMore } =
-        useOrganizerEvents(debouncedSearchItem);
+    const { events, isLoading, isFetchingNextPage, hasMore, loadMore } =
+        useOrganizerEvents(debouncedSearchItem, isOrganizer);
 
-    const isOrganizer = user?.role === "organizer";
+    const {
+        eventsCustomer,
+        isLoadingCustomer,
+        isFetchingNextPageCustomer,
+        hasMoreCustomer,
+        loadMoreCustomer,
+    } = useCustomerEvents(debouncedSearchItem, isOrganizer);
 
     return (
         <div className="flex flex-col gap-8 w-full">
@@ -40,14 +47,23 @@ export default function PageMyEvents() {
             </div>
 
             {isOrganizer ? (
-                <EventOrganizerGrid
+                <EventGrid
                     events={events}
                     isLoading={isLoading}
+                    isFetchingNextPage={isFetchingNextPage}
                     hasMore={hasMore}
                     loadMore={loadMore}
+                    emptyMessage="Você ainda não criou nenhum evento."
                 />
             ) : (
-                <div></div>
+                <EventGrid
+                    events={eventsCustomer}
+                    isLoading={isLoadingCustomer}
+                    isFetchingNextPage={isFetchingNextPageCustomer}
+                    hasMore={hasMoreCustomer}
+                    loadMore={loadMoreCustomer}
+                    emptyMessage="Você ainda não criou nenhum evento."
+                />
             )}
         </div>
     );

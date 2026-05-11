@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import MainContent from "../components/main-content";
 import Text from "../components/text";
@@ -17,59 +16,36 @@ export default function PageEditEvent() {
     const { event, isLoading: eventLoading } = useEvent(id || "");
     const { categories, isLoading: categoriesLoading } = useCategories();
 
-    const { updateEvent } = useUpdateEvent(id || "");
-    const cancelEvent = useCancelEvent(id || "");
-
-    // Estados locais para controlar o carregamento e erros dos botões
-    const [isProcessing, setIsProcessing] = useState(false);
-    const [actionError, setActionError] = useState<string | null>(null);
+    const { updateEvent, isUpdating, updateError } = useUpdateEvent();
+    const { cancelEvent, isCanceling, cancelError } = useCancelEvent();
 
     const handleUpdate = async (
         data: CreateEventFormData,
         bannerFile: File | null,
     ) => {
         try {
-            setIsProcessing(true);
-            setActionError(null);
-            await updateEvent(data, bannerFile);
+            await updateEvent({
+                id: id || "",
+                data,
+                bannerFile,
+            });
 
             alert("Evento atualizado com sucesso!");
             navigate(`/event/${id}`);
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (err: any) {
-            console.error(err);
-            setActionError(
-                err.response?.data?.message || "Erro ao atualizar evento",
-            );
-        } finally {
-            setIsProcessing(false);
+        } catch (err) {
+            console.error("Erro ao atualizar", err);
         }
     };
 
     const handleCancel = async () => {
-        if (
-            !window.confirm(
-                "Deseja realmente cancelar este evento? Esta ação é irreversível.",
-            )
-        ) {
-            return;
-        }
+        if (!window.confirm("Deseja realmente cancelar este evento?")) return;
 
         try {
-            setIsProcessing(true);
-            setActionError(null);
-            await cancelEvent();
-
+            await cancelEvent(id || "");
             alert("Evento cancelado com sucesso!");
             navigate("/my-events");
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (err: any) {
-            console.error(err);
-            setActionError(
-                err.response?.data?.message || "Erro ao cancelar evento",
-            );
-        } finally {
-            setIsProcessing(false);
+        } catch (err) {
+            console.error("Erro ao cancelar", err);
         }
     };
 
@@ -101,8 +77,10 @@ export default function PageEditEvent() {
                     categories={categories}
                     onSubmit={handleUpdate}
                     onCancelEvent={handleCancel}
-                    isLoading={isProcessing}
-                    error={actionError}
+                    isSubmitLoading={isUpdating}
+                    isCancelLoading={isCanceling}
+                    submitError={updateError}
+                    cancelError={cancelError}
                 />
             </div>
         </MainContent>
