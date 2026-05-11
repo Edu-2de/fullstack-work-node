@@ -15,7 +15,7 @@ export const createEventSchema = z.object({
         .refine((dateString) => {
             return new Date(dateString) > new Date();
         }, "A data do evento não pode estar no passado"),
-    location: z.string().min(1, "O local é obrigatório").max(255),
+    location: z.string().min(5, "O local é obrigatório").max(255),
     total_capacity: z
         .number("Insira uma capacidade válida")
         .int("A capacidade deve ter um valor inteiro")
