@@ -49,8 +49,18 @@ export default function LoginForm() {
                         });
                     });
                 } else {
-                    setError("root", { message: genericMessage });
+                    setError("root", {
+                        message:
+                            genericMessage ||
+                            "Falha ao iniciar sessão. Verifique os seus dados.",
+                    });
+                    setValue("password", "", { shouldValidate: false });
                 }
+            } else {
+                setError("root", {
+                    message:
+                        "Ocorreu um erro inesperado. Tente novamente mais tarde.",
+                });
             }
         }
     }
@@ -85,6 +95,15 @@ export default function LoginForm() {
                     {...register("password")}
                 />
             </div>
+
+            {errors.root && (
+                <Text
+                    variant="text-sm"
+                    className="text-error-light text-center bg-error-base/10 p-3 rounded-lg border border-error-base/20"
+                >
+                    {errors.root.message}
+                </Text>
+            )}
 
             <Button
                 isLoading={isSubmitting}
