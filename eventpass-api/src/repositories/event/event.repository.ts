@@ -70,7 +70,6 @@ export class EventRepository implements IEventRepository {
 
         const [events, total] = await this.ormRepository.findAndCount({
             where: where,
-
             skip: skip,
             take: safeLimit,
             order: {
@@ -80,7 +79,6 @@ export class EventRepository implements IEventRepository {
                 categories: true,
                 organizer: true,
             },
-            withDeleted: true,
             select: {
                 organizer: {
                     id: true,

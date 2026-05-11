@@ -194,7 +194,7 @@ export class EventService {
         this.ensureOwnerShip(eventExists, organizerId, userRole);
 
         const isFinishied = new Date(eventExists.start_date) < new Date();
-        if (!isFinishied) {
+        if (isFinishied) {
             throw new AppError(
                 "O evento já ocorreu, nao é possível cancelar-lo",
                 HttpStatus.CONFLICT,
@@ -217,7 +217,7 @@ export class EventService {
         this.ensureOwnerShip(eventExists, organizerId, userRole);
 
         const isFinishied = new Date(eventExists.start_date) < new Date();
-        if (!isFinishied) {
+        if (isFinishied) {
             throw new AppError(
                 "O evento já ocorreu, nao é possível deletar-lo",
                 HttpStatus.CONFLICT,
