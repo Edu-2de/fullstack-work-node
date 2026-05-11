@@ -145,9 +145,10 @@ export default function EventCard({
                             </div>
 
                             <Text className="absolute inset-0 text-white/80 text-sm leading-relaxed transition-opacity duration-500 opacity-0 group-hover:opacity-100">
-                                {event.description.length > 80
+                                {event?.description &&
+                                event.description.length > 80
                                     ? `${event.description.substring(0, 80)}...`
-                                    : event.description}
+                                    : event?.description || ""}
                             </Text>
                         </div>
                     </div>
