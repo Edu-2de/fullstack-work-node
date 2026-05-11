@@ -7,7 +7,7 @@ import EventForm from "../features/events/components/EventForm";
 import { useCancelEvent } from "../features/events/hooks/useCancelEvent";
 import { useEvent } from "../features/events/hooks/useEvent";
 import { useUpdateEvent } from "../features/events/hooks/useUpdateEvent";
-import type { CreateEventFormData } from "../features/events/schema";
+import type { EventFormData } from "../features/events/models/event.types";
 
 export default function PageEditEvent() {
     const { id } = useParams<{ id: string }>();
@@ -20,7 +20,7 @@ export default function PageEditEvent() {
     const { cancelEvent, isCanceling, cancelError } = useCancelEvent();
 
     const handleUpdate = async (
-        data: CreateEventFormData,
+        data: EventFormData,
         bannerFile: File | null,
     ) => {
         try {

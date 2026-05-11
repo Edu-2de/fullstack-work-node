@@ -4,7 +4,7 @@ import Text from "../components/text";
 import { useCategories } from "../features/categories/hooks/useCategories";
 import EventForm from "../features/events/components/EventForm";
 import { useCreateEvent } from "../features/events/hooks/useCreateEvent";
-import type { CreateEventFormData } from "../features/events/schema";
+import type { EventFormData } from "../features/events/models/event.types";
 
 export default function PageCreateEvent() {
     const navigate = useNavigate();
@@ -12,7 +12,7 @@ export default function PageCreateEvent() {
     const { createEvent, isCreating, createError } = useCreateEvent();
 
     const handleSubmit = async (
-        data: CreateEventFormData,
+        data: EventFormData,
         bannerFile: File | null,
     ) => {
         await createEvent({ data, bannerFile });

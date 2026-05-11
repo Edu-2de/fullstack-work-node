@@ -1,9 +1,20 @@
+import { useNavigate } from "react-router-dom";
 import Image from "../assets/images/event.jpg";
 import MenuItem from "../components/menu-item";
 import Text from "../components/text";
 import RegisterForm from "../features/auth/components/RegisterForm";
+import { useRegister } from "../features/auth/hooks/useRegister";
+import type { RegisterFormData } from "../features/auth/models/auth.types";
 
 export default function PageRegister() {
+    const navigate = useNavigate();
+    const { registerUser, isSubmitting, submitError } = useRegister();
+
+    const handleSubmit = async (data: RegisterFormData) => {
+        await registerUser(data);
+        navigate("/login");
+    };
+
     return (
         <div className="flex w-full h-screen bg-gray-100 overflow-hidden">
             <div className="hidden lg:flex w-1/2 p-5">
@@ -55,7 +66,11 @@ export default function PageRegister() {
                         </ul>
                     </div>
 
-                    <RegisterForm />
+                    <RegisterForm
+                        onSubmit={handleSubmit}
+                        isSubmitLoading={isSubmitting}
+                        submitError={submitError}
+                    />
                 </div>
             </div>
         </div>

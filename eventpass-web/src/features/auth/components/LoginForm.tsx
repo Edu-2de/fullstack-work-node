@@ -1,9 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isAxiosError } from "axios";
 import { useForm, type Path } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 
-import { useAuth } from "../hooks/useAuth";
 import { type LoginFormData } from "../models/auth.types";
 import { loginSchema } from "../schema";
 
@@ -13,10 +11,17 @@ import Button from "../../../components/button";
 import InputText from "../../../components/input-text";
 import Text from "../../../components/text";
 
-export default function LoginForm() {
-    const { login } = useAuth();
-    const navigate = useNavigate();
+interface LoginFormProps {
+    onSubmit: (data: LoginFormData) => Promise<void>;
+    isSubmitLoading?: boolean;
+    submitError?: Error | null;
+}
 
+export default function LoginForm({
+    onSubmit,
+    isSubmitLoading,
+    submitError,
+}: LoginFormProps) {
     const {
         register,
         handleSubmit,
@@ -33,28 +38,27 @@ export default function LoginForm() {
     const emailValue = watch("email");
     const passwordValue = watch("password");
 
-    async function onSubmit(data: LoginFormData) {
+    async function handleFormSubmit(data: LoginFormData) {
         try {
-            await login(data);
-            navigate("/");
+            await onSubmit(data);
         } catch (error) {
-            if (isAxiosError(error) && error.response) {
-                const backendErrors = error.response.data.errors;
-                const genericMessage = error.response.data.message;
-
-                if (backendErrors && Array.isArray(backendErrors)) {
-                    backendErrors.forEach((err) => {
-                        setError(err.field as Path<LoginFormData>, {
-                            message: err.message,
-                        });
-                    });
+            if (isAxiosError(error)) {
+                if (error.response?.data?.errors) {
+                    const backendErrors = error.response.data.errors;
+                    backendErrors.forEach(
+                        (err: { field: string; message: string }) => {
+                            setError(err.field as Path<LoginFormData>, {
+                                type: "server",
+                                message: err.message,
+                            });
+                        },
+                    );
                 } else {
                     setError("root", {
                         message:
-                            genericMessage ||
-                            "Falha ao iniciar sessão. Verifique os seus dados.",
+                            error.response?.data?.message ||
+                            "E-mail ou senha incorretos.",
                     });
-                    setValue("password", "", { shouldValidate: false });
                 }
             } else {
                 setError("root", {
@@ -62,11 +66,26 @@ export default function LoginForm() {
                         "Ocorreu um erro inesperado. Tente novamente mais tarde.",
                 });
             }
+            setValue("password", "", { shouldValidate: false });
+        }
+    }
+
+    let globalErrorMessage = submitError?.message;
+    if (isAxiosError(submitError)) {
+        if (!submitError.response?.data?.errors) {
+            globalErrorMessage =
+                submitError.response?.data?.message ||
+                "Falha ao criar conta. Verifique os dados.";
+        } else {
+            globalErrorMessage = undefined;
         }
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
+        <form
+            onSubmit={handleSubmit(handleFormSubmit)}
+            className="flex flex-col gap-8"
+        >
             <Text as="h1" variant="display-xl" className="text-white">
                 Acesse sua conta
             </Text>
@@ -105,8 +124,17 @@ export default function LoginForm() {
                 </Text>
             )}
 
+            {globalErrorMessage && (
+                <Text
+                    variant="text-sm"
+                    className="text-error-light text-center bg-error-base/10 p-3 rounded-lg border border-error-base/20"
+                >
+                    {globalErrorMessage}
+                </Text>
+            )}
+
             <Button
-                isLoading={isSubmitting}
+                isLoading={isSubmitting || isSubmitLoading}
                 size="full"
                 className="mt-2 h-12"
                 type="submit"

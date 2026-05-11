@@ -29,7 +29,4 @@ export const createEventSchema = z.object({
         .min(1, "Selecione pelo menos uma categoria"),
 });
 
-export const updateEvent = createEventSchema.partial();
-
-export type CreateEventFormData = z.infer<typeof createEventSchema>;
-export type UpdateEventFormData = z.infer<typeof updateEvent>;
+export const updateEventSchema = createEventSchema.partial();

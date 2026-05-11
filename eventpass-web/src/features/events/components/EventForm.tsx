@@ -18,7 +18,9 @@ import Text from "../../../components/text";
 
 import type { Category } from "../../categories/models/category.types";
 import type { Event } from "../models/event.types";
-import { createEventSchema, type CreateEventFormData } from "../schema";
+
+import type { EventFormData } from "../models/event.types";
+import { createEventSchema } from "../schema";
 
 const EventVariants = tv({
     slots: {
@@ -49,12 +51,8 @@ const EventVariants = tv({
 interface EventFormProps {
     event?: Event;
     categories: Category[];
-    onSubmit: (
-        data: CreateEventFormData,
-        bannerFile: File | null,
-    ) => Promise<void>;
+    onSubmit: (data: EventFormData, bannerFile: File | null) => Promise<void>;
     onCancelEvent?: () => Promise<void>;
-
     isSubmitLoading?: boolean;
     isCancelLoading?: boolean;
     submitError?: Error | null;
@@ -98,7 +96,7 @@ export default function EventForm({
         watch,
         setError,
         formState: { errors, isSubmitting },
-    } = useForm<CreateEventFormData>({
+    } = useForm<EventFormData>({
         resolver: zodResolver(createEventSchema),
         mode: "onChange",
         defaultValues: event
@@ -156,10 +154,7 @@ export default function EventForm({
         }
     };
 
-    // 3. O coração do Error Bubbling e injeção!
-    const handleFormSubmit: SubmitHandler<CreateEventFormData> = async (
-        data,
-    ) => {
+    const handleFormSubmit: SubmitHandler<EventFormData> = async (data) => {
         try {
             await onSubmit(data, bannerFile);
         } catch (err) {
@@ -168,13 +163,10 @@ export default function EventForm({
 
                 backendErrors.forEach(
                     (backendError: { field: string; message: string }) => {
-                        setError(
-                            backendError.field as keyof CreateEventFormData,
-                            {
-                                type: "server",
-                                message: backendError.message,
-                            },
-                        );
+                        setError(backendError.field as keyof EventFormData, {
+                            type: "server",
+                            message: backendError.message,
+                        });
                     },
                 );
                 return;

@@ -1,11 +1,11 @@
 // useUpdateEvent.ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../../helpers/api";
-import type { UpdateEventFormData } from "../schema";
+import type { UpdateFormData } from "../models/event.types";
 
 interface UpdateEventPayload {
     id: string;
-    data: UpdateEventFormData;
+    data: UpdateFormData;
     bannerFile: File | null;
 }
 

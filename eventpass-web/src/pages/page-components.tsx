@@ -12,21 +12,19 @@ import Rating from "../components/rating";
 import Skeleton from "../components/skeleton";
 import StarButton from "../components/starButton";
 import Text from "../components/text";
-import type { Event } from "../features/events/models/event.types";
 import type { Category } from "../features/categories/models/category.types";
+import type { Event } from "../features/events/models/event.types";
 
 function PageComponents() {
     const [pesquisa, setPesquisa] = React.useState("");
     const [notaEvento, setNotaEvento] = React.useState(0);
     const [favorito, setFavorito] = React.useState(false);
 
-    // Corrigindo a tipagem das categorias conforme seu modelo
     const mockCategories: Category[] = [
         { id: "1", name: "Tecnologia" },
         { id: "2", name: "Design" },
     ];
 
-    // Corrigindo o objeto de evento com os campos obrigatórios da sua interface
     const eventTest: Event = {
         id: "test-id",
         title: "Conferência Tech 2026",
@@ -45,7 +43,6 @@ function PageComponents() {
 
     return (
         <div className="flex flex-col gap-12 p-8 pb-20">
-            {/* --- SEÇÃO DE TIPOGRAFIA --- */}
             <section className="flex flex-col gap-4">
                 <Text
                     variant="title-lg"
@@ -86,7 +83,6 @@ function PageComponents() {
                 </div>
             </section>
 
-            {/* --- SEÇÃO DE BOTÕES E INTERAÇÕES --- */}
             <section className="flex flex-col gap-4">
                 <Text
                     variant="title-lg"
@@ -144,7 +140,6 @@ function PageComponents() {
                 </div>
             </section>
 
-            {/* --- SEÇÃO DE FORMULÁRIOS --- */}
             <section className="flex flex-col gap-4">
                 <Text
                     variant="title-lg"
@@ -175,7 +170,6 @@ function PageComponents() {
                 </div>
             </section>
 
-            {/* --- SEÇÃO DE NAVIGATION --- */}
             <section className="flex flex-col gap-4">
                 <Text
                     variant="title-lg"
@@ -198,7 +192,6 @@ function PageComponents() {
                 </div>
             </section>
 
-            {/* --- SEÇÃO DE CARDS E SKELETONS --- */}
             <section className="flex flex-col gap-4">
                 <Text
                     variant="title-lg"

@@ -1,22 +1,27 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { isAxiosError } from "axios";
 import { useForm, type Path } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import InputText from "../../../components/input-text";
-import Text from "../../../components/text";
-import { useRegister } from "../hooks/useRegister";
 import type { RegisterFormData } from "../models/auth.types";
 import { registerSchema } from "../schema";
 
-import { isAxiosError } from "axios";
 import EmailIcon from "../../../assets/icons/Envelope-Regular.svg?react";
 import PasswordIcon from "../../../assets/icons/Password-Regular.svg?react";
 import UserIcon from "../../../assets/icons/User-Regular.svg?react";
 import Button from "../../../components/button";
+import InputText from "../../../components/input-text";
+import Text from "../../../components/text";
 
-export default function RegisterForm() {
-    const { registerUser } = useRegister();
-    const navigate = useNavigate();
+interface RegisterFormProps {
+    onSubmit: (data: RegisterFormData) => Promise<void>;
+    isSubmitLoading?: boolean;
+    submitError?: Error | null;
+}
 
+export default function RegisterForm({
+    onSubmit,
+    isSubmitLoading,
+    submitError,
+}: RegisterFormProps) {
     const {
         register,
         handleSubmit,
@@ -34,42 +39,44 @@ export default function RegisterForm() {
     const emailValue = watch("email");
     const passwordValue = watch("password_encrypted");
 
-    async function onSubmit(data: RegisterFormData) {
+    async function handleFormSubmit(data: RegisterFormData) {
         try {
-            await registerUser(data);
-            navigate("/login");
+            await onSubmit(data);
         } catch (error) {
-            if (isAxiosError(error) && error.response) {
+            if (isAxiosError(error) && error.response?.data?.errors) {
                 const backendErrors = error.response.data.errors;
-                const genericMessage = error.response.data.message;
-
-                if (backendErrors && Array.isArray(backendErrors)) {
-                    backendErrors.forEach((err) => {
+                backendErrors.forEach(
+                    (err: { field: string; message: string }) => {
                         setError(err.field as Path<RegisterFormData>, {
+                            type: "server",
                             message: err.message,
                         });
-                    });
-                } else {
-                    setError("root", {
-                        message:
-                            genericMessage ||
-                            "Falha ao criar conta. Verifique os dados fornecidos.",
-                    });
-                    setValue("password_encrypted", "", {
-                        shouldValidate: false,
-                    });
-                }
-            } else {
-                setError("root", {
-                    message:
-                        "Ocorreu um erro inesperado. Tente novamente mais tarde.",
-                });
+                    },
+                );
+
+                setValue("password_encrypted", "", { shouldValidate: false });
+                return;
             }
+            setValue("password_encrypted", "", { shouldValidate: false });
+        }
+    }
+
+    let globalErrorMessage = submitError?.message;
+    if (isAxiosError(submitError)) {
+        if (!submitError.response?.data?.errors) {
+            globalErrorMessage =
+                submitError.response?.data?.message ||
+                "Falha ao criar conta. Verifique os dados.";
+        } else {
+            globalErrorMessage = undefined;
         }
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
+        <form
+            onSubmit={handleSubmit(handleFormSubmit)}
+            className="flex flex-col gap-8"
+        >
             <Text as="h1" variant="display-xl" className="text-white">
                 Crie sua conta
             </Text>
@@ -112,17 +119,17 @@ export default function RegisterForm() {
                 />
             </div>
 
-            {errors.root && (
+            {globalErrorMessage && (
                 <Text
                     variant="text-sm"
                     className="text-error-light text-center bg-error-base/10 p-3 rounded-lg border border-error-base/20"
                 >
-                    {errors.root.message}
+                    {globalErrorMessage}
                 </Text>
             )}
 
             <Button
-                isLoading={isSubmitting}
+                isLoading={isSubmitting || isSubmitLoading}
                 size="full"
                 className="mt-2 h-12"
                 type="submit"

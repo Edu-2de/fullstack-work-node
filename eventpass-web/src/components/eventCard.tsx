@@ -23,7 +23,7 @@ interface EventCardProps
     extends
         React.ComponentProps<"div">,
         VariantProps<typeof eventCardVariants> {
-    event: Event;
+    event: Event & { ticketStatus?: string };
     isLoading?: boolean;
 }
 
@@ -44,7 +44,9 @@ export default function EventCard({
     const isPastEvent = eventDate
         ? eventDate.getTime() < new Date().getTime()
         : false;
-    const isCancelled = event.status === "cancelled";
+    const isEventCancelled = event.status === "cancelled";
+    const isTicketCancelled = event.ticketStatus === "cancelled";
+    const isCancelled = isEventCancelled || isTicketCancelled;
     const isInactive = isPastEvent || isCancelled;
 
     let day = "--";

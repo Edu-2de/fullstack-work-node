@@ -5,6 +5,8 @@ import EventDetail from "../features/events/components/EventDetail";
 import EventDetailSkeleton from "../features/events/components/EventDetailSkeleton";
 import { useDeleteEvent } from "../features/events/hooks/useDeleteEvent";
 import { useEvent } from "../features/events/hooks/useEvent";
+import { useMyEvents } from "../features/events/hooks/useMyEvents";
+import { useCancelTicket } from "../features/tickets/hooks/useCancelTicket";
 import { useCreateTicket } from "../features/tickets/hooks/useCreateTicket";
 
 export default function PageEventDetail() {
@@ -16,10 +18,16 @@ export default function PageEventDetail() {
 
     const { createTicket, isBuying: isBuyingTicket } = useCreateTicket();
     const { deleteEvent, isDeleting: isDeletingEvent } = useDeleteEvent();
+    const { cancelTicket, cancelError } = useCancelTicket();
 
     const isCustomer = user?.role === "customer";
     const isOwnerEvent =
         user?.role === "organizer" && event?.organizer?.id === user?.id;
+
+    const { events } = useMyEvents();
+    const eventWithTicket = events.find((e) => e.id === id);
+    const hasTicket = !!eventWithTicket;
+    const ticketId = eventWithTicket?.ticketId;
 
     async function handleBuyTicket() {
         try {
@@ -55,6 +63,26 @@ export default function PageEventDetail() {
         }
     }
 
+    const handleCancelTicket = async () => {
+        if (
+            !window.confirm(
+                "Deseja realmente cancelar esse ticket? Esta ação é irreversível.",
+            )
+        ) {
+            return;
+        }
+
+        try {
+            await cancelTicket(ticketId || "");
+            alert("Ticket deletado com sucesso!");
+            navigate("/my-events");
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (err: any) {
+            console.error(err);
+            alert(cancelError || "Erro ao cancelar evento");
+        }
+    };
+
     if (isFetchingEvent) {
         return <EventDetailSkeleton />;
     }
@@ -74,10 +102,12 @@ export default function PageEventDetail() {
             event={event}
             isCustomer={isCustomer}
             isOwner={isOwnerEvent}
+            hasTicket={hasTicket}
             onBack={() => navigate(-1)}
             onBuy={handleBuyTicket}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onCancelTicket={handleCancelTicket}
             isBuyLoading={isBuyingTicket}
             isDeleteLoading={isDeletingEvent}
         />

@@ -10,7 +10,8 @@ interface EventDetailProps {
     onBuy?: () => void;
     onEdit?: () => void;
     onDelete?: () => void;
-
+    onCancelTicket?: () => void;
+    hasTicket?: boolean;
     isBuyLoading?: boolean;
     isDeleteLoading?: boolean;
 }
@@ -23,6 +24,8 @@ export default function EventDetail({
     onBuy,
     onEdit,
     onDelete,
+    onCancelTicket,
+    hasTicket,
     isBuyLoading,
     isDeleteLoading,
 }: EventDetailProps) {
@@ -329,17 +332,24 @@ export default function EventDetail({
                                     <Button
                                         disabled
                                         variant="outline"
-                                        size="lg"
-                                        className="w-full sm:w-auto cursor-not-allowed border-error-base text-error-light"
+                                        className="cursor-not-allowed border-error-base text-error-light"
                                     >
                                         Evento Cancelado
+                                    </Button>
+                                ) : hasTicket ? (
+                                    // SE ELE JÁ TEM O INGRESSO: Mostra botão de cancelar
+                                    <Button
+                                        onClick={onCancelTicket}
+                                        variant="outline"
+                                        className="w-full sm:w-auto h-14 px-12 text-lg border-error-base text-error-light hover:bg-error-base/10"
+                                    >
+                                        Cancelar Ingresso
                                     </Button>
                                 ) : isSoldOut ? (
                                     <Button
                                         disabled
                                         variant="outline"
-                                        size="lg"
-                                        className="w-full sm:w-auto cursor-not-allowed border-error-base text-error-light"
+                                        className="cursor-not-allowed border-error-base text-error-light"
                                     >
                                         Ingressos Esgotados
                                     </Button>
@@ -347,7 +357,6 @@ export default function EventDetail({
                                     <Button
                                         onClick={onBuy}
                                         isLoading={isBuyLoading}
-                                        size="lg"
                                         className="w-full sm:w-auto h-14 px-12 text-lg"
                                     >
                                         Comprar Ingresso

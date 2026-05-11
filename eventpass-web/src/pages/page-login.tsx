@@ -1,9 +1,20 @@
+import { useNavigate } from "react-router-dom";
 import Image from "../assets/images/event.jpg";
 import MenuItem from "../components/menu-item";
 import Text from "../components/text";
 import LoginForm from "../features/auth/components/LoginForm";
+import { useAuth } from "../features/auth/hooks/useAuth";
+import type { LoginFormData } from "../features/auth/models/auth.types";
 
 export default function PageLogin() {
+    const { login } = useAuth();
+    const navigate = useNavigate();
+
+    const handleSubmit = async (data: LoginFormData) => {
+        await login(data);
+        navigate("/");
+    };
+
     return (
         <div className="flex w-full h-screen bg-gray-100 overflow-hidden">
             <div className="hidden lg:flex w-1/2 p-5">
@@ -54,7 +65,7 @@ export default function PageLogin() {
                             </MenuItem>
                         </ul>
                     </div>
-                    <LoginForm />
+                    <LoginForm onSubmit={handleSubmit} />
                 </div>
             </div>
         </div>

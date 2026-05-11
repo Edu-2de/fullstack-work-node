@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../../helpers/api";
-import type { CreateEventFormData } from "../schema";
+import type { EventFormData } from "../models/event.types";
 
 interface CreateEventPayload {
-    data: CreateEventFormData;
+    data: EventFormData;
     bannerFile: File | null;
 }
 
