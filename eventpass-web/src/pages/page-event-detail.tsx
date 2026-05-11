@@ -28,6 +28,7 @@ export default function PageEventDetail() {
     const eventWithTicket = events.find((e) => e.id === id);
     const hasTicket = !!eventWithTicket;
     const ticketId = eventWithTicket?.ticketId;
+    const ticketStatus = eventWithTicket?.ticketStatus;
 
     async function handleBuyTicket() {
         try {
@@ -100,6 +101,7 @@ export default function PageEventDetail() {
     return (
         <EventDetail
             event={event}
+            ticketStatus={ticketStatus}
             isCustomer={isCustomer}
             isOwner={isOwnerEvent}
             hasTicket={hasTicket}

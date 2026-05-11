@@ -4,6 +4,7 @@ import type { Event } from "../models/event.types";
 
 interface EventDetailProps {
     event: Event;
+    ticketStatus: string;
     isCustomer: boolean;
     isOwner?: boolean;
     onBack: () => void;
@@ -18,6 +19,7 @@ interface EventDetailProps {
 
 export default function EventDetail({
     event,
+    ticketStatus,
     isCustomer,
     isOwner,
     onBack,
@@ -120,7 +122,8 @@ export default function EventDetail({
     }).format(Number(event.price));
 
     const isPastEvent = eventDateObj.getTime() < new Date().getTime();
-    const isCancelled = event.status === "cancelled";
+    const isCancelled =
+        event.status === "cancelled" || ticketStatus === "cancelled";
     const isSoldOut = event.available_capacity <= 0;
 
     return (
