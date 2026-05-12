@@ -35,7 +35,7 @@ function PageComponents() {
         total_capacity: 500,
         available_capacity: 350,
         price: 180.0,
-        banner_url: null, // Usará o NoImage definido no componente
+        banner_url: null,
         status: "published",
         organizer: { id: "org-1", name: "Carlos" },
         categories: mockCategories,
