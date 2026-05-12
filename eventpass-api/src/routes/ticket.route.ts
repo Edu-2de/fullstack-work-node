@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { UserRole } from "../entities/user";
-import { ticketController } from "../factories/services-factory";
+import { TicketModuleFactory } from "../factories/ticket.factory";
 import { ensureAuthenticated } from "../middlewares/ensureAuthenticated";
 import { ensureRole } from "../middlewares/ensureRole";
 import { validateData } from "../middlewares/validateRequest";
@@ -8,6 +8,7 @@ import { idParamSchema } from "../validators/common.validator";
 import { useTicket } from "../validators/ticket.validator";
 
 const ticketRoutes = Router();
+const ticketController = TicketModuleFactory.getController();
 
 //CREATE ticket
 ticketRoutes.post(

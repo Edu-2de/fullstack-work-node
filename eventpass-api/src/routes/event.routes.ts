@@ -2,7 +2,7 @@ import { Router } from "express";
 import multer from "multer";
 import { uploadConfig } from "../config/upload";
 import { UserRole } from "../entities/user";
-import { eventController } from "../factories/services-factory";
+import { EventModuleFactory } from "../factories/event.factory";
 import { ensureAuthenticated } from "../middlewares/ensureAuthenticated";
 import { ensureRole } from "../middlewares/ensureRole";
 import { validateData } from "../middlewares/validateRequest";
@@ -11,6 +11,7 @@ import { createEvent, updateEvent } from "../validators/event.validator";
 
 const eventRoutes = Router();
 const upload = multer(uploadConfig);
+const eventController = EventModuleFactory.getController();
 
 //CREATE event
 eventRoutes.post(

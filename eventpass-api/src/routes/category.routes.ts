@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { UserRole } from "../entities/user";
-import { categoryController } from "../factories/services-factory";
+import { CategoryModuleFactory } from "../factories/category.factory";
 import { ensureAuthenticated } from "../middlewares/ensureAuthenticated";
 import { ensureRole } from "../middlewares/ensureRole";
 import { validateData } from "../middlewares/validateRequest";
@@ -11,6 +11,7 @@ import {
 import { idParamSchema } from "../validators/common.validator";
 
 const categoryRoutes = Router();
+const categoryController = CategoryModuleFactory.getController();
 
 //CREATE category
 categoryRoutes.post(

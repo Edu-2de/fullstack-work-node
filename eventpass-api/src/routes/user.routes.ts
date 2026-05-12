@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { UserRole } from "../entities/user";
-import { userController } from "../factories/services-factory";
+import { UserModuleFactory } from "../factories/user.factory";
 import { ensureAuthenticated } from "../middlewares/ensureAuthenticated";
 import { ensureRole } from "../middlewares/ensureRole";
 import { validateData } from "../middlewares/validateRequest";
@@ -13,6 +13,7 @@ import {
 } from "../validators/user.validator";
 
 const userRoutes = Router();
+const userController = UserModuleFactory.getController();
 
 //CREATE user
 userRoutes.post("/register", validateData(createUserSchema), (req, res) =>
