@@ -340,7 +340,6 @@ export default function EventDetail({
                                         Evento Cancelado
                                     </Button>
                                 ) : hasTicket ? (
-                                    // SE ELE JÁ TEM O INGRESSO: Mostra botão de cancelar
                                     <Button
                                         onClick={onCancelTicket}
                                         variant="outline"
