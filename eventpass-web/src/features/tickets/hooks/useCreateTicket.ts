@@ -6,7 +6,7 @@ export function useCreateTicket() {
 
     const mutation = useMutation({
         mutationFn: async (eventId: string) => {
-            const response = await api.post("/tickets", { eventId });
+            const response = await api.post(`/tickets/${eventId}`);
             return response.data;
         },
         onSuccess: (_, eventId) => {
