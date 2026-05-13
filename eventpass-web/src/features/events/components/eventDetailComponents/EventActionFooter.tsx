@@ -82,7 +82,7 @@ export default function EventActionFooter({
                             variant="outline"
                             className="cursor-not-allowed border-error-base text-error-light"
                         >
-                            Evento Cancelado
+                            Cancelado
                         </Button>
                     ) : hasTicket ? (
                         <Button
