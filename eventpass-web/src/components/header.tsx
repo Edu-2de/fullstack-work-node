@@ -18,6 +18,7 @@ export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
     const canCreateEvent = user?.role === "organizer";
+    const isCustomerUser = user?.role === "customer";
 
     function handleLogout() {
         logout();
@@ -39,9 +40,16 @@ export default function Header() {
                         <MenuItem to="/" icon={PopCornIcon}>
                             Explorar
                         </MenuItem>
-                        <MenuItem to="/my-events" icon={FilmIcon}>
-                            Meus Eventos
-                        </MenuItem>
+                        {isCustomerUser ? (
+                            <MenuItem to="/my-events" icon={FilmIcon}>
+                                Meus Tickets
+                            </MenuItem>
+                        ) : (
+                            <MenuItem to="/my-events" icon={FilmIcon}>
+                                Meus Eventos
+                            </MenuItem>
+                        )}
+
                         {canCreateEvent && (
                             <MenuItem to="/create-event" icon={PulsIcon}>
                                 Novo Evento
