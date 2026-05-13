@@ -99,7 +99,9 @@ export class TicketRepository implements ITicketRepository {
                 },
             },
             relations: {
-                events: true,
+                events: {
+                    categories: true,
+                },
             },
             order: {
                 purchase_date: "DESC",
@@ -111,6 +113,10 @@ export class TicketRepository implements ITicketRepository {
                     start_date: true,
                     location: true,
                     banner_url: true,
+                    categories: {
+                        id: true,
+                        name: true,
+                    },
                 },
             },
         });
