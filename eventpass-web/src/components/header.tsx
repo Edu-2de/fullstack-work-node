@@ -19,6 +19,7 @@ export default function Header() {
 
     const canCreateEvent = user?.role === "organizer";
     const isCustomerUser = user?.role === "customer";
+    const isAdminUser = user?.role === "admin";
 
     function handleLogout() {
         logout();
@@ -54,6 +55,17 @@ export default function Header() {
                             <MenuItem to="/create-event" icon={PulsIcon}>
                                 Novo Evento
                             </MenuItem>
+                        )}
+
+                        {isAdminUser && (
+                            <>
+                             <MenuItem to="/create-category" icon={PulsIcon}>
+                                Nova Categoria
+                            </MenuItem>
+                              <MenuItem to="/create-category" icon={PulsIcon}>
+                                Novo Usuário
+                            </MenuItem>
+                            </>
                         )}
                     </ul>
                 </nav>
