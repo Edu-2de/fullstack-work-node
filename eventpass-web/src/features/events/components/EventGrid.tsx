@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import FilmIcon from "../../../assets/icons/FilmSlate-Regular.svg?react";
 import EventCard from "../../../components/eventCard";
 import Icon from "../../../components/icon";
