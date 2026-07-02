@@ -45,12 +45,12 @@ export default function Header() {
                             <MenuItem to="/my-events" icon={FilmIcon}>
                                 Meus Tickets
                             </MenuItem>
-                        ) : (
+                        ) : canCreateEvent && (
                             <MenuItem to="/my-events" icon={FilmIcon}>
                                 Meus Eventos
                             </MenuItem>
                         )}
-
+s
                         {canCreateEvent && (
                             <MenuItem to="/create-event" icon={PulsIcon}>
                                 Novo Evento
