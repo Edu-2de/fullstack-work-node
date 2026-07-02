@@ -1,8 +1,9 @@
 import { z } from "zod";
-import { loginSchema, registerSchema } from "../schema";
+import { loginSchema, registerByAdminSchema, registerSchema } from "../schema";
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
+export type RegisterByAdminFormData = z.infer<typeof registerByAdminSchema>;
 
 export interface User {
     id: string;

@@ -3,14 +3,15 @@ import OrganizerRoute from "./components/organizer-route";
 import PrivateRoute from "./components/private-route";
 import LayoutMain from "./pages/layout-main";
 import PageComponents from "./pages/page-components";
+import PageCreateCategory from "./pages/page-create-category";
 import PageCreateEvent from "./pages/page-create-event";
+import PageCreateUser from "./pages/page-create-user";
 import PageEditEvent from "./pages/page-edit-event";
 import PageEventDetail from "./pages/page-event-detail";
 import PageHome from "./pages/page-home";
 import PageLogin from "./pages/page-login";
 import PageMyEvents from "./pages/page-my-events";
 import PageRegister from "./pages/page-register";
-import PageCreateCategory from "./pages/page-create-category";
 
 export default function App() {
     return (
@@ -27,6 +28,7 @@ export default function App() {
                             path="/create-category"
                             element={<PageCreateCategory />}
                         />
+                     <Route path="/create-user" element={<PageCreateUser />} />
                     <Route element={<OrganizerRoute />}>
                         <Route
                             path="/create-event"

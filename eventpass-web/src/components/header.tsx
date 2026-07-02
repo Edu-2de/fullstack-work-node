@@ -66,7 +66,7 @@ s
                              <MenuItem to="/create-category" icon={PulsIcon}>
                                 Nova Categoria
                             </MenuItem>
-                              <MenuItem to="/create-category" icon={PulsIcon}>
+                              <MenuItem to="/create-user" icon={PulsIcon}>
                                 Novo Usuário
                             </MenuItem>
                             </>
