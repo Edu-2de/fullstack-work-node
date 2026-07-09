@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+import AdminRoute from "./components/admin-route";
 import OrganizerRoute from "./components/organizer-route";
 import PrivateRoute from "./components/private-route";
 import LayoutMain from "./pages/layout-main";
@@ -16,29 +17,28 @@ import PageRegister from "./pages/page-register";
 export default function App() {
     return (
         <Routes>
+
             <Route path="/login" element={<PageLogin />} />
             <Route path="/register" element={<PageRegister />} />
             <Route path="/components" element={<PageComponents />} />
+
             <Route element={<PrivateRoute />}>
                 <Route element={<LayoutMain />}>
+
                     <Route path="/" element={<PageHome />} />
                     <Route path="/my-events" element={<PageMyEvents />} />
                     <Route path="/event/:id" element={<PageEventDetail />} />
-                     <Route
-                            path="/create-category"
-                            element={<PageCreateCategory />}
-                        />
-                     <Route path="/create-user" element={<PageCreateUser />} />
-                    <Route element={<OrganizerRoute />}>
-                        <Route
-                            path="/create-event"
-                            element={<PageCreateEvent />}
-                        />
-                        <Route
-                            path="/event/edit/:id"
-                            element={<PageEditEvent />}
-                        />
+
+                    <Route element={<AdminRoute />}>
+                        <Route path="/create-category" element={<PageCreateCategory />}/>
+                        <Route path="/create-user" element={<PageCreateUser />} />
                     </Route>
+
+                    <Route element={<OrganizerRoute />}>
+                        <Route path="/create-event" element={<PageCreateEvent />}/>
+                        <Route path="/event/edit/:id" element={<PageEditEvent />}/>
+                    </Route>
+
                 </Route>
             </Route>
         </Routes>
