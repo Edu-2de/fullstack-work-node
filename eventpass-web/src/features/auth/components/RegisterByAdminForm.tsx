@@ -131,6 +131,13 @@ export default function UserForm({
           )}
        </div>
 
+        <InputText
+          type="password"
+          placeholder="Password"
+          {...register("password_encrypted")}
+          error={errors.password_encrypted?.message}
+        />
+
         {submitErrorMessage && (
           <Text
             variant="text-sm"

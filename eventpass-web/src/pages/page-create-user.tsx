@@ -12,7 +12,7 @@ export default function PageCreateUser() {
         try {
             await createUser(data);
             alert("Usuário criado com sucesso!");
-            navigate("/"); // Ou redirecione para uma tabela de listagem de usuários
+            navigate("/");
         } catch (error) {
             console.error("Falha na criação do usuário.", error);
         }
